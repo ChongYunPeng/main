@@ -1,3 +1,5 @@
+package doordonote.storage;
+
 import java.util.Date;
 
 public class EventTask extends Task implements Comparable<Task> {

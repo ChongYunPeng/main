@@ -1,3 +1,5 @@
+package doordonote.storage;
+
 import java.util.Date;
 
 public class DeadlineTask extends Task implements Comparable<Task> {
