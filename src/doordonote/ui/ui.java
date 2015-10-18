@@ -59,7 +59,6 @@ public class UI extends Application {
         vbox.setSpacing(2);
         vbox.setStyle("-fx-background-color: #336699;");
         
-        Text output = new Text("Feedback");
         output.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
         output.setFill(Color.WHITE);
         
