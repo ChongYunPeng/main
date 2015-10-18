@@ -1,16 +1,16 @@
-package doordonote.storage;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Map;
-import java.util.HashMap;
 import java.lang.reflect.Type;
 import java.util.Stack;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,8 +20,6 @@ import com.google.gson.reflect.TypeToken;
  * 
  *  @author: Chen Yongrui
  * 
- *  Need more testing
- *  set method might need checking
  *  
  */
 
@@ -31,17 +29,20 @@ public class JsonFileIO {
 	private static final String DEFAULT_NAME = "data.json";
 	private static final String FILE_TYPE = ".json";
 	private static final String INITIAL_JSONSTRING = "{}";
-	private static final int HASH_SIZE = 4099;
+	private static final int HASHSET_SIZE = 4099;
+	private static final int HASHMAP_SIZE = 13;
 
 	private final Gson gson = new GsonBuilder().registerTypeAdapter(Task.class, 
 			new TaskClassAdapter<Task>()).create();
 
-	private final Type type = new TypeToken<Map<Integer, Task>>(){}.getType();
-	private Map<Integer, Task> map = new HashMap<>(HASH_SIZE);
+	private Type type = new TypeToken<HashMap<String, Set<Task>>>(){}.getType();
+	private Set<Task> setFloating = new HashSet<Task>(HASHSET_SIZE);
+	private Set<Task> setDeadline = new HashSet<Task>(HASHSET_SIZE);
+	private Set<Task> setEvent = new HashSet<Task>(HASHSET_SIZE);
+	private Set<Task> setDelete = new HashSet<Task>(HASHSET_SIZE);
+	private Map<String, Set<Task>> map = new HashMap<String, Set<Task>>(HASHMAP_SIZE);
 
-	private ArrayList<Task> listTask;
-	private ArrayList<Integer> keys = new ArrayList<Integer>();
-
+	private ArrayList<Task> listTask = null;
 
 
 	private final Stack<String> undo = new Stack<String>();
@@ -50,7 +51,6 @@ public class JsonFileIO {
 	private static String currentFile;
 
 
-	/************** Constructors **********************/
 
 	public JsonFileIO(){
 		currentFile = DEFAULT_NAME;
@@ -65,18 +65,9 @@ public class JsonFileIO {
 		initialize();
 	}
 
-	/**************** Accessors ***********************/
-
 	public String getFileName() {
 		return currentFile;
 	}
-
-	public ArrayList<Integer> getTaskId(){
-		return keys;
-	}
-
-
-	/**************** Methods ***********************/
 
 
 	public void setFile(String fileName){
@@ -88,21 +79,14 @@ public class JsonFileIO {
 			File file = new File(currentFile);
 			if(!file.exists()){
 				file.createNewFile();
-				FileWriter fw = new FileWriter(file);
-				fw.write(INITIAL_JSONSTRING);
-				fw.close();
-				//				undo.push("");
-			}			
-			else{
+				writeToFile(INITIAL_JSONSTRING);
+				undo.push(INITIAL_JSONSTRING);
+			}	else{
 				map = jsonToMap();
-				if(map!=null){
-					for (Integer key: map.keySet()){
-						keys.add(key);
-					}
+				if(!map.isEmpty()){
 					listTask = read();	
 				}
-				
-				//			undo.push(getFileString(currentFile));
+				undo.push(getFileString(currentFile));
 			}
 		}
 		catch (IOException e) {
@@ -113,9 +97,17 @@ public class JsonFileIO {
 
 	protected void write(Task task){
 
-		Integer taskKey = task.hashCode();
-		map.put(taskKey, task);
-		keys.add(taskKey);
+		if(task instanceof FloatingTask){
+			setFloating.add(task);
+			map.put("FLOATING_TASK", setFloating);
+		} else if(task instanceof DeadlineTask){
+			setDeadline.add(task);
+			map.put("DEADLINE_TASK", setDeadline);
+		} else if(task instanceof EventTask){
+			setEvent.add(task);
+			map.put("EVENT_TASK", setEvent);
+		}
+
 		String json = gson.toJson(map, type);
 		try{
 			writeToFile(json);
@@ -128,9 +120,10 @@ public class JsonFileIO {
 	}
 
 
-	public void clear(){
+	protected void clear(){
 		try{
 			FileWriter fw = new FileWriter(currentFile);
+			fw.write("{}");
 			fw.close();
 			undo.push("");
 		}
@@ -143,7 +136,11 @@ public class JsonFileIO {
 	protected void delete(Task taskToDelete) throws EmptyTaskListException{
 
 		if(!map.isEmpty()){
-			map.remove(taskToDelete.hashCode());
+			String taskType = taskToDelete.getType();
+			Set<Task> set = map.get(taskType);
+			set.remove(taskToDelete);
+			setDelete.add(taskToDelete);
+			map.put("DELETED_TASK", setDelete);
 			String json = gson.toJson(map, type);
 			try{
 				writeToFile(json);
@@ -162,22 +159,31 @@ public class JsonFileIO {
 
 	protected void update(Task taskToUpdate, Task newUpdatedTask) 
 			throws EmptyTaskListException{
-		try{
 			delete(taskToUpdate);
 			write(newUpdatedTask);
-		}
-		catch(EmptyTaskListException e){
-			throw e;
-		}
 	}
 
 	//This method reads the current json file and returns an
-	//arraylist of Task
+	//arraylist of Task sorted by Date. FloatingTasks are
+	// at the back of this ArrayList
 	protected ArrayList<Task> read() throws IOException{
-		Task[] arrTask;
-		Map<Integer, Task> jsonMap = jsonToMap();
-		arrTask = jsonMap.values().toArray(new Task[jsonMap.size()]);
-		listTask = new ArrayList<Task>(Arrays.asList(arrTask));
+		setFloating = map.get("FLOATING_TASK");
+		setDeadline = map.get("DEADLINE_TASK");
+		setEvent = map.get("EVENT_TASK");
+		listTask = new ArrayList<Task>();
+		if(setDeadline!=null && !setDeadline.isEmpty()){
+			ArrayList<Task> listDeadline = new ArrayList<Task>(setDeadline);
+			listTask.addAll(listDeadline);
+		}
+		if(setEvent!=null && !setEvent.isEmpty()){
+			ArrayList<Task> listEvent = new ArrayList<Task>(setEvent);
+			listTask.addAll(listEvent);
+		}
+
+		Collections.sort(listTask);
+		if(setFloating!=null && !setFloating.isEmpty()){
+			listTask.addAll(setFloating);
+		}
 		return listTask;
 	}
 
@@ -195,7 +201,6 @@ public class JsonFileIO {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -214,20 +219,17 @@ public class JsonFileIO {
 	}
 
 	// This method gets json string from currentFile and map it
-	private Map<Integer, Task> jsonToMap() throws IOException {
+	private HashMap<String, Set<Task>> jsonToMap() throws IOException {
 		String json = getFileString(currentFile);
-		Map<Integer, Task> jsonMap = gson.fromJson(json, type);
+		HashMap<String, Set<Task>> jsonMap = gson.fromJson(json, type);
 		return jsonMap;
 	}
-
-
 
 	private void writeToFile(String json) throws IOException{
 		FileWriter writer = new FileWriter(currentFile);
 		writer.write(json);
 		writer.close();	
 	}
-
 
 
 	// This method reads strings from a file

@@ -1,8 +1,6 @@
-package doordonote.storage;
-
 import java.util.Date;
 
-public class EventTask extends Task {
+public class EventTask extends Task implements Comparable<Task> {
 	
 	private Date startDate;
 	private Date endDate;
@@ -20,6 +18,14 @@ public class EventTask extends Task {
 	
 	public Date getEndDate(){
 		return endDate;
+	}
+	
+	public String getType(){
+		return "EVENT_TASK";
+	}
+	
+	public int compareTo(Task task){
+		return getEndDate().compareTo(task.getEndDate());
 	}
 	
 	@Override

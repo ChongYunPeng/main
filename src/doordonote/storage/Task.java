@@ -1,8 +1,6 @@
-package doordonote.storage;
+import java.util.Date;
 
-
-
-public abstract class Task {
+public abstract class Task implements Comparable<Task>{
 
 
 	protected String description;
@@ -12,11 +10,15 @@ public abstract class Task {
 		this.description = description;
 	}
 
-
-
 	public String getDescription(){
 		return description;
 	}
+	
+	public abstract Date getEndDate();
+	
+	public abstract String getType();
+	
+	public abstract int compareTo(Task t);
 	
 	public abstract int hashCode();
 	

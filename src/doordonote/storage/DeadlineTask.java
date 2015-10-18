@@ -1,19 +1,25 @@
-package doordonote.storage;
-
 import java.util.Date;
 
-public class DeadlineTask extends Task {
+public class DeadlineTask extends Task implements Comparable<Task> {
 
 	private Date endDate;
-	
-	
+		
 	public DeadlineTask(String description, Date endDate){
 		super(description);
 		this.endDate = endDate;
 	}
 	
-	public Date getTaskEndDate(){
+	public Date getEndDate(){
 		return endDate;
+	}
+	
+	public String getType(){
+		return "DEADLINE_TASK";
+	}
+	
+	@Override
+	public int compareTo(Task task){
+		return getEndDate().compareTo(task.getEndDate());
 	}
 
 	@Override

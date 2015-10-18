@@ -1,6 +1,6 @@
-package doordonote.storage;
-
 import java.util.Date;
+import java.util.ArrayList;
+import java.io.IOException;
 
 public class TaskFileIO implements FileIO {
 
@@ -21,25 +21,34 @@ public class TaskFileIO implements FileIO {
 		jsonFileIO = new JsonFileIO(fileName);
 	}
 
-	public static TaskFileIO getInstance(){
+	public static FileIO getInstance(){
 		if(taskStorage == null){
 			taskStorage = new TaskFileIO();
 		}
 		return taskStorage;
 	}
+	
+	
+	public String add(Task task){
+		jsonFileIO.write(task);
+		return String.format(MESSAGE_ADD, task);
+	}
 
 	public String add(String description, Date startDate, Date endDate) {
 		Task task = createTask(description, startDate, endDate);
-		jsonFileIO.write(task);
-		return String.format(MESSAGE_ADD, task);
+		return add(task);
 	}
 
 
 	public String update(Task taskToUpdate, String description, Date startDate, Date endDate) {
 		Task updatedTask = createTask(description, startDate, endDate);
+		return update(taskToUpdate, updatedTask);
+	}
+	
+	public String update(Task taskToUpdate, Task updatedTask){
 		try{
-		jsonFileIO.update(taskToUpdate, updatedTask);
-		return String.format(MESSAGE_UPDATE, updatedTask);
+			jsonFileIO.update(taskToUpdate, updatedTask);
+			return String.format(MESSAGE_UPDATE, updatedTask);
 		}
 		catch(EmptyTaskListException e){
 			return MESSAGE_NO_TASK_TO_UPDATE;
@@ -55,6 +64,18 @@ public class TaskFileIO implements FileIO {
 			return MESSAGE_NO_TASK_TO_DELETE;
 		}
 	}
+	
+	public ArrayList<Task> read() throws IOException{
+		ArrayList<Task> listTask = null;
+		try{
+			listTask = jsonFileIO.read();
+		}
+		catch (IOException e){
+			throw e;
+		}		
+		assert(listTask!=null);
+		return listTask;
+	}
 
 	private Task createTask(String description, Date startDate,
 			Date endDate){
@@ -62,17 +83,11 @@ public class TaskFileIO implements FileIO {
 
 		if(description!=null && startDate==null && endDate==null){
 			task = new FloatingTask(description);
-		}
-
-		else if(description!=null && startDate==null && endDate!=null){
+		} else if(description!=null && startDate==null && endDate!=null){
 			task = new DeadlineTask(description, endDate);
-		}
-
-		else if(description!=null && startDate!=null && endDate!=null){
+		} else if(description!=null && startDate!=null && endDate!=null){
 			task = new EventTask(description, startDate, endDate);
-		}
-
-		else {
+		} else {
 			assert (task != null):"Invalid Task parameters";
 		}
 
