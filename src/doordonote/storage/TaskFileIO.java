@@ -1,6 +1,12 @@
 package doordonote.storage;
 
 import java.util.Date;
+
+import doordonote.common.DeadlineTask;
+import doordonote.common.EventTask;
+import doordonote.common.FloatingTask;
+import doordonote.common.Task;
+
 import java.util.ArrayList;
 import java.io.IOException;
 

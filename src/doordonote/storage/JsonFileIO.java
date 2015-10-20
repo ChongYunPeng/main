@@ -18,6 +18,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import doordonote.common.DeadlineTask;
+import doordonote.common.EventTask;
+import doordonote.common.FloatingTask;
+import doordonote.common.Task;
+
 /*
  * 
  *  @author: Chen Yongrui
