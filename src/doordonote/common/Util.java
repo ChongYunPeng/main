@@ -6,12 +6,16 @@ public final class Util {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static String removeFirstWord(String userCommand) {
-		return userCommand.replace(getFirstWord(userCommand), "").trim();
+	public static String removeFirstWord(String input) {
+		return input.replace(getFirstWord(input), "").trim();
 	}
 
-	public static String getFirstWord(String userCommand) {
-		String commandTypeString = userCommand.trim().split("\\s+")[0];
+	public static String getFirstWord(String input) {
+		String commandTypeString = input.trim().split("\\s+")[0];
 		return commandTypeString;
+	}
+	
+	public static boolean isEmptyOrNull(String input) {
+		return (input == null || input.trim().isEmpty());
 	}
 }
