@@ -1,34 +1,30 @@
-package doordonote.storage;
+package doordonote.common;
 
 import java.util.Date;
 
-public class EventTask extends Task {
-	
-	private Date startDate;
-	private Date endDate;
+public class DeadlineTask extends Task implements Comparable<Task> {
 
-	
-	public EventTask(String description, Date startDate, Date endDate){
+	private Date endDate;
+		
+	public DeadlineTask(String description, Date endDate){
 		super(description);
-		this.startDate = startDate;
 		this.endDate = endDate;
-	}
-	
-	public Date getStartDate(){
-		return startDate;
 	}
 	
 	public Date getEndDate(){
 		return endDate;
 	}
 	
+	public String getType(){
+		return "DEADLINE_TASK";
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
-		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
 		return result;
 	}
 
@@ -40,9 +36,9 @@ public class EventTask extends Task {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof EventTask))
+		if (!(obj instanceof DeadlineTask))
 			return false;
-		EventTask other = (EventTask) obj;
+		DeadlineTask other = (DeadlineTask) obj;
 		if (description == null) {
 			if (other.description != null)
 				return false;
@@ -53,11 +49,8 @@ public class EventTask extends Task {
 				return false;
 		} else if (!endDate.equals(other.endDate))
 			return false;
-		if (startDate == null) {
-			if (other.startDate != null)
-				return false;
-		} else if (!startDate.equals(other.startDate))
-			return false;
 		return true;
 	}
+	
+	
 }

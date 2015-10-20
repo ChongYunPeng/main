@@ -1,5 +1,6 @@
-package doordonote.storage;
+package doordonote.common;
 
+import java.util.Date;
 
 public class FloatingTask extends Task {
 	
@@ -8,8 +9,12 @@ public class FloatingTask extends Task {
 		super(description);	
 	}
 	
-	public String getDesc(){
-		return description;
+	public Date getEndDate(){
+		return null;
+	}
+	
+	public String getType(){
+		return "FLOATING_TASK";
 	}
 	
 	@Override
