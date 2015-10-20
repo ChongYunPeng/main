@@ -17,6 +17,11 @@ public class TaskFileIO implements FileIO {
 	private final String MESSAGE_DELETE = "Task deleted";
 	private final String MESSAGE_NO_TASK_TO_DELETE = "No Tasks to delete";
 	private final String MESSAGE_NO_TASK_TO_UPDATE = "No Tasks to update";
+	private final String MESSAGE_CLEAR = "All data deleted from file";
+	private final String MESSAGE_UNDO_SUCCESS = "Undo executed";
+	private final String MESSAGE_UNDO_FAIL = "Undo not executed";
+	private final String MESSAGE_REDO_SUCCESS = "Redo executed";
+	private final String MESSAGE_REDO_FAIL = "Redo not executed";
 
 	protected JsonFileIO jsonFileIO;
 	private static TaskFileIO taskStorage;
@@ -38,7 +43,7 @@ public class TaskFileIO implements FileIO {
 	
 	
 	public String add(Task task){
-		jsonFileIO.write(task);
+		jsonFileIO.add(task);
 		return String.format(MESSAGE_ADD, task);
 	}
 
@@ -73,16 +78,49 @@ public class TaskFileIO implements FileIO {
 		}
 	}
 	
-	public ArrayList<Task> read() throws IOException{
+	public ArrayList<Task> readTasks() throws IOException{
 		ArrayList<Task> listTask = null;
 		try{
-			listTask = jsonFileIO.read();
+			listTask = jsonFileIO.readTasks();
 		}
 		catch (IOException e){
 			throw e;
 		}		
 		assert(listTask!=null);
 		return listTask;
+	}
+	
+	public ArrayList<Task> readDeletedTasks() throws IOException{
+		ArrayList<Task> listTask = null;
+		try{
+			listTask = jsonFileIO.readDeletedTasks();
+		}
+		catch (IOException e){
+			throw e;
+		}		
+		assert(listTask!=null);
+		return listTask;
+	}
+	
+	public String clear(){
+		jsonFileIO.clear();
+		return MESSAGE_CLEAR;
+	}
+	
+	public String undo(){
+		if(jsonFileIO.undo()){
+			return MESSAGE_UNDO_SUCCESS;
+		} else{
+			return MESSAGE_UNDO_FAIL;
+		}
+	}
+	
+	public String redo(){
+		if(jsonFileIO.redo()){
+			return MESSAGE_REDO_SUCCESS;
+		} else{
+			return MESSAGE_REDO_FAIL;
+		}
 	}
 
 	private Task createTask(String description, Date startDate,

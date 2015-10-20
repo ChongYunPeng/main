@@ -26,7 +26,7 @@ import doordonote.common.Task;
 /*
  * 
  *  @author: Chen Yongrui
- * 
+ *  Undo and redo needs work
  *  
  */
 
@@ -42,14 +42,9 @@ public class JsonFileIO {
 	private final Gson gson = new GsonBuilder().registerTypeAdapter(Task.class, 
 			new TaskClassAdapter<Task>()).create();
 
-	private Type type = new TypeToken<HashMap<String, Set<Task>>>(){}.getType();
-	private Set<Task> setFloating = new HashSet<Task>(HASHSET_SIZE);
-	private Set<Task> setDeadline = new HashSet<Task>(HASHSET_SIZE);
-	private Set<Task> setEvent = new HashSet<Task>(HASHSET_SIZE);
-	private Set<Task> setDelete = new HashSet<Task>(HASHSET_SIZE);
-	private Map<String, Set<Task>> map = new HashMap<String, Set<Task>>(HASHMAP_SIZE);
-
-	private ArrayList<Task> listTask = null;
+	private Type type = new TypeToken<HashSet<Task>>(){}.getType();
+	private Set<Task> set = new HashSet<Task>(HASHSET_SIZE);
+	
 
 
 	private final Stack<String> undo = new Stack<String>();
@@ -89,10 +84,7 @@ public class JsonFileIO {
 				writeToFile(INITIAL_JSONSTRING);
 				undo.push(INITIAL_JSONSTRING);
 			}	else{
-				map = jsonToMap();
-				if(!map.isEmpty()){
-					listTask = read();	
-				}
+				set = jsonToSet();
 				undo.push(getFileString(currentFile));
 			}
 		}
@@ -102,20 +94,16 @@ public class JsonFileIO {
 	}
 
 
-	protected void write(Task task){
-
-		if(task instanceof FloatingTask){
-			setFloating.add(task);
-			map.put("FLOATING_TASK", setFloating);
-		} else if(task instanceof DeadlineTask){
-			setDeadline.add(task);
-			map.put("DEADLINE_TASK", setDeadline);
-		} else if(task instanceof EventTask){
-			setEvent.add(task);
-			map.put("EVENT_TASK", setEvent);
+	protected void add(Task task){
+		String json = writeTask(task);
+		if(json!=null){
+			undo.push(json);
 		}
+	}
 
-		String json = gson.toJson(map, type);
+	private String writeTask(Task task) {
+		set.add(task);
+		String json = gson.toJson(set, type);
 		try{
 			writeToFile(json);
 		}
@@ -123,7 +111,7 @@ public class JsonFileIO {
 		catch(IOException e){
 			e.printStackTrace();
 		}
-		//		undo.push(json);
+		return json;
 	}
 
 
@@ -132,7 +120,7 @@ public class JsonFileIO {
 			FileWriter fw = new FileWriter(currentFile);
 			fw.write("{}");
 			fw.close();
-			undo.push("");
+			undo.push("{}");
 		}
 
 		catch(IOException e){
@@ -140,57 +128,65 @@ public class JsonFileIO {
 		}
 	}
 
-	protected void delete(Task taskToDelete) throws EmptyTaskListException{
+	protected void delete(Task task) throws EmptyTaskListException{
+		String json = writeDeleteTask(task);
+		if(json!=null){
+			undo.push(json);
+		}
 
-		if(!map.isEmpty()){
-			String taskType = taskToDelete.getType();
-			Set<Task> set = map.get(taskType);
-			set.remove(taskToDelete);
-			setDelete.add(taskToDelete);
-			map.put("DELETED_TASK", setDelete);
-			String json = gson.toJson(map, type);
+	}
+
+	private String writeDeleteTask(Task task) throws EmptyTaskListException {
+		if(!set.isEmpty()){
+			set.remove(task);
+			task.setDeleted();
+			set.add(task);
+			String json = gson.toJson(set, type);
 			try{
 				writeToFile(json);
 			}
-
 			catch(IOException e){
 				e.printStackTrace();
 			}
+			return json;
 		}
 
 		else{
 			throw  new EmptyTaskListException();
 		}
-
 	}
 
 	protected void update(Task taskToUpdate, Task newUpdatedTask) 
 			throws EmptyTaskListException{
-			delete(taskToUpdate);
-			write(newUpdatedTask);
+		writeDeleteTask(taskToUpdate);
+		String json = writeTask(newUpdatedTask);
+		if(json!=null){
+			undo.push(json);
+		}
 	}
 
 	//This method reads the current json file and returns an
 	//arraylist of Task sorted by Date. FloatingTasks are
 	// at the back of this ArrayList
-	protected ArrayList<Task> read() throws IOException{
-		setFloating = map.get("FLOATING_TASK");
-		setDeadline = map.get("DEADLINE_TASK");
-		setEvent = map.get("EVENT_TASK");
-		listTask = new ArrayList<Task>();
-		if(setDeadline!=null && !setDeadline.isEmpty()){
-			ArrayList<Task> listDeadline = new ArrayList<Task>(setDeadline);
-			listTask.addAll(listDeadline);
+	protected ArrayList<Task> readTasks() throws IOException{
+		ArrayList<Task> listTask = new ArrayList<Task>();
+		for(Task t : set){
+			if(!t.isDeleted()){
+			    listTask.add(t);
+			}
 		}
-		if(setEvent!=null && !setEvent.isEmpty()){
-			ArrayList<Task> listEvent = new ArrayList<Task>(setEvent);
-			listTask.addAll(listEvent);
-		}
-
 		Collections.sort(listTask);
-		if(setFloating!=null && !setFloating.isEmpty()){
-			listTask.addAll(setFloating);
+		return listTask;
+	}
+	
+	protected ArrayList<Task> readDeletedTasks() throws IOException{
+		ArrayList<Task> listTask = new ArrayList<Task>();
+		for(Task t : set){
+			if(t.isDeleted()){
+			    listTask.add(t);
+			}
 		}
+		Collections.sort(listTask);
 		return listTask;
 	}
 
@@ -226,10 +222,10 @@ public class JsonFileIO {
 	}
 
 	// This method gets json string from currentFile and map it
-	private HashMap<String, Set<Task>> jsonToMap() throws IOException {
+	private HashSet<Task> jsonToSet() throws IOException {
 		String json = getFileString(currentFile);
-		HashMap<String, Set<Task>> jsonMap = gson.fromJson(json, type);
-		return jsonMap;
+		HashSet<Task> set = gson.fromJson(json, type);
+		return set;
 	}
 
 	private void writeToFile(String json) throws IOException{

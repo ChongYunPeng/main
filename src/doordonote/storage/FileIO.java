@@ -14,5 +14,9 @@ public interface FileIO {
 			Date startDate, Date endDate);
 	public String update(Task oldTask, Task newTask);
 	public String delete(Task taskToDelete);
-	public ArrayList<Task> read() throws IOException;
+	public ArrayList<Task> readTasks() throws IOException;
+	public ArrayList<Task> readDeletedTasks() throws IOException;
+	public String clear();
+	public String undo();
+	public String redo();
 }
