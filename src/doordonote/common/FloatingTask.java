@@ -13,6 +13,10 @@ public class FloatingTask extends Task {
 		return null;
 	}
 	
+	public Date getStartDate(){
+		return null;
+	}
+	
 	public String getType(){
 		return "FLOATING_TASK";
 	}

@@ -15,6 +15,10 @@ public class DeadlineTask extends Task implements Comparable<Task> {
 		return endDate;
 	}
 	
+	public Date getStartDate() {
+		return null;
+	}
+	
 	public String getType(){
 		return "DEADLINE_TASK";
 	}

@@ -3,7 +3,7 @@ package doordonote.command;
 import java.util.Date;
 
 import doordonote.logic.Controller;
-import doordonote.storage.Task;
+import doordonote.common.Task;
 
 public class UpdateCommand implements Command {
 

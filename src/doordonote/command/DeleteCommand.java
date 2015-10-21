@@ -1,7 +1,7 @@
 package doordonote.command;
 
 import doordonote.logic.Controller;
-import doordonote.storage.Task;
+import doordonote.common.Task;
 
 public class DeleteCommand implements Command {
 	int taskID = -1;
