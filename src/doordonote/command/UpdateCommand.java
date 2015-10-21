@@ -20,10 +20,6 @@ public class UpdateCommand implements Command {
 		this.endDate = endDate;
 		this.taskID = taskID;
 	}
-	@Override
-	public boolean isUndoable() {
-		return true;
-	}
 
 	@Override
 	public String execute(CommandToController controller) {

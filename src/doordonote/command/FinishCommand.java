@@ -9,11 +9,6 @@ public class FinishCommand implements Command {
 		assert(taskIdToFinish > 0);
 		this.taskIdToFinish = taskIdToFinish;
 	}
-	
-	@Override
-	public boolean isUndoable() {
-		return false;
-	}
 
 	@Override
 	public String execute(CommandToController controller) {

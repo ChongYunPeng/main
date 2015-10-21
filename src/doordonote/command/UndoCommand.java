@@ -8,11 +8,6 @@ public class UndoCommand implements Command {
 	}
 
 	@Override
-	public boolean isUndoable() {
-		return false;
-	}
-
-	@Override
 	public String execute(CommandToController controller) {
 		return controller.undo();
 	}

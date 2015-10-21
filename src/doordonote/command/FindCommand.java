@@ -1,18 +1,23 @@
 package doordonote.command;
 
+import java.util.List;
+
 import doordonote.logic.CommandToController;
 
 public class FindCommand implements Command {
-
-	@Override
-	public boolean isUndoable() {
-		return false;
+	protected List<String> keywords = null;
+	
+	public FindCommand() {
+		
+	}
+	
+	public FindCommand(List<String> keywords) {
+		this.keywords = keywords;
 	}
 
 	@Override
 	public String execute(CommandToController controller) {
-		controller.undo();
-		return null;
+		return controller.find(keywords);
 	}
 
 }

@@ -20,8 +20,8 @@ public class AddCommand implements Command {
 	 * 			The end date of the event. A null value indicates this task is not a deadline
 	 */
 	public AddCommand(String taskDescription, Date startDate, Date endDate) {
-		// AddHandler should have checked that task is not null
-		assert(taskDescription != null);
+		// AddHandler should have checked that task is not null and not empty
+		assert(taskDescription != null && !taskDescription.isEmpty());
 		
 		this.taskDescription = taskDescription;
 		this.startDate = startDate;
@@ -33,18 +33,5 @@ public class AddCommand implements Command {
 		assert(controller != null);
 		this.controller = controller;
 		return controller.add(taskDescription, startDate, endDate);
-		
-//		// Handle error
-//		if (addedTask == null) {
-//			
-//		}
-//		hasExecuted = true;
-//		// TODO: Add return statement
-//		return null;
-	}
-
-	@Override
-	public boolean isUndoable() {
-		return true;
 	}
 }

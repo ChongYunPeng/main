@@ -17,12 +17,6 @@ public class DeleteCommand implements Command {
 		assert(taskID > 0);
 		this.taskID = taskID;
 	}
-	
-
-	@Override
-	public boolean isUndoable() {
-		return true;
-	}
 
 	@Override
 	public String execute(CommandToController controller) {

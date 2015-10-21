@@ -12,11 +12,6 @@ public class HelpCommand implements Command {
 	public HelpCommand() {}
 
 	@Override
-	public boolean isUndoable() {
-		return false;
-	}
-
-	@Override
 	public String execute(CommandToController controller) {
 		if (commandType == null) {
 			return controller.help();
