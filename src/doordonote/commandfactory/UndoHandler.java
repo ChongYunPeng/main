@@ -6,8 +6,11 @@ import doordonote.common.Util;
 
 public class UndoHandler extends AbstractCommandHandler {
 
-	public UndoHandler(String commmandBody) {
+	public UndoHandler(String commmandBody) throws ExcessArgumentException {
 		super(commmandBody);
+		if (!commandBody.isEmpty()) {
+			throw new ExcessArgumentException();
+		}
 	}
 
 	@Override

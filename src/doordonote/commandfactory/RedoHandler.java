@@ -6,9 +6,11 @@ import doordonote.common.Util;
 
 public class RedoHandler extends AbstractCommandHandler {
 
-	public RedoHandler(String commmandBody) {
+	public RedoHandler(String commmandBody) throws ExcessArgumentException {
 		super(commmandBody);
-		// TODO Auto-generated constructor stub
+		if (!commandBody.isEmpty()) {
+			throw new ExcessArgumentException();
+		}
 	}
 
 	@Override

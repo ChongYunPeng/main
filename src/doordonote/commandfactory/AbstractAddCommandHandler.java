@@ -20,7 +20,7 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 		this.dateParser = dateParser;
 	}
 	
-	protected List<Date> getDates(int indexOfTimePeriod) {		
+	protected List<Date> getDateList(int indexOfTimePeriod) {		
 		if (indexOfTimePeriod < 0) {
 			return null;
 		}
@@ -41,17 +41,34 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 		return commandBody.toLowerCase().lastIndexOf("by");
 	}
 	
-	protected boolean isMostLikelyEvent() {
+	protected boolean isEvent() {
 		int indexOfEventDate = getEventDateIndex();
 		int indexOfDeadlineDate = getDeadlineDateIndex();
-		return (indexOfEventDate > indexOfDeadlineDate);
+		if (indexOfEventDate > indexOfDeadlineDate) {
+			Date startDate = getEventStartDate();
+			Date endDate = getEventEndDate();
+			return (startDate != null && endDate != null);
+		} else {
+			return false;
+		}
+	}
+	
+	protected boolean isDeadline() {
+		int indexOfEventDate = getEventDateIndex();
+		int indexOfDeadlineDate = getDeadlineDateIndex();
+		if (indexOfDeadlineDate > indexOfEventDate) {
+			Date endDate = getDeadlineDate();
+			return endDate != null;
+		} else {
+			return false;
+		}
 	}
 	
 	protected Date getEventStartDate() {
 		int eventDateIndex = getEventDateIndex();
-		List<Date> datesList = getDates(eventDateIndex);
+		List<Date> datesList = getDateList(eventDateIndex);
 
-		if (isMostLikelyEvent() && datesList != null && datesList.size() == 2) {
+		if (isEvent() && datesList != null && datesList.size() == 2) {
 			return datesList.get(0);
 		} else {
 			return null;
@@ -60,9 +77,9 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 	
 	protected Date getEventEndDate() {
 		int eventDateIndex = getEventDateIndex();
-		List<Date> datesList = getDates(eventDateIndex);
+		List<Date> datesList = getDateList(eventDateIndex);
 
-		if (isMostLikelyEvent() && datesList != null && datesList.size() == 2) {
+		if (isEvent() && datesList != null && datesList.size() == 2) {
 			return datesList.get(1);
 		} else {
 			return null;
@@ -71,9 +88,9 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 	
 	protected Date getDeadlineDate() {
 		int deadlineDateIndex = getDeadlineDateIndex();
-		List<Date> datesList = getDates(deadlineDateIndex);
+		List<Date> datesList = getDateList(deadlineDateIndex);
 
-		if (!isMostLikelyEvent() && datesList != null && !datesList.isEmpty()) {
+		if (!isEvent() && datesList != null && !datesList.isEmpty()) {
 			return datesList.get(0);
 		} else {
 			return null;
@@ -82,9 +99,9 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 	
 	
 	protected String getTaskDescription() {
-		if (isMostLikelyEvent() && getEventEndDate() != null) {
+		if (isEvent()) {
 			return commandBody.substring(0, getEventDateIndex());
-		} else if (getDeadlineDate() != null) {
+		} else if (isDeadline()) {
 			return commandBody.substring(0, getDeadlineDateIndex());
 		} else {
 			return commandBody;

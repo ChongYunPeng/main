@@ -9,5 +9,5 @@ public abstract class AbstractCommandHandler {
 		this.commandBody = commandBody;
 	}
 
-	public abstract Command generateCommand();
+	public abstract Command generateCommand() throws NumberFormatException, NegativeIndexException;
 }
