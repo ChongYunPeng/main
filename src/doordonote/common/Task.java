@@ -17,6 +17,8 @@ public abstract class Task implements Comparable<Task>{
 	}
 
 	public abstract Date getEndDate();
+	
+	public abstract Date getStartDate();
 
 	public abstract String getType();
 

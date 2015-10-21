@@ -140,9 +140,9 @@ public class UI extends Application {
         vbox1.getChildren().add(eventsHeader);
 
         for(int i=0; i<taskList.size(); i++) {
-        	if(taskList.get(i).getTaskType() == 2) {
+        	if(taskList.get(i).getType().equals("EVENT_TASK")) {
         		haveEvents = true;
-                        String eventTask = count++ + ". " + taskList.get(i).getTaskDesc() + " from " + ft.format(taskList.get(i).getStartDate()) + " to " + ft.format(taskList.get(i).getEndDate()); 
+                        String eventTask = count++ + ". " + taskList.get(i).getDescription() + " from " + ft.format(taskList.get(i).getStartDate()) + " to " + ft.format(taskList.get(i).getEndDate()); 
                         Text eventDisplay = new Text(eventTask);
                         eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
                         vbox1.getChildren().add(eventDisplay);
@@ -163,9 +163,9 @@ public class UI extends Application {
         vbox2.getChildren().add(deadlineHeader);
 
         for(int i=0; i<taskList.size(); i++) {
-        	if(taskList.get(i).getTaskType() == 1) {
+        	if(taskList.get(i).getType().equals("DEADLINE_TASK")) {
         		haveDeadlines = true;
-                        String deadlineTask = count++ + ". " + taskList.get(i).getTaskDesc() + " by " + ft.format(taskList.get(i).getEndDate()); 
+                        String deadlineTask = count++ + ". " + taskList.get(i).getDescription() + " by " + ft.format(taskList.get(i).getEndDate()); 
                         Text deadlineDisplay = new Text(deadlineTask);
                         deadlineDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
                         vbox2.getChildren().add(deadlineDisplay);
@@ -186,9 +186,9 @@ public class UI extends Application {
         vbox3.getChildren().add(floatingHeader);
 
         for(int i=0; i<taskList.size(); i++) {
-        	if(taskList.get(i).getTaskType() == 0) {
+        	if(taskList.get(i).getType().equals("FLOATING_TASK")) {
         		haveFloatingTasks = true;
-                        String floatingTask = (count++ + ". " + taskList.get(i).getTaskDesc()); 
+                        String floatingTask = (count++ + ". " + taskList.get(i).getDescription()); 
                         Text floatingDisplay = new Text(floatingTask);
                         floatingDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
                         vbox3.getChildren().add(floatingDisplay);
@@ -226,7 +226,6 @@ public class UI extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println("hello");
     	launch(args);
     }
     

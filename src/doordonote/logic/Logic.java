@@ -6,7 +6,7 @@ import java.util.List;
 import doordonote.command.Command;
 import doordonote.parser.Parser;
 import doordonote.storage.Storage;
-import doordonote.storage.Task;
+import doordonote.common.Task;
 
 public class Logic {
 	protected Parser parser = null;
