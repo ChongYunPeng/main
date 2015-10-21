@@ -353,11 +353,22 @@ public class UI extends Application {
             }
         }
         else {
-            if(minutes != null) {
-                time = hour + ":" + minutes + "am";
+        	if(minutes != null) {
+            	if(hour == 0) {
+            		
+                    time = hour+12 + ":" + minutes + "am";
+            	}
+            	else{
+            		time = hour + ":" + minutes + "am";
+            	}
             }
             else {
-                time = hour + "am";
+            	if(hour == 0) {
+            		time = hour+12 + "am";
+            	}
+            	else {
+                    time = hour + "am";
+            	}
             }
         }
         
