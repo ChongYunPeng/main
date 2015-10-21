@@ -24,10 +24,10 @@ public class AddHandler extends AbstractAddCommandHandler {
 			startDate = getEventStartDate();
 			endDate = getEventEndDate();
 			
-			// Make sure that both dates are defined
 			assert(startDate != null && endDate != null);
 		} else if (isDeadline()) {
 			endDate = getDeadlineDate();
+			
 			assert(endDate != null);
 		} 
 		

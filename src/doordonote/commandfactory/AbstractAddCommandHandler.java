@@ -1,23 +1,47 @@
 package doordonote.commandfactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;
 
-import doordonote.command.AddCommand;
-import doordonote.command.Command;
-
 // TODO: Change name to make it more understandable
 // TODO: Make parser static
 public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 	protected static final int NUM_OF_DATES_IN_EVENTS = 2;
+	protected static final int NUM_OF_DATES_IN_DEADLINES = 1;
+
 	protected Parser dateParser = null;
-	
+	protected Date eventStartDate = null;
+	protected Date eventEndDate = null;
+	protected Date deadlineDate = null;
+	protected boolean isEvent = false;
+	protected boolean isDeadline = false;	
+	protected int eventDateIndex = -1;
+	protected int deadlineDateIndex = -1;
+	protected List<Date> dateList = null;
+
 	public AbstractAddCommandHandler(String commandBody, Parser dateParser) {
 		super(commandBody);
 		this.dateParser = dateParser;
+		this.eventDateIndex = getEventDateIndex();
+		this.deadlineDateIndex = getDeadlineDateIndex();
+		if (eventDateIndex > deadlineDateIndex) {
+			dateList = getDateList(eventDateIndex);
+			if (dateList.size() == NUM_OF_DATES_IN_EVENTS) {
+				eventStartDate = dateList.get(0);
+				eventEndDate = dateList.get(1);
+				isEvent = true;
+			}
+		} else if (deadlineDateIndex > eventDateIndex){
+			dateList = getDateList(deadlineDateIndex);
+			if (dateList.size() == NUM_OF_DATES_IN_DEADLINES) {
+				deadlineDate = dateList.get(0);
+				isDeadline = true;
+			}
+		}
 	}
 	
 	protected List<Date> getDateList(int indexOfTimePeriod) {		
@@ -27,7 +51,7 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 		String eventPeriodString = commandBody.substring(indexOfTimePeriod);
 		List<DateGroup> dateGroupList = dateParser.parse(eventPeriodString);
 		if (dateGroupList.isEmpty()) {
-			return null;
+			return new ArrayList<Date>();
 		} else {
 			return dateGroupList.get(0).getDates();
 		}
@@ -42,59 +66,23 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 	}
 	
 	protected boolean isEvent() {
-		int indexOfEventDate = getEventDateIndex();
-		int indexOfDeadlineDate = getDeadlineDateIndex();
-		if (indexOfEventDate > indexOfDeadlineDate) {
-			Date startDate = getEventStartDate();
-			Date endDate = getEventEndDate();
-			return (startDate != null && endDate != null);
-		} else {
-			return false;
-		}
+		return isEvent;
 	}
 	
 	protected boolean isDeadline() {
-		int indexOfEventDate = getEventDateIndex();
-		int indexOfDeadlineDate = getDeadlineDateIndex();
-		if (indexOfDeadlineDate > indexOfEventDate) {
-			Date endDate = getDeadlineDate();
-			return endDate != null;
-		} else {
-			return false;
-		}
+		return isDeadline;
 	}
 	
 	protected Date getEventStartDate() {
-		int eventDateIndex = getEventDateIndex();
-		List<Date> datesList = getDateList(eventDateIndex);
-
-		if (isEvent() && datesList != null && datesList.size() == 2) {
-			return datesList.get(0);
-		} else {
-			return null;
-		}
+		return eventStartDate;
 	}
 	
 	protected Date getEventEndDate() {
-		int eventDateIndex = getEventDateIndex();
-		List<Date> datesList = getDateList(eventDateIndex);
-
-		if (isEvent() && datesList != null && datesList.size() == 2) {
-			return datesList.get(1);
-		} else {
-			return null;
-		}
+		return eventEndDate;
 	}
 	
 	protected Date getDeadlineDate() {
-		int deadlineDateIndex = getDeadlineDateIndex();
-		List<Date> datesList = getDateList(deadlineDateIndex);
-
-		if (!isEvent() && datesList != null && !datesList.isEmpty()) {
-			return datesList.get(0);
-		} else {
-			return null;
-		}
+		return deadlineDate;
 	}
 	
 	
