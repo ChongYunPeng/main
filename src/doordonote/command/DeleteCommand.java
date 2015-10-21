@@ -1,12 +1,10 @@
 package doordonote.command;
 
 import doordonote.logic.Controller;
-import doordonote.common.Task;
 
 public class DeleteCommand implements Command {
 	int taskID = -1;
 	protected Controller controller;
-	protected Task deletedTask = null;
 	protected boolean hasExecuted = false;
 
 	
@@ -29,8 +27,7 @@ public class DeleteCommand implements Command {
 	@Override
 	public String execute(Controller controller) {
 		this.controller = controller;
-		deletedTask = controller.delete(taskID);
-		return null;
+		return controller.delete(taskID);
 	}
 
 }

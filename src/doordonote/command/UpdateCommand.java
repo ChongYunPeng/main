@@ -3,7 +3,6 @@ package doordonote.command;
 import java.util.Date;
 
 import doordonote.logic.Controller;
-import doordonote.common.Task;
 
 public class UpdateCommand implements Command {
 
@@ -11,8 +10,6 @@ public class UpdateCommand implements Command {
 	protected String taskDescription = null;
 	protected Date startDate = null;
 	protected Date endDate = null;
-	protected Task originalTask = null;
-	protected Task newTask = null;
 	
 	public UpdateCommand(int taskID, String taskDescription, Date startDate, Date endDate) {
 		
@@ -30,9 +27,7 @@ public class UpdateCommand implements Command {
 
 	@Override
 	public String execute(Controller controller) {
-		controller.add(taskDescription, startDate, endDate);
-		controller.delete(taskID);
-		return "Task completed";
+		return controller.update(taskID, taskDescription, startDate, endDate);
 	}
 	
 
