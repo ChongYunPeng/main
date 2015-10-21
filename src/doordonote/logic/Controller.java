@@ -9,6 +9,10 @@ import java.util.List;
 
 import doordonote.command.Command;
 import doordonote.commandfactory.CommandFactory;
+import doordonote.commandfactory.EmptyCommandBodyException;
+import doordonote.commandfactory.ExcessArgumentException;
+import doordonote.commandfactory.InvalidCommandException;
+import doordonote.commandfactory.NegativeIndexException;
 import doordonote.common.EventTask;
 import doordonote.common.Task;
 import doordonote.common.TaskTest;
@@ -19,16 +23,12 @@ import doordonote.storage.StorageHandler;
 
 public class Controller implements UIToController, CommandToController {
 	protected CommandFactory cmdFactory = null;
-	protected Deque<Command> undoStack = null;
-	protected Deque<Command> redoStack = null;
 	protected Storage storage = null;
 	protected List<Task> fullTaskList = null;
 	protected List<Task> userTaskList = null;
 	
 	public Controller() {
 		cmdFactory = new CommandFactory();
-		undoStack = new LinkedList<Command>();
-		redoStack = new LinkedList<Command>();
 		storage = StorageHandler.getInstance();
 		try {
 			fullTaskList = getStorageTaskList();
@@ -67,8 +67,9 @@ public class Controller implements UIToController, CommandToController {
 		return outputMsg;
 	}
 	
+	// TODO add exception handling for when taskID > List size
 	protected Task getTask(int taskID) {
-		return userTaskList.get(taskID);
+		return userTaskList.get(taskID - 1);
 	}
 	
 	protected List<Task> getStorageTaskList() throws IOException {
@@ -79,6 +80,7 @@ public class Controller implements UIToController, CommandToController {
 	public String find(List<String> keywords) {
 		assert(keywords != null);
 		List<Task> tempList = fullTaskList;
+		userTaskList = tempList;
 		for (String keyword : keywords) {
 			tempList = new ArrayList<Task>();
 			for (Task task : userTaskList) {
@@ -127,37 +129,57 @@ public class Controller implements UIToController, CommandToController {
 
 	@Override
 	public String parseAndExecuteCommand(String userInput) {
-		Command cmd = cmdFactory.parse(userInput);
-		if (cmd.isUndoable()) {
-			undoStack.push(cmd);
-			if (undoStack.size() < 10) {
-				undoStack.removeLast();
-			} 
+		Command cmd;
+		try {
+			cmd = cmdFactory.parse(userInput);
+			return cmd.execute(this);
+		} catch (Exception e) {
+			return e.getMessage();
 		}
-		return cmd.execute(this);
 	}
 
 	@Override
 	public String redo() {
-		// TODO Auto-generated method stub
-		return null;
+		String outputMsg = storage.redo();
+		try {
+			fullTaskList = getStorageTaskList();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		userTaskList = fullTaskList;
+		return outputMsg;
 	}
 
 	@Override
 	public String undo() {
-		// TODO Auto-generated method stub
-		return null;
+		String outputMsg = storage.undo();
+		try {
+			fullTaskList = getStorageTaskList();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		userTaskList = fullTaskList;
+		return outputMsg;
 	}
 
 	@Override
 	public String update(int taskID, String taskDescription, Date startDate, Date endDate) {
-		// TODO Auto-generated method stub
-		return null;
+		Task taskToUpdate = getTask(taskID);
+		String outputMsg = storage.update(taskToUpdate, taskDescription, startDate, endDate);
+		try {
+			fullTaskList = getStorageTaskList();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		userTaskList = fullTaskList;
+		return outputMsg;
 	}
 	
-	public static void main(String[] args) {
-		UIToController controller = new Controller();
-		controller.parseAndExecuteCommand("add run from monday to fri");
-	}
-
+//	public static void main(String[] args) {
+//		Controller control = new Controller();
+//		control.parseAndExecuteCommand("add task by Mondahy");
+//	}
 }
