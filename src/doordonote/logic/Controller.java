@@ -12,22 +12,16 @@ public class Controller{
 		// TODO Auto-generated method stub
 		
 	}
-//
-//	public String add(Task taskDeleted) {
-//		// TODO Auto-generated method stub
-//		
-//	}
 
 	public String delete(int taskID) {
 		return null;
 		// TODO Auto-generated method stub
 		
 	}
-
-//	public Task delete(Task taskAdded) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	
+	public String update(int taskID, String taskDescription, Date startDate, Date endDate) {
+		return null;
+	}
 
 	public String find(List<String> keywords) {
 		return null;
