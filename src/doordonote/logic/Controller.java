@@ -3,6 +3,7 @@ package doordonote.logic;
 import java.util.Date;
 import java.util.List;
 
+import doordonote.common.Task;
 import doordonote.common.TaskTest;
 
 //import doordonote.storage.Task;
@@ -40,7 +41,7 @@ public class Controller implements UIToController, CommandToController {
 	}
 
 	@Override
-	public List<TaskTest> getTasks() {
+	public List<Task> getTasks() {
 		// TODO Auto-generated method stub
 		return null;
 	}
