@@ -1,7 +1,8 @@
 package doordonote.ui;
 
 import doordonote.common.Task;
-import doordonote.logic.Logic;
+import doordonote.logic.Controller;
+import doordonote.logic.UIToController;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,7 +36,7 @@ import javafx.scene.text.TextAlignment;
 public class UI extends Application {
     
     Text output = new Text("Feedback Message");
-    Logic logic = new Logic();
+    UIToController controller = new Controller();
     
     BorderPane border = new BorderPane();
     
@@ -97,7 +98,7 @@ public class UI extends Application {
         {
             if (ke.getCode().equals(KeyCode.ENTER)) {
                 if(commandBox.getText() != null) {
-                    String feedback = logic.parseAndExecuteCommand(commandBox.getText());
+                    String feedback = controller.parseAndExecuteCommand(commandBox.getText());
 		    if (feedback != null) {
 			output.setText(feedback);
 			border.setCenter(addHBox());		
@@ -124,7 +125,7 @@ public class UI extends Application {
     
     protected HBox displayTasks(HBox main) {
         
-        List<Task> taskList = logic.getTasks();
+        List<Task> taskList = controller.getTasks();
         boolean haveEventsOrDeadlines = true;
         boolean haveFloatingTasks = false;
         boolean haveSameDate = true;
