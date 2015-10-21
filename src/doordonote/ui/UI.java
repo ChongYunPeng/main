@@ -4,18 +4,18 @@ import doordonote.common.Task;
 import doordonote.logic.Logic;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import static javafx.geometry.Pos.CENTER;
 import static javafx.geometry.Pos.TOP_CENTER;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -43,7 +43,7 @@ public class UI extends Application {
     public void start(Stage primaryStage) {
         
         border.setBottom(addVBoxB());
-        border.setCenter(addVBox());
+        border.setCenter(addHBox());
         border.setTop(addHeader());
 
         Scene scene = new Scene(border);  
@@ -76,7 +76,7 @@ public class UI extends Application {
         
         Label command = new Label("Command:");
         command.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-        command.setTextFill(Color.web("#ffffff"));
+        command.setTextFill(Color.web("#FFFFFF"));
         TextField commandBox = new TextField();
         commandBox.setPrefWidth(500);
         
@@ -100,7 +100,7 @@ public class UI extends Application {
                     String feedback = logic.parseAndExecuteCommand(commandBox.getText());
 		    if (feedback != null) {
 			output.setText(feedback);
-			border.setCenter(addVBox());		
+			border.setCenter(addHBox());		
 		    }    
                 commandBox.clear();
                 }
@@ -110,98 +110,129 @@ public class UI extends Application {
     }
     
     
-    protected VBox addVBox() {
+    protected HBox addHBox() {
         
-        VBox main = new VBox();
+        HBox main = new HBox();
         
         main.setPadding(new Insets(40, 25, 30, 25));
         main.setSpacing(40);
-        main.setStyle("-fx-background-color: #FFFEE8;");
+        main.setStyle("-fx-background-color: #FFFFFF;");
         
 
         return displayTasks(main);
     }
     
-    protected VBox displayTasks(VBox main) {
+    protected HBox displayTasks(HBox main) {
         
         List<Task> taskList = logic.getTasks();
-        SimpleDateFormat ft = new SimpleDateFormat ("EEE, MMM d, hh:mm");
-        boolean haveEvents = false;
-        boolean haveDeadlines = false;
+        boolean haveEventsOrDeadlines = true;
         boolean haveFloatingTasks = false;
+        boolean haveSameDate = true;
         int count = 1;
+        int i, j;
         
         VBox vbox1 = new VBox();
-        vbox1.setAlignment(CENTER);
-        
-        Text eventsHeader = new Text("Events");
-        eventsHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
-        eventsHeader.setTextAlignment(TextAlignment.CENTER);
-        vbox1.getChildren().add(eventsHeader);
-
-        for(int i=0; i<taskList.size(); i++) {
-        	if(taskList.get(i).getType().equals("EVENT_TASK")) {
-        		haveEvents = true;
-                        String eventTask = count++ + ". " + taskList.get(i).getDescription() + " from " + ft.format(taskList.get(i).getStartDate()) + " to " + ft.format(taskList.get(i).getEndDate()); 
-                        Text eventDisplay = new Text(eventTask);
-                        eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
-                        vbox1.getChildren().add(eventDisplay);
-        	}
-        }
-
-        if(haveEvents == false) {
-            Text noEvent = new Text("*none*");
-            vbox1.getChildren().add(noEvent);
-        }
+        vbox1.setAlignment(TOP_CENTER);
+        vbox1.setPadding(new Insets(18, 18, 18, 18));
+        vbox1.setSpacing(15);
+        vbox1.setPrefWidth(500);
+        vbox1.setStyle("-fx-background-color: #E1F5EF;");
         
         VBox vbox2 = new VBox();
-        vbox2.setAlignment(CENTER);
+        vbox2.setAlignment(TOP_CENTER);
+        vbox2.setPadding(new Insets(18, 18, 18, 18));
+        vbox2.setSpacing(15);
+        vbox2.setPrefWidth(500);
+        vbox2.setStyle("-fx-background-color: #E1F5EF;");
         
-        Text deadlineHeader = new Text("Deadlines");
-        deadlineHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
-        deadlineHeader.setTextAlignment(TextAlignment.CENTER);
-        vbox2.getChildren().add(deadlineHeader);
+        for(i = 0; i < taskList.size(); i++) {
+            if(!(taskList.get(i).getType().equals("FLOATING_TASK"))) {
+                Calendar calEnd = DateToCalendar(taskList.get(i).getEndDate());
+                String day = getDay(calEnd); 
+                String month = getMonth(calEnd);
+                int date = calEnd.get(calEnd.DAY_OF_MONTH);
+                String timeEnd = getTime(calEnd);
+                Text taskDate = new Text(day + ", " + date + " " + month);
+                taskDate.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
+                taskDate.setTextAlignment(TextAlignment.CENTER);
+                taskDate.setFill(Color.web("#0C1847"));
+                Text taskDesc;
+                if(taskList.get(i).getType().equals("DEADLINE_TASK")) {
+                    taskDesc = new Text(count++ + ". " + "[by " + timeEnd + "] " + taskList.get(i).getDescription());
+                }
+                else {
+                    Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
+                    String timeStart = getTime(calStart);
+                    taskDesc = new Text(count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + taskList.get(i).getDescription());
+                }
+                taskDesc.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
+                vbox1.getChildren().addAll(taskDate, taskDesc);
+                for(j = i+1; j < taskList.size(); j++) {
+                   haveSameDate = true;
+                   if(!(taskList.get(j).getType().equals("FLOATING_TASK"))) {
+                      Calendar calEnd2 = DateToCalendar(taskList.get(j).getEndDate());
+                      String month2 = getMonth(calEnd2);
+                      int date2 = calEnd2.get(calEnd2.DAY_OF_MONTH);
+                      String timeEnd2 = getTime(calEnd2);
+                      if((date != date2)||!(month.equals(month2)))
+                          haveSameDate = false;
+                      else {
+                          Text taskDesc2;
+                          if(taskList.get(j).getType().equals("DEADLINE_TASK")) {
+                             taskDesc2 = new Text(count++ + ". " + "[by " + timeEnd2 + "] " + taskList.get(j).getDescription());
+                          }
+                          else {
+                             Calendar calStart2 = DateToCalendar(taskList.get(j).getStartDate());
+                             String timeStart2 = getTime(calStart2);
+                             taskDesc2 = new Text(count++ + ". " + "[" + timeStart2 + "-" + timeEnd2 + "] " + taskList.get(j).getDescription());
+                          }
+                          taskDesc2.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
+                          vbox1.getChildren().addAll(taskDesc2);
+                          i++;
+                      }
+                   }
+                   else {
+                       haveEventsOrDeadlines = false;
+                   }
+                   if(haveEventsOrDeadlines == false || haveSameDate == false) {
+                       break;
+                   }
+                }
+            }
+            else {
+                haveEventsOrDeadlines = false;
+            }
+      
+            if(haveEventsOrDeadlines == false) {
+                break;
+            }
 
-        for(int i=0; i<taskList.size(); i++) {
-        	if(taskList.get(i).getType().equals("DEADLINE_TASK")) {
-        		haveDeadlines = true;
-                        String deadlineTask = count++ + ". " + taskList.get(i).getDescription() + " by " + ft.format(taskList.get(i).getEndDate()); 
-                        Text deadlineDisplay = new Text(deadlineTask);
-                        deadlineDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
-                        vbox2.getChildren().add(deadlineDisplay);
-        	}
         }
-
-        if(haveDeadlines == false) {
-            Text noDeadline = new Text("*none*");
-            vbox2.getChildren().add(noDeadline);
-        }
-        
-        VBox vbox3 = new VBox();
-        vbox3.setAlignment(CENTER);
         
         Text floatingHeader = new Text("Floating Tasks");
         floatingHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
         floatingHeader.setTextAlignment(TextAlignment.CENTER);
-        vbox3.getChildren().add(floatingHeader);
-
-        for(int i=0; i<taskList.size(); i++) {
+        floatingHeader.setFill(Color.web("#0C1847"));
+        vbox2.getChildren().add(floatingHeader);
+        
+        for(i=0; i<taskList.size(); i++) {
         	if(taskList.get(i).getType().equals("FLOATING_TASK")) {
         		haveFloatingTasks = true;
                         String floatingTask = (count++ + ". " + taskList.get(i).getDescription()); 
                         Text floatingDisplay = new Text(floatingTask);
                         floatingDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
-                        vbox3.getChildren().add(floatingDisplay);
+                        vbox2.getChildren().add(floatingDisplay);
         	}
         }
 
         if(haveFloatingTasks == false) {
             Text noFloatingTasks = new Text("*none*");
-            vbox3.getChildren().add(noFloatingTasks);
+            noFloatingTasks.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
+            vbox2.getChildren().add(noFloatingTasks);
         }
         
         main.setAlignment(TOP_CENTER);
-        main.getChildren().addAll(vbox1, vbox2, vbox3);
+        main.getChildren().addAll(vbox1, vbox2);
         
         return main;
         
@@ -212,14 +243,125 @@ public class UI extends Application {
         hbox.setPadding(new Insets(20, 25, 20, 25));
         hbox.setStyle("-fx-background-color: #001B4D;");
         
+        DropShadow ds = new DropShadow();
+        ds.setOffsetY(3.0f);
+        ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
+        
         Text title = new Text("Ongoing Tasks");
         title.setFont(Font.font("Tahoma", FontWeight.BOLD, 22));
         title.setFill(Color.WHITE);
+        title.setEffect(ds);
+        title.setCache(true);
+        title.setX(10.0f);
+        title.setY(270.0f);	
         
         hbox.getChildren().add(title);
         hbox.setAlignment(CENTER);
         
         return hbox;
+    }
+    
+    protected Calendar DateToCalendar(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
+    }
+    
+    protected String getDay(Calendar cal) {
+        String day = null;
+        switch(cal.get(cal.DAY_OF_WEEK)) {
+                    case 1: day = "Sun";
+                            break;
+                    case 2: day = "Mon";
+                            break;
+                    case 3: day = "Tues";
+                            break;
+                    case 4: day = "Wed";
+                            break;
+                    case 5: day = "Thurs";
+                            break;
+                    case 6: day = "Fri";
+                            break;
+                    case 7: day = "Sat";
+                          
+                }
+        
+        return day;
+    }
+    
+    protected String getMonth(Calendar cal) {
+        String month = null;
+        switch(cal.get(cal.MONTH)) {
+                    case 1: month = "Jan";
+                            break;
+                    case 2: month = "Feb";
+                            break;
+                    case 3: month = "Mar";
+                            break;
+                    case 4: month = "Apr";
+                            break;
+                    case 5: month = "May";
+                            break;
+                    case 6: month = "Jun";
+                            break;
+                    case 7: month = "Jul";
+                            break;
+                    case 8: month = "Aug";
+                            break;
+                    case 9: month = "Sept";
+                            break;
+                    case 10: month = "Oct";
+                            break;
+                    case 11: month = "Nov";
+                            break;
+                    case 12: month = "Dec";
+                }
+        
+        return month;
+    }
+    
+    protected String getMinutes(Calendar cal) {
+        String minutes;
+        
+        if(cal.get(cal.MINUTE) < 10) {
+        	if(cal.get(cal.MINUTE) == 0) {
+                minutes = null;
+            }
+            else {
+                minutes = "0" + cal.get(cal.MINUTE);
+            }
+        }
+        else {
+            minutes = "" + cal.get(cal.MINUTE);
+        }
+        
+        return minutes;        
+    }
+    
+    protected String getTime(Calendar cal) {
+        String time;
+        String minutes = getMinutes(cal);
+        int hour = cal.get(cal.HOUR_OF_DAY);
+        
+        if(hour > 12) {
+            if(minutes != null) {
+                time = (hour - 12) + ":" + minutes + "pm";
+            }
+            else {
+                time = (hour - 12) + "pm";
+            }
+        }
+        else {
+            if(minutes != null) {
+                time = hour + ":" + minutes + "am";
+            }
+            else {
+                time = hour + "am";
+            }
+        }
+        
+        return time;  
+        
     }
     
     /**
