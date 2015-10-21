@@ -1,6 +1,6 @@
 package doordonote.ui;
 
-import doordonote.storage.Task;
+import doordonote.common.Task;
 import doordonote.logic.Logic;
 
 import java.text.SimpleDateFormat;
@@ -35,7 +35,7 @@ import javafx.scene.text.TextAlignment;
 public class UI extends Application {
     
     Text output = new Text("Feedback Message");
-    UIjava logic = new UIjava();
+    Logic logic = new Logic();
     
     BorderPane border = new BorderPane();
     
@@ -124,7 +124,7 @@ public class UI extends Application {
     
     protected VBox displayTasks(VBox main) {
         
-        List<Task> taskList = logic.getTaskList();
+        List<Task> taskList = logic.getTasks();
         SimpleDateFormat ft = new SimpleDateFormat ("EEE, MMM d, hh:mm");
         boolean haveEvents = false;
         boolean haveDeadlines = false;
@@ -226,7 +226,8 @@ public class UI extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(args);
+        System.out.println("hello");
+    	launch(args);
     }
     
 }
