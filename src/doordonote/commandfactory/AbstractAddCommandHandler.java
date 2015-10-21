@@ -51,7 +51,7 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 		int eventDateIndex = getEventDateIndex();
 		List<Date> datesList = getDates(eventDateIndex);
 
-		if (isMostLikelyEvent() && datesList != null && datesList.size() < 2) {
+		if (isMostLikelyEvent() && datesList != null && datesList.size() == 2) {
 			return datesList.get(0);
 		} else {
 			return null;
@@ -62,7 +62,7 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 		int eventDateIndex = getEventDateIndex();
 		List<Date> datesList = getDates(eventDateIndex);
 
-		if (isMostLikelyEvent() && datesList != null && datesList.size() < 2) {
+		if (isMostLikelyEvent() && datesList != null && datesList.size() == 2) {
 			return datesList.get(1);
 		} else {
 			return null;

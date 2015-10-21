@@ -1,17 +1,12 @@
 package doordonote.commandfactory;
 
 import java.util.Date;
-import java.util.List;
-
-import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;
 
 import doordonote.command.AddCommand;
 import doordonote.command.Command;
 
-public class AddHandler extends AbstractAddCommandHandler {
-	protected Parser dateParser = null;
-	
+public class AddHandler extends AbstractAddCommandHandler {	
 	public AddHandler(String commandBody, Parser dateParser) {
 		super(commandBody, dateParser);
 	}
