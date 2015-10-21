@@ -1,6 +1,6 @@
 package doordonote.command;
 
-import doordonote.logic.Controller;
+import doordonote.logic.CommandToController;
 
 public class UndoCommand implements Command {
 
@@ -13,7 +13,7 @@ public class UndoCommand implements Command {
 	}
 
 	@Override
-	public String execute(Controller controller) {
+	public String execute(CommandToController controller) {
 		return controller.undo();
 	}
 

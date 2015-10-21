@@ -1,6 +1,6 @@
 package doordonote.command;
 
-import doordonote.logic.Controller;
+import doordonote.logic.CommandToController;
 
 public class RedoCommand implements Command {
 
@@ -10,7 +10,7 @@ public class RedoCommand implements Command {
 	}
 
 	@Override
-	public String execute(Controller controller) {
+	public String execute(CommandToController controller) {
 		return controller.redo();
 	}
 

@@ -2,13 +2,13 @@ package doordonote.command;
 
 import java.util.Date;
 
-import doordonote.logic.Controller;
+import doordonote.logic.CommandToController;
 
 public class AddCommand implements Command {
 	protected String taskDescription = null;
 	protected Date startDate = null;
 	protected Date endDate = null;
-	protected Controller controller = null;
+	protected CommandToController controller = null;
 	protected boolean hasExecuted = false;
 	
 	/**
@@ -29,7 +29,7 @@ public class AddCommand implements Command {
 	}
 	
 	@Override
-	public String execute(Controller controller) {
+	public String execute(CommandToController controller) {
 		assert(controller != null);
 		this.controller = controller;
 		return controller.add(taskDescription, startDate, endDate);

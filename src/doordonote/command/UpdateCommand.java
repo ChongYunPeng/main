@@ -2,7 +2,7 @@ package doordonote.command;
 
 import java.util.Date;
 
-import doordonote.logic.Controller;
+import doordonote.logic.CommandToController;
 
 public class UpdateCommand implements Command {
 
@@ -26,7 +26,7 @@ public class UpdateCommand implements Command {
 	}
 
 	@Override
-	public String execute(Controller controller) {
+	public String execute(CommandToController controller) {
 		return controller.update(taskID, taskDescription, startDate, endDate);
 	}
 	

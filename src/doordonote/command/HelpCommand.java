@@ -1,6 +1,6 @@
 package doordonote.command;
 
-import doordonote.logic.Controller;
+import doordonote.logic.CommandToController;
 
 public class HelpCommand implements Command {
 	protected String commandType = null;
@@ -17,7 +17,7 @@ public class HelpCommand implements Command {
 	}
 
 	@Override
-	public String execute(Controller controller) {
+	public String execute(CommandToController controller) {
 		if (commandType == null) {
 			return controller.help();
 		} else {

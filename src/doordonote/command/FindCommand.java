@@ -1,6 +1,6 @@
 package doordonote.command;
 
-import doordonote.logic.Controller;
+import doordonote.logic.CommandToController;
 
 public class FindCommand implements Command {
 
@@ -10,7 +10,7 @@ public class FindCommand implements Command {
 	}
 
 	@Override
-	public String execute(Controller controller) {
+	public String execute(CommandToController controller) {
 		controller.undo();
 		return null;
 	}

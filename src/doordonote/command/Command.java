@@ -1,6 +1,6 @@
 package doordonote.command;
 
-import doordonote.logic.Controller;
+import doordonote.logic.CommandToController;
 
 public interface Command {
 	/**
@@ -9,5 +9,5 @@ public interface Command {
 	 */
 	boolean isUndoable();
 	
-	String execute(Controller controller);
+	String execute(CommandToController controller);
 }

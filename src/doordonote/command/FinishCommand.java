@@ -1,6 +1,6 @@
 package doordonote.command;
 
-import doordonote.logic.Controller;
+import doordonote.logic.CommandToController;
 
 public class FinishCommand implements Command {
 	protected int taskIdToFinish = -1;
@@ -16,7 +16,7 @@ public class FinishCommand implements Command {
 	}
 
 	@Override
-	public String execute(Controller controller) {
+	public String execute(CommandToController controller) {
 		controller.finish(taskIdToFinish);
 		return null;
 	}
