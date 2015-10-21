@@ -8,8 +8,6 @@ public class AddCommand implements Command {
 	protected String taskDescription = null;
 	protected Date startDate = null;
 	protected Date endDate = null;
-	protected CommandToController controller = null;
-	protected boolean hasExecuted = false;
 	
 	/**
 	 * @param 	taskDescription 
@@ -31,7 +29,6 @@ public class AddCommand implements Command {
 	@Override
 	public String execute(CommandToController controller) {
 		assert(controller != null);
-		this.controller = controller;
 		return controller.add(taskDescription, startDate, endDate);
 	}
 }
