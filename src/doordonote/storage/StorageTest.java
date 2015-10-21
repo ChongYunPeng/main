@@ -63,7 +63,24 @@ public class StorageTest {
 	public void testStorageClear() throws IOException{
 		addTaskToStorage();
 		str.clear();
-		assertEquals("{}", JsonFileIO.getFileString(NAME_TEST));
+		assertEquals("[]", JsonFileIO.getFileString(NAME_TEST));
+	}
+	
+	@Test
+	public void testCurrentFileStringWithVariousMethods() throws IOException, EmptyTaskListException{
+		str.add(task0);
+		assertEquals(str.getCurrentFileString(), JsonFileIO.getFileString(NAME_TEST));
+		str.add(task3);
+		assertEquals(str.getCurrentFileString(), JsonFileIO.getFileString(NAME_TEST));
+		str.delete(task0);
+		assertEquals(str.getCurrentFileString(), JsonFileIO.getFileString(NAME_TEST));
+		str.undo();
+		assertEquals(str.getCurrentFileString(), JsonFileIO.getFileString(NAME_TEST));
+		str.add(task2);
+		str.add(task1);
+		ArrayList<Task> arrlist = addTaskToStorage();
+		Collections.sort(arrlist);
+		assertEquals(arrlist, str.readTasks());
 	}
 	
 	
@@ -91,12 +108,22 @@ public class StorageTest {
 	}
 	
 	@Test
-	public void testStorageUndoAndRedo() throws IOException{
+	public void testStorageUndoAndRedo() throws IOException, EmptyTaskListException{
 		ArrayList<Task> arrlist = new ArrayList<Task>();
 		str.add(task0);
 		str.add(task3);
 		str.undo();
 		arrlist.add(task0);
+		assertEquals(arrlist, str.readTasks());
+		str.add(task1);
+		str.add(task2);
+		str.undo();
+		str.undo();
+		assertEquals(arrlist, str.readTasks());
+		str.redo();
+		str.redo();
+		arrlist.add(task1);
+		arrlist.add(task2);
 		assertEquals(arrlist, str.readTasks());
 	}
 	
