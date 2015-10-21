@@ -10,13 +10,14 @@ import doordonote.common.Task;
 import java.util.ArrayList;
 import java.io.IOException;
 
-public class TaskFileIO implements FileIO {
+public class StorageHandler implements Storage {
 
 	private final String MESSAGE_ADD = "Task %1$s added";
 	private final String MESSAGE_UPDATE = "Task updated to %1$s";
-	private final String MESSAGE_DELETE = "Task deleted";
+	private final String MESSAGE_DELETE = "Task %1$s deleted";
 	private final String MESSAGE_NO_TASK_TO_DELETE = "No Tasks to delete";
 	private final String MESSAGE_NO_TASK_TO_UPDATE = "No Tasks to update";
+	private final String MESSAGE_REMOVE = "Task %1$s removed from file";
 	private final String MESSAGE_CLEAR = "All data deleted from file";
 	private final String MESSAGE_UNDO_SUCCESS = "Undo executed";
 	private final String MESSAGE_UNDO_FAIL = "Undo not executed";
@@ -24,23 +25,26 @@ public class TaskFileIO implements FileIO {
 	private final String MESSAGE_REDO_FAIL = "Redo not executed";
 
 	protected JsonFileIO jsonFileIO;
-	private static TaskFileIO taskStorage;
+	private static StorageHandler taskStorage;
 
-	private TaskFileIO(){
+	private StorageHandler(){
 		jsonFileIO = new JsonFileIO();
 	}
 
-	private TaskFileIO(String fileName){
+	private StorageHandler(String fileName){
 		jsonFileIO = new JsonFileIO(fileName);
 	}
 
-	public static FileIO getInstance(){
+	public static Storage getInstance(){
 		if(taskStorage == null){
-			taskStorage = new TaskFileIO();
+			taskStorage = new StorageHandler();
 		}
 		return taskStorage;
 	}
 	
+	public void setFile(String fileName){
+		jsonFileIO.setFile(fileName);
+	}
 	
 	public String add(Task task){
 		jsonFileIO.add(task);
@@ -71,11 +75,16 @@ public class TaskFileIO implements FileIO {
 	public String delete(Task taskToDelete){
 		try{
 			jsonFileIO.delete(taskToDelete);
-			return MESSAGE_DELETE;
+			return String.format(MESSAGE_DELETE, taskToDelete);
 		}
 		catch(EmptyTaskListException e){
 			return MESSAGE_NO_TASK_TO_DELETE;
 		}
+	}
+	
+	public String remove(Task taskToRemove){
+		jsonFileIO.remove(taskToRemove);
+		return String.format(MESSAGE_REMOVE, taskToRemove);
 	}
 	
 	public ArrayList<Task> readTasks() throws IOException{

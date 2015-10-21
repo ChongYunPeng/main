@@ -11,16 +11,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import doordonote.common.DeadlineTask;
-import doordonote.common.EventTask;
-import doordonote.common.FloatingTask;
 import doordonote.common.Task;
 
 /*
@@ -35,16 +30,14 @@ public class JsonFileIO {
 
 	private static final String DEFAULT_NAME = "data.json";
 	private static final String FILE_TYPE = ".json";
-	private static final String INITIAL_JSONSTRING = "{}";
+	private static final String INITIAL_JSONSTRING = "[]";
 	private static final int HASHSET_SIZE = 4099;
-	private static final int HASHMAP_SIZE = 13;
-
-	private final Gson gson = new GsonBuilder().registerTypeAdapter(Task.class, 
+	private static final Gson gson = new GsonBuilder().registerTypeAdapter(Task.class, 
 			new TaskClassAdapter<Task>()).create();
-
-	private Type type = new TypeToken<HashSet<Task>>(){}.getType();
-	private Set<Task> set = new HashSet<Task>(HASHSET_SIZE);
+	private static final Type type = new TypeToken<HashSet<Task>>(){}.getType();
 	
+	private Set<Task> set = new HashSet<Task>(HASHSET_SIZE);
+	private String currentJsonString = INITIAL_JSONSTRING;
 
 
 	private final Stack<String> undo = new Stack<String>();
@@ -76,6 +69,10 @@ public class JsonFileIO {
 		currentFile = fileName;
 	}
 
+	public String getCurrentFileString(){
+		return currentJsonString;
+	}
+
 	private void initialize(){
 		try {
 			File file = new File(currentFile);
@@ -83,9 +80,10 @@ public class JsonFileIO {
 				file.createNewFile();
 				writeToFile(INITIAL_JSONSTRING);
 				undo.push(INITIAL_JSONSTRING);
+				currentJsonString = INITIAL_JSONSTRING;
 			}	else{
 				set = jsonToSet();
-				undo.push(getFileString(currentFile));
+				currentJsonString = getFileString(currentFile);
 			}
 		}
 		catch (IOException e) {
@@ -97,7 +95,8 @@ public class JsonFileIO {
 	protected void add(Task task){
 		String json = writeTask(task);
 		if(json!=null){
-			undo.push(json);
+			undo.push(currentJsonString);
+			currentJsonString = json;
 		}
 	}
 
@@ -118,9 +117,10 @@ public class JsonFileIO {
 	protected void clear(){
 		try{
 			FileWriter fw = new FileWriter(currentFile);
-			fw.write("{}");
+			fw.write(INITIAL_JSONSTRING);
 			fw.close();
-			undo.push("{}");
+			undo.push(currentJsonString);
+			currentJsonString = INITIAL_JSONSTRING;
 		}
 
 		catch(IOException e){
@@ -131,9 +131,22 @@ public class JsonFileIO {
 	protected void delete(Task task) throws EmptyTaskListException{
 		String json = writeDeleteTask(task);
 		if(json!=null){
-			undo.push(json);
+			undo.push(currentJsonString);
+			currentJsonString = json;
 		}
-
+	}
+	
+	protected void remove(Task task){
+		set.remove(task);
+		String json = gson.toJson(set,type);
+		try{
+			writeToFile(json);
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+		undo.push(currentJsonString);
+		currentJsonString = json;
 	}
 
 	private String writeDeleteTask(Task task) throws EmptyTaskListException {
@@ -161,29 +174,30 @@ public class JsonFileIO {
 		writeDeleteTask(taskToUpdate);
 		String json = writeTask(newUpdatedTask);
 		if(json!=null){
-			undo.push(json);
+			undo.push(currentJsonString);
+			currentJsonString = json;
 		}
 	}
 
 	//This method reads the current json file and returns an
 	//arraylist of Task sorted by Date. FloatingTasks are
-	// at the back of this ArrayList
+	//at the back of this ArrayList
 	protected ArrayList<Task> readTasks() throws IOException{
 		ArrayList<Task> listTask = new ArrayList<Task>();
 		for(Task t : set){
 			if(!t.isDeleted()){
-			    listTask.add(t);
+				listTask.add(t);
 			}
 		}
 		Collections.sort(listTask);
 		return listTask;
 	}
-	
+
 	protected ArrayList<Task> readDeletedTasks() throws IOException{
 		ArrayList<Task> listTask = new ArrayList<Task>();
 		for(Task t : set){
 			if(t.isDeleted()){
-			    listTask.add(t);
+				listTask.add(t);
 			}
 		}
 		Collections.sort(listTask);
@@ -193,16 +207,21 @@ public class JsonFileIO {
 
 	public boolean undo() {
 		if(!undo.isEmpty()){
-			redo.push(undo.pop());
-			if(!undo.isEmpty()){
-				try{
-					writeToFile(undo.peek());
-				}
-				catch (IOException e){
-					e.printStackTrace();
-				}
-				return true;
+			try{
+				writeToFile(undo.peek());
 			}
+			catch (IOException e){
+				e.printStackTrace();
+			}
+			currentJsonString = undo.peek();
+			redo.push(undo.pop());
+			try{
+			set = jsonToSet();
+			}
+			catch (IOException e){
+				e.printStackTrace();
+			}
+			return true;
 		}
 		return false;
 	}
@@ -212,11 +231,19 @@ public class JsonFileIO {
 		if(!redo.isEmpty()){
 			try{
 				writeToFile(redo.peek());
-				undo.push(redo.pop());
 			}
 			catch (IOException e){
 				e.printStackTrace();
 			}
+			currentJsonString = redo.peek();
+			undo.push(redo.pop());
+			try{
+				set = jsonToSet();
+				}
+				catch (IOException e){
+					e.printStackTrace();
+				}
+			return true;
 		}
 		return false;
 	}
@@ -224,8 +251,8 @@ public class JsonFileIO {
 	// This method gets json string from currentFile and map it
 	private HashSet<Task> jsonToSet() throws IOException {
 		String json = getFileString(currentFile);
-		HashSet<Task> set = gson.fromJson(json, type);
-		return set;
+		HashSet<Task> jsonSet = gson.fromJson(json, type);
+		return jsonSet;
 	}
 
 	private void writeToFile(String json) throws IOException{
