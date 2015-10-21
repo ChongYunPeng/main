@@ -10,11 +10,6 @@ public class FindCommand implements Command {
 	}
 
 	@Override
-	public String undo() {
-		return null;
-	}
-
-	@Override
 	public String execute(Controller controller) {
 		controller.undo();
 		return null;

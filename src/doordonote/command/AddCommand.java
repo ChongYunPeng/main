@@ -49,13 +49,4 @@ public class AddCommand implements Command {
 	public boolean isUndoable() {
 		return true;
 	}
-
-	@Override
-	public String undo() {
-		assert(hasExecuted);
-		controller.delete(addedTask);
-		
-		// TODO: Add return statement
-		return null;
-	}
 }

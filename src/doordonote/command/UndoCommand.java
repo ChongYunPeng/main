@@ -13,11 +13,6 @@ public class UndoCommand implements Command {
 	}
 
 	@Override
-	public String undo() {
-		return null;
-	}
-
-	@Override
 	public String execute(Controller controller) {
 		return controller.undo();
 	}

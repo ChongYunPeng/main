@@ -9,6 +9,5 @@ public interface Command {
 	 */
 	boolean isUndoable();
 	
-	String undo();
 	String execute(Controller controller);
 }

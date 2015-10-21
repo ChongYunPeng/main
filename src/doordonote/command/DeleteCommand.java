@@ -32,13 +32,5 @@ public class DeleteCommand implements Command {
 		deletedTask = controller.delete(taskID);
 		return null;
 	}
-	
-	@Override
-	public String undo() {
-		assert(hasExecuted);
-		controller.add(deletedTask);
-		return null;
-	}
-
 
 }

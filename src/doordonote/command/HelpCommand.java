@@ -17,12 +17,6 @@ public class HelpCommand implements Command {
 	}
 
 	@Override
-	public String undo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String execute(Controller controller) {
 		if (commandType == null) {
 			return controller.help();
