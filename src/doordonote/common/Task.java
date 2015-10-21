@@ -6,14 +6,42 @@ public abstract class Task implements Comparable<Task>{
 
 
 	protected String description;
+	protected boolean isDone;
+	protected boolean isDeleted;
 
 
 	public Task(String description){
 		this.description = description;
+		this.isDone = false;
+		this.isDeleted = false;
 	}
 
 	public String getDescription(){
 		return description;
+	}
+	
+	public boolean isDeleted(){
+		return isDeleted;
+	}
+	
+	public boolean isDone(){
+		return isDone;
+	}
+	
+	public void setDeleted(){
+		this.isDeleted = true;
+	}
+	
+	public void setNotDeleted(){
+		this.isDeleted = false;
+	}
+	
+	public void setDone(){
+		this.isDone = true;
+	}
+	
+	public void setNotDone(){
+		this.isDone = false;
 	}
 
 	public abstract Date getEndDate();
