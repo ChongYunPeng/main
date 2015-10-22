@@ -55,6 +55,9 @@ public class CommandFactory {
 		case "help":
 			handler = new HelpHandler(commandBody);
 			break;
+		case "home":
+			handler = new HomeHandler(commandBody);
+			break;
 		// case "get" :
 		// case "restore" :
 		// case "path" :

@@ -22,6 +22,9 @@ import doordonote.storage.StorageHandler;
 //import doordonote.storage.Task;
 
 public class Controller implements UIToController, CommandToController {
+	
+	private static final String MESSAGE_HOME = "Back to homescreen";
+	
 	protected CommandFactory cmdFactory = null;
 	protected Storage storage = null;
 	protected List<Task> fullTaskList = null;
@@ -176,6 +179,18 @@ public class Controller implements UIToController, CommandToController {
 		}
 		userTaskList = fullTaskList;
 		return outputMsg;
+	}
+	
+	@Override
+	public String home(){
+		try {
+			fullTaskList = getStorageTaskList();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		userTaskList = fullTaskList;
+		return MESSAGE_HOME;
 	}
 	
 //	public static void main(String[] args) {

@@ -23,4 +23,6 @@ public interface CommandToController {
 	String undo();
 	
 	String update(int taskID, String taskDescription, Date startDate, Date endDate);
+	
+	String home();
 }
