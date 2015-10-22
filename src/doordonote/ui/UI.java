@@ -293,29 +293,29 @@ public class UI extends Application {
     protected String getMonth(Calendar cal) {
         String month = null;
         switch(cal.get(cal.MONTH)) {
-                    case 1: month = "Jan";
+                    case 0: month = "Jan";
                             break;
-                    case 2: month = "Feb";
+                    case 1: month = "Feb";
                             break;
-                    case 3: month = "Mar";
+                    case 2: month = "Mar";
                             break;
-                    case 4: month = "Apr";
+                    case 3: month = "Apr";
                             break;
-                    case 5: month = "May";
+                    case 4: month = "May";
                             break;
-                    case 6: month = "Jun";
+                    case 5: month = "Jun";
                             break;
-                    case 7: month = "Jul";
+                    case 6: month = "Jul";
                             break;
-                    case 8: month = "Aug";
+                    case 7: month = "Aug";
                             break;
-                    case 9: month = "Sept";
+                    case 8: month = "Sept";
                             break;
-                    case 10: month = "Oct";
+                    case 9: month = "Oct";
                             break;
-                    case 11: month = "Nov";
+                    case 10: month = "Nov";
                             break;
-                    case 12: month = "Dec";
+                    case 11: month = "Dec";
                 }
         
         return month;
