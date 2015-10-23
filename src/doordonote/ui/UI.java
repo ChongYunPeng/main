@@ -352,7 +352,7 @@ public class UI extends Application {
                 time = (hour - 12) + "pm";
             }
         }
-        else {
+        else if (hour < 12){
         	if(minutes != null) {
             	if(hour == 0) {
             		
@@ -369,6 +369,14 @@ public class UI extends Application {
             	else {
                     time = hour + "am";
             	}
+            }
+        }
+        else {
+        	if(minutes != null) {
+                time = hour + ":" + minutes + "pm";
+            }
+            else {
+                time = hour + "pm";
             }
         }
         
