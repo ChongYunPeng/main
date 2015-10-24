@@ -21,7 +21,7 @@ import doordonote.common.Task;
  */
 
 
-public class JsonFileIO {
+public class Writer {
 
 	private static final String DEFAULT_NAME = "data.json";
 	private static final String FILE_TYPE = ".json";
@@ -39,13 +39,13 @@ public class JsonFileIO {
 	Reader reader;
 
 
-	public JsonFileIO(){
+	public Writer(){
 		currentFile = DEFAULT_NAME;
 		initialize();
 		reader = new Reader();
 	}
 
-	public JsonFileIO(String name){
+	public Writer(String name){
 		if(!name.contains(FILE_TYPE)){
 			name += FILE_TYPE;
 		}

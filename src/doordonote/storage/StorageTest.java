@@ -25,7 +25,7 @@ public class StorageTest {
 	private static final String NAME_TEST = "test.json";
 	private static final String NAME_CUSTOM = "custom";
 	
-	JsonFileIO str = new JsonFileIO(NAME_TEST);
+	Writer str = new Writer(NAME_TEST);
 	Reader reader = new Reader(NAME_TEST);
 	
 	Date date0 = new Date(2000, 10, 6);
@@ -56,7 +56,7 @@ public class StorageTest {
 	
 	@Test
 	public void testCustomFileName(){
-		JsonFileIO str = new JsonFileIO(NAME_CUSTOM);
+		Writer str = new Writer(NAME_CUSTOM);
 		assertEquals(str.getFileName(), "custom.json");
 	}
 	
