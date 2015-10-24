@@ -25,14 +25,17 @@ public class StorageHandler implements Storage {
 	private final String MESSAGE_REDO_FAIL = "Redo not executed";
 
 	protected JsonFileIO jsonFileIO;
+	protected Reader reader;
 	private static StorageHandler taskStorage;
 
-	private StorageHandler(){
+	public StorageHandler(){
 		jsonFileIO = new JsonFileIO();
+		reader = new Reader();
 	}
 
-	private StorageHandler(String fileName){
+	public StorageHandler(String fileName){
 		jsonFileIO = new JsonFileIO(fileName);
+		reader = new Reader(fileName);
 	}
 
 	public static Storage getInstance(){
@@ -90,7 +93,7 @@ public class StorageHandler implements Storage {
 	public ArrayList<Task> readTasks() throws IOException{
 		ArrayList<Task> listTask = null;
 		try{
-			listTask = jsonFileIO.readTasks();
+			listTask = reader.readTasks();
 		}
 		catch (IOException e){
 			throw e;
@@ -102,7 +105,7 @@ public class StorageHandler implements Storage {
 	public ArrayList<Task> readDeletedTasks() throws IOException{
 		ArrayList<Task> listTask = null;
 		try{
-			listTask = jsonFileIO.readDeletedTasks();
+			listTask = reader.readDeletedTasks();
 		}
 		catch (IOException e){
 			throw e;

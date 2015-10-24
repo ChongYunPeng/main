@@ -10,55 +10,44 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class TaskClassAdapter<T>
-implements JsonSerializer<T>, JsonDeserializer<T> {
+//This class extends Gson library to write sub classes onto json file.
+
+public class TaskClassAdapter<Task> implements JsonSerializer<Task>, JsonDeserializer<Task> {
 
 	@Override
-	public final JsonElement serialize(final T object, final Type interfaceType, final JsonSerializationContext context) 
+	public final JsonElement serialize(final Task object, final Type interfaceType, final JsonSerializationContext context) 
 	{
-		final JsonObject member = new JsonObject();
-
-		member.addProperty("type", object.getClass().getName());
-
-		member.add("data", context.serialize(object));
-
-		return member;
+		final JsonObject obj = new JsonObject();
+		obj.addProperty("type", object.getClass().getName());
+		obj.add("data", context.serialize(object));
+		return obj;
 	}
 
 	@Override
-	public final T deserialize(final JsonElement elem, final Type interfaceType, final JsonDeserializationContext context) 
-			throws JsonParseException 
-	{
-		final JsonObject member = (JsonObject) elem;
-		final JsonElement typeString = get(member, "type");
-		final JsonElement data = get(member, "data");
-		final Type actualType = typeForName(typeString);
-
-		return context.deserialize(data, actualType);
+	public final Task deserialize(final JsonElement element, final Type interfaceType, final JsonDeserializationContext context) 
+			throws JsonParseException {
+		final JsonObject obj = (JsonObject) element;
+		final JsonElement typeString = get(obj, "type");
+		final JsonElement data = get(obj, "data");
+		final Type type = typeForName(typeString);
+		return context.deserialize(data, type);
 	}
 
-	private Type typeForName(final JsonElement typeElem) 
-	{
-		try 
-		{
-			return Class.forName(typeElem.getAsString());
+	private Type typeForName(final JsonElement typeElement) {
+		try {
+			return Class.forName(typeElement.getAsString());
 		} 
-		catch (ClassNotFoundException e) 
-		{
+		catch (ClassNotFoundException e) {
 			throw new JsonParseException(e);
 		}
 	}
 
-	private JsonElement get(final JsonObject wrapper, final String memberName) 
-	{
-		final JsonElement elem = wrapper.get(memberName);
-
-		if (elem == null) 
-		{
-			throw new JsonParseException(
-					"no '" + memberName + "' member found in json file.");
+	private JsonElement get(final JsonObject wrapper, final String memberName) {
+		final JsonElement element = wrapper.get(memberName);
+		if (element == null) {
+			throw new JsonParseException("No '" + memberName + "' member found in json file.");
 		}
-		return elem;
+		return element;
 	}
 
 }
