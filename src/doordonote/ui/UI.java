@@ -15,13 +15,16 @@ import static javafx.geometry.Pos.CENTER;
 import static javafx.geometry.Pos.TOP_CENTER;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -132,6 +135,10 @@ public class UI extends Application {
         int count = 1;
         int i, j;
         
+        VBox v1 = new VBox();
+        v1.setPrefWidth(500);
+        v1.setStyle("-fx-background-color: #E1F5EF;");
+        
         VBox vbox1 = new VBox();
         vbox1.setAlignment(TOP_CENTER);
         vbox1.setPadding(new Insets(18, 18, 18, 18));
@@ -139,12 +146,30 @@ public class UI extends Application {
         vbox1.setPrefWidth(500);
         vbox1.setStyle("-fx-background-color: #E1F5EF;");
         
+        ScrollPane sp1 = new ScrollPane();
+        VBox.setVgrow(sp1, Priority.ALWAYS);
+        sp1.setVmax(440);
+        sp1.setPrefSize(115, 150);
+        sp1.setHbarPolicy(ScrollBarPolicy.NEVER);
+        sp1.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+        
+        VBox v2 = new VBox();
+        v2.setPrefWidth(500);
+        v2.setStyle("-fx-background-color: #E1F5EF;");
+        
         VBox vbox2 = new VBox();
         vbox2.setAlignment(TOP_CENTER);
         vbox2.setPadding(new Insets(18, 18, 18, 18));
         vbox2.setSpacing(15);
         vbox2.setPrefWidth(500);
         vbox2.setStyle("-fx-background-color: #E1F5EF;");
+        
+        ScrollPane sp2 = new ScrollPane();
+        VBox.setVgrow(sp2, Priority.ALWAYS);
+        sp2.setVmax(440);
+        sp2.setPrefSize(115, 150);
+        sp2.setHbarPolicy(ScrollBarPolicy.NEVER);
+        sp2.setVbarPolicy(ScrollBarPolicy.ALWAYS);
         
         for(i = 0; i < taskList.size(); i++) {
             if(!(taskList.get(i).getType().equals("FLOATING_TASK"))) {
@@ -210,6 +235,9 @@ public class UI extends Application {
 
         }
         
+        sp1.setContent(vbox1);
+        v1.getChildren().addAll(sp1);
+        
         Text floatingHeader = new Text("Floating Tasks");
         floatingHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
         floatingHeader.setTextAlignment(TextAlignment.CENTER);
@@ -232,8 +260,11 @@ public class UI extends Application {
             vbox2.getChildren().add(noFloatingTasks);
         }
         
+        sp2.setContent(vbox2);
+        v2.getChildren().addAll(sp2);
+        
         main.setAlignment(TOP_CENTER);
-        main.getChildren().addAll(vbox1, vbox2);
+        main.getChildren().addAll(v1, v2);
         
         return main;
         
