@@ -131,14 +131,18 @@ public class Controller implements UIToController, CommandToController {
 	}
 
 	@Override
-	public String parseAndExecuteCommand(String userInput) {
+	public String parseAndExecuteCommand(String userInput) throws InvalidCommandException, EmptyCommandBodyException,
+	ExcessArgumentException, NumberFormatException, NegativeIndexException {
 		Command cmd;
-		try {
+		/*try {
 			cmd = cmdFactory.parse(userInput);
 			return cmd.execute(this);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
+		*/
+		cmd = cmdFactory.parse(userInput);
+		return cmd.execute(this);
 	}
 
 	@Override

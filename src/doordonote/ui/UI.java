@@ -114,7 +114,8 @@ public class UI extends Application {
                     	feedback = controller.parseAndExecuteCommand(commandBox.getText());
 		                if (feedback != null) {
 		            	   //if(getFirstWord(feedback).equals("invalid")||getFirstWord(feedback).equals("no")){
-				        	   output.setFill(Color.web("#F20505"));
+		                	output.setText(feedback);   
+		                	output.setFill(Color.web("#00811C"));
 		            	   }
 		            	/*else {
 		            		output.setFill(Color.web("#00811C"));
@@ -135,10 +136,11 @@ public class UI extends Application {
 	                    }
                     }
                     catch (Exception e) {
-                    	feedback = e.getMessage(); 
-                    	output.setFill(Color.web("#00811C"));
+                    	feedback = e.getMessage();
+                    	output.setText(feedback);
+                    	output.setFill(Color.web("#F20505"));
                     }
-		            output.setText(feedback);
+		            
 		            border.setCenter(addHBox());
                     commandBox.clear();
                 }
