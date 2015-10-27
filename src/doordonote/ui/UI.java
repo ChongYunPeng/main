@@ -63,8 +63,8 @@ public class UI extends Application {
         vbox.setSpacing(2);
         vbox.setStyle("-fx-background-color: #336699;");
         
-        output.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-        output.setFill(Color.WHITE);
+        output.setFont(Font.font("Calibri", FontWeight.BOLD, 16));
+        output.setFill(Color.web("#B4F2A2"));
         
         vbox.getChildren().addAll(output, addHBox2());
         vbox.setAlignment(CENTER);
@@ -102,11 +102,15 @@ public class UI extends Application {
             if (ke.getCode().equals(KeyCode.ENTER)) {
                 if(commandBox.getText() != null) {
                     String feedback = controller.parseAndExecuteCommand(commandBox.getText());
-		    if (feedback != null) {
-			output.setText(feedback);
-			border.setCenter(addHBox());		
-		    }    
-                commandBox.clear();
+		            if (feedback != null) {
+		            	if(getFirstWord(feedback).equals("error:")){
+				        	   output.setFill(Color.web("#FF8282"));
+				           }
+			            output.setText(feedback);
+			            border.setCenter(addHBox());
+			           
+		            }    
+                    commandBox.clear();
                 }
             }
         }
@@ -148,10 +152,12 @@ public class UI extends Application {
         
         ScrollPane sp1 = new ScrollPane();
         VBox.setVgrow(sp1, Priority.ALWAYS);
-        sp1.setVmax(440);
+        //sp1.setVmax(440);
+        sp1.setFitToHeight(true);
+        sp1.setFitToWidth(true);
         sp1.setPrefSize(115, 150);
         sp1.setHbarPolicy(ScrollBarPolicy.NEVER);
-        sp1.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+        sp1.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
         
         VBox v2 = new VBox();
         v2.setPrefWidth(500);
@@ -166,10 +172,12 @@ public class UI extends Application {
         
         ScrollPane sp2 = new ScrollPane();
         VBox.setVgrow(sp2, Priority.ALWAYS);
-        sp2.setVmax(440);
+        //sp2.setVmax(440);
+        sp2.setFitToHeight(true);
+        sp2.setFitToWidth(true);
         sp2.setPrefSize(115, 150);
         sp2.setHbarPolicy(ScrollBarPolicy.NEVER);
-        sp2.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+        sp2.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
         
         for(i = 0; i < taskList.size(); i++) {
             if(!(taskList.get(i).getType().equals("FLOATING_TASK"))) {
@@ -414,6 +422,11 @@ public class UI extends Application {
         return time;  
         
     }
+    
+    public static String getFirstWord(String input) {
+		String commandTypeString = input.trim().split("\\s+")[0];
+		return commandTypeString.toLowerCase();
+	}
     
     /**
      * @param args the command line arguments
