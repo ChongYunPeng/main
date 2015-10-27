@@ -9,16 +9,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import static javafx.geometry.Pos.CENTER;
 import static javafx.geometry.Pos.TOP_CENTER;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -100,29 +104,97 @@ public class UI extends Application {
     protected void getUserInput(TextField commandBox) {
         
         commandBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
-    
+         String feedback;
         @Override
         public void handle(KeyEvent ke)
         {
             if (ke.getCode().equals(KeyCode.ENTER)) {
                 if(commandBox.getText() != null) {
-                    String feedback = controller.parseAndExecuteCommand(commandBox.getText());
-		            if (feedback != null) {
-		            	if(getFirstWord(feedback).equals("invalid")||getFirstWord(feedback).equals("no")){
-				        	output.setFill(Color.web("#F20505"));
-				           }
-		            	else {
+                    try {
+                    	feedback = controller.parseAndExecuteCommand(commandBox.getText());
+		                if (feedback != null) {
+		            	   //if(getFirstWord(feedback).equals("invalid")||getFirstWord(feedback).equals("no")){
+				        	   output.setFill(Color.web("#F20505"));
+		            	   }
+		            	/*else {
 		            		output.setFill(Color.web("#00811C"));
 		            	}
-			            output.setText(feedback);
-			            border.setCenter(addHBox());
-			           
-		            }    
+			            */
+			         
+	                    else {
+	                	   Stage helpStage = createHelpWindow();
+	                       helpStage.show();
+	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+	                          @Override
+	                          public void handle(KeyEvent evt) {
+	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+	                                helpStage.close();
+	                            }
+	                          }
+	                       });
+	                    }
+                    }
+                    catch (Exception e) {
+                    	feedback = e.getMessage(); 
+                    	output.setFill(Color.web("#00811C"));
+                    }
+		            output.setText(feedback);
+		            border.setCenter(addHBox());
                     commandBox.clear();
                 }
             }
         }
         });
+    }
+    
+    public Stage createHelpWindow() {
+    	Stage stage = new Stage();
+    	HBox hb = new HBox();
+    	hb.setSpacing(15);
+    	hb.setAlignment(CENTER);
+        Image image1 = new Image("question_mark.png");
+        ImageView imv1 = new ImageView(image1);
+        imv1.setFitWidth(30);
+        imv1.setPreserveRatio(true);
+        imv1.setSmooth(true);
+        imv1.setCache(true);
+        Text helpHeader = new Text("Hello! This is the page to provide you with all the help you need for DoOrDoNote");
+        helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
+        helpHeader.setFill(Color.web("#00143E")); //#00143E
+        hb.getChildren().addAll(helpHeader, imv1);
+        
+        Text tableHeader = new Text("Here is a table of all the commands you can use:");
+        tableHeader.setFont(Font.font("Calibri", FontWeight.NORMAL, 17));
+        tableHeader.setFill(Color.web("#00143E"));
+        
+        Image image2 = new Image("help_resize.jpg");
+        ImageView imv2 = new ImageView(image2);
+        imv2.setFitWidth(700);
+        imv2.setPreserveRatio(true);
+        imv2.setSmooth(true);
+        imv2.setCache(true);
+        
+        Button bt = new Button(" OK! ");
+       
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(15, 30, 10, 30));
+        vb.setSpacing(10);
+        vb.getChildren().addAll(hb, tableHeader, imv2, bt);
+        vb.setAlignment(TOP_CENTER);
+        vb.setStyle("-fx-background-color: #eff4ff;");
+        Scene sc = new Scene(vb);
+        
+        stage.setTitle("Help!");
+        stage.setScene(sc);
+        
+        bt.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            stage.close();      
+            }
+        });
+        
+        return stage;
+    	
     }
     
     
