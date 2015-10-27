@@ -63,7 +63,7 @@ public class CommandFactory {
 		// case "path" :
 
 		default:
-			throw new InvalidCommandException("Error: " + commandType + INVALID_COMMAND);
+			throw new InvalidCommandException("Invalid command format. " + "\'" + commandType + "\'" + INVALID_COMMAND);
 		}
 
 		return handler.generateCommand();

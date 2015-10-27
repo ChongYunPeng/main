@@ -42,6 +42,7 @@ public class UI extends Application {
     UIToController controller = new Controller();
     
     BorderPane border = new BorderPane();
+    Scene scene = new Scene(border);
     
     @Override
     public void start(Stage primaryStage) {
@@ -49,8 +50,7 @@ public class UI extends Application {
         border.setBottom(addVBoxB());
         border.setCenter(addHBox());
         border.setTop(addHeader());
-
-        Scene scene = new Scene(border);  
+  
         primaryStage.setScene(scene);
         primaryStage.setTitle("DoOrDoNote");
         primaryStage.show();
@@ -60,13 +60,18 @@ public class UI extends Application {
     protected VBox addVBoxB() {
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(10, 12, 10, 12));
-        vbox.setSpacing(2);
+        vbox.setSpacing(5);
         vbox.setStyle("-fx-background-color: #336699;");
         
-        output.setFont(Font.font("Calibri", FontWeight.BOLD, 16));
-        output.setFill(Color.web("#B4F2A2"));
+        HBox hb = new HBox();
+        hb.setStyle("-fx-background-color: #F5F8FF;"); //E9EFFD
+        hb.setAlignment(CENTER);
+        hb.setPadding(new Insets(5, 5, 5, 5));
+        output.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+        output.setFill(Color.web("#00811C"));
+        hb.getChildren().add(output);
         
-        vbox.getChildren().addAll(output, addHBox2());
+        vbox.getChildren().addAll(hb, addHBox2());
         vbox.setAlignment(CENTER);
         return vbox;
         
@@ -103,9 +108,12 @@ public class UI extends Application {
                 if(commandBox.getText() != null) {
                     String feedback = controller.parseAndExecuteCommand(commandBox.getText());
 		            if (feedback != null) {
-		            	if(getFirstWord(feedback).equals("error:")){
-				        	   output.setFill(Color.web("#FF8282"));
+		            	if(getFirstWord(feedback).equals("invalid")||getFirstWord(feedback).equals("no")){
+				        	output.setFill(Color.web("#F20505"));
 				           }
+		            	else {
+		            		output.setFill(Color.web("#00811C"));
+		            	}
 			            output.setText(feedback);
 			            border.setCenter(addHBox());
 			           
@@ -159,6 +167,24 @@ public class UI extends Application {
         sp1.setHbarPolicy(ScrollBarPolicy.NEVER);
         sp1.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
         
+        double scrollPaneIncrement = 0.2;
+        
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent evt) {
+                if (evt.getCode().equals(KeyCode.UP)) {
+                	if (sp1.getVvalue() > sp1.getVmin()) {
+                        sp1.setVvalue(sp1.getVvalue() - scrollPaneIncrement);
+                    }
+                }
+                if (evt.getCode().equals(KeyCode.DOWN)) {
+                	if (sp1.getVvalue() < sp1.getVmax()) {
+                        sp1.setVvalue(sp1.getVvalue() + scrollPaneIncrement);
+                    }
+                }
+            }
+        }); 
+        
         VBox v2 = new VBox();
         v2.setPrefWidth(500);
         v2.setStyle("-fx-background-color: #E1F5EF;");
@@ -178,6 +204,22 @@ public class UI extends Application {
         sp2.setPrefSize(115, 150);
         sp2.setHbarPolicy(ScrollBarPolicy.NEVER);
         sp2.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent evt) {
+                if (evt.getCode().equals(KeyCode.UP)) {
+                	if (sp2.getVvalue() > sp2.getVmin()) {
+                        sp2.setVvalue(sp2.getVvalue() - scrollPaneIncrement);
+                    }
+                }
+                if (evt.getCode().equals(KeyCode.DOWN)) {
+                	if (sp2.getVvalue() < sp2.getVmax()) {
+                        sp2.setVvalue(sp2.getVvalue() + scrollPaneIncrement);
+                    }
+                }
+            }
+        });
         
         for(i = 0; i < taskList.size(); i++) {
             if(!(taskList.get(i).getType().equals("FLOATING_TASK"))) {
@@ -288,7 +330,7 @@ public class UI extends Application {
         ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
         
         Text title = new Text("Ongoing Tasks");
-        title.setFont(Font.font("Tahoma", FontWeight.BOLD, 22));
+        title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
         title.setFill(Color.WHITE);
         title.setEffect(ds);
         title.setCache(true);

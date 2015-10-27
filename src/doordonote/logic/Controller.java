@@ -97,7 +97,7 @@ public class Controller implements UIToController, CommandToController {
 		if (!userTaskList.isEmpty()) {
 			return "Tasks found";
 		} else {
-			return "No task found";
+			return "No task found!";
 		}
 	}
 
