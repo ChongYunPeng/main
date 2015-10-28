@@ -79,7 +79,7 @@ public class TaskWriter {
 				toUndoStack(INITIAL_JSONSTRING);
 			}	else{
 				currentJsonString = TaskReader.getFileString(currentFile);
-	//			toUndoStack(currentJsonString);
+				toUndoStack(currentJsonString);
 			}
 		}
 		catch (IOException e) {
