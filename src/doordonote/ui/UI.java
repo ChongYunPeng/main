@@ -307,6 +307,22 @@ public class UI extends Application {
 		            
                 }
             }
+                
+             if (ke.getCode().equals(KeyCode.ESCAPE)) {
+                	try {
+                    	feedback = controller.parseAndExecuteCommand("home");
+                    	output.setText(feedback);   
+	                	output.setFill(Color.web("#00811C"));
+			            border.setCenter(addHBox());
+                		border.setTop(addHeader());
+                		commandBox.clear();
+                	}
+                	catch (Exception e) {
+                    	feedback = e.getMessage();
+                    	output.setText(feedback);
+                    	output.setFill(Color.web("#F20505"));
+                    }
+                }
         }
         });
     }
