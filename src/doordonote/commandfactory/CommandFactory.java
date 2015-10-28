@@ -74,7 +74,8 @@ public class CommandFactory {
 		return handler.generateCommand();
 	}
 
-	private static String getCommandType(String userCommand) {
+	protected static String getCommandType(String userCommand) {
+		assert(userCommand != null);
 		String commandType = Util.getFirstWord(userCommand).toLowerCase();
 		return commandType;
 	}

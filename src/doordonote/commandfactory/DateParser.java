@@ -17,10 +17,16 @@ public class DateParser {
 	}
 	
 	public Date parse(String input) {
+		// input should always be checked to be no null
+		assert(input != null);
 		CalendarSource.setBaseDate(defaultDate);
 		List<DateGroup> baseDateList = natty.parse(input);
-		DateGroup baseDateGroup = baseDateList.get(0);
-		List<Date> dateList = baseDateGroup.getDates();
-		return dateList.get(0);
+		try {
+			DateGroup baseDateGroup = baseDateList.get(0);
+			List<Date> dateList = baseDateGroup.getDates();
+			return dateList.get(0);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 }
