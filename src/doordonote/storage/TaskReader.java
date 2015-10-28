@@ -17,7 +17,7 @@ import doordonote.common.Task;
 
 
 
-public class Reader {
+public class TaskReader {
 
 	private static final String DEFAULT_NAME = "data.json";
 	private static final int HASHSET_SIZE = 4099;
@@ -29,7 +29,7 @@ public class Reader {
 
 	private static String currentFile;
 
-	public Reader(){
+	public TaskReader(){
 		currentFile = DEFAULT_NAME;
 		try{
 			set = jsonToSet();
@@ -39,7 +39,7 @@ public class Reader {
 			}
 	}
 	
-	public Reader(String name){
+	public TaskReader(String name){
 		currentFile = name;
 		try{
 		set = jsonToSet();
@@ -65,7 +65,7 @@ public class Reader {
 		set = jsonToSet();
 		ArrayList<Task> listTask = new ArrayList<Task>();
 		for(Task t : set){
-			if(!t.isDeleted()){
+			if(!t.isDeleted() && !t.isDone()){
 				listTask.add(t);
 			}
 		}
@@ -84,9 +84,21 @@ public class Reader {
 		Collections.sort(listTask);
 		return listTask;
 	}
+	
+	protected ArrayList<Task> readDoneTasks() throws IOException{
+		set = jsonToSet();
+		ArrayList<Task> listTask = new ArrayList<Task>();
+		for(Task t : set){
+			if(t.isDone()){
+				listTask.add(t);
+			}
+		}
+		Collections.sort(listTask);
+		return listTask;
+	}
 
 	// This method gets json string from currentFile and map it
-	private HashSet<Task> jsonToSet() throws IOException {
+	protected HashSet<Task> jsonToSet() throws IOException {
 		String json = getFileString(currentFile);
 		HashSet<Task> jsonSet = gson.fromJson(json, type);
 		return jsonSet;

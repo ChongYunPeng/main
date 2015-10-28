@@ -23,38 +23,47 @@ public class StorageHandler implements Storage {
 	private final String MESSAGE_UNDO_FAIL = "Undo not executed";
 	private final String MESSAGE_REDO_SUCCESS = "Redo executed";
 	private final String MESSAGE_REDO_FAIL = "Redo not executed";
+	private final String MESSAGE_RESTORE = "Task %1$s restored";
+	private final String MESSAGE_FINISH = "Marked Task %1$s as done";
+	private final String MESSAGE_NOT_FINISH = "Marked Task %1$s as not done";
 
-	protected Writer jsonFileIO;
-	protected Reader reader;
-	private static StorageHandler taskStorage;
+	protected TaskWriter writer;
+	protected TaskReader reader;
+	private static StorageHandler storageHandler;
 
 	public StorageHandler(){
-		jsonFileIO = new Writer();
-		reader = new Reader();
+		writer = new TaskWriter();
+		reader = new TaskReader();
 	}
 
 	public StorageHandler(String fileName){
-		jsonFileIO = new Writer(fileName);
-		reader = new Reader(fileName);
+		writer = new TaskWriter(fileName);
+		reader = new TaskReader(fileName);
 	}
 
 	public static Storage getInstance(){
-		if(taskStorage == null){
-			taskStorage = new StorageHandler();
+		if(storageHandler == null){
+			storageHandler = new StorageHandler();
 		}
-		return taskStorage;
-	}
-	
-	public void setFile(String fileName){
-		jsonFileIO.setFile(fileName);
-	}
-	
-	public String add(Task task){
-		jsonFileIO.add(task);
-		return String.format(MESSAGE_ADD, task);
+		return storageHandler;
 	}
 
-	public String add(String description, Date startDate, Date endDate) {
+	public void setFile(String fileName){
+		writer.setFile(fileName);
+	}
+
+	public String add(Task task){
+		try{
+			writer.add(task);
+			return String.format(MESSAGE_ADD, task);
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	public String add(String description, Date startDate, Date endDate){
 		Task task = createTask(description, startDate, endDate);
 		return add(task);
 	}
@@ -64,32 +73,40 @@ public class StorageHandler implements Storage {
 		Task updatedTask = createTask(description, startDate, endDate);
 		return update(taskToUpdate, updatedTask);
 	}
-	
+
 	public String update(Task taskToUpdate, Task updatedTask){
 		try{
-			jsonFileIO.update(taskToUpdate, updatedTask);
+			writer.update(taskToUpdate, updatedTask);
 			return String.format(MESSAGE_UPDATE, updatedTask);
 		}
 		catch(EmptyTaskListException e){
 			return MESSAGE_NO_TASK_TO_UPDATE;
 		}
+		catch(IOException e){
+			e.printStackTrace();
+			return "";
+		}
 	}
 
 	public String delete(Task taskToDelete){
 		try{
-			jsonFileIO.delete(taskToDelete);
+			writer.delete(taskToDelete);
 			return String.format(MESSAGE_DELETE, taskToDelete);
 		}
 		catch(EmptyTaskListException e){
 			return MESSAGE_NO_TASK_TO_DELETE;
 		}
+		catch(IOException e){
+			e.printStackTrace();
+			return "";
+		}
 	}
-	
-	public String remove(Task taskToRemove){
-		jsonFileIO.remove(taskToRemove);
+
+	public String remove(Task taskToRemove) throws IOException{
+		writer.remove(taskToRemove);
 		return String.format(MESSAGE_REMOVE, taskToRemove);
 	}
-	
+
 	public ArrayList<Task> readTasks() throws IOException{
 		ArrayList<Task> listTask = null;
 		try{
@@ -101,7 +118,7 @@ public class StorageHandler implements Storage {
 		assert(listTask!=null);
 		return listTask;
 	}
-	
+
 	public ArrayList<Task> readDeletedTasks() throws IOException{
 		ArrayList<Task> listTask = null;
 		try{
@@ -114,27 +131,53 @@ public class StorageHandler implements Storage {
 		return listTask;
 	}
 	
+	public ArrayList<Task> readDoneTasks() throws IOException{
+		ArrayList<Task> listTask = null;
+		try{
+			listTask = reader.readDoneTasks();
+		}
+		catch (IOException e){
+			throw e;
+		}		
+		assert(listTask!=null);
+		return listTask;
+	}
+
 	public String clear(){
-		jsonFileIO.clear();
+		writer.clear();
 		return MESSAGE_CLEAR;
 	}
-	
+
 	public String undo(){
-		if(jsonFileIO.undo()){
+		if(writer.undo()){
 			return MESSAGE_UNDO_SUCCESS;
 		} else{
 			return MESSAGE_UNDO_FAIL;
 		}
 	}
-	
+
 	public String redo(){
-		if(jsonFileIO.redo()){
+		if(writer.redo()){
 			return MESSAGE_REDO_SUCCESS;
 		} else{
 			return MESSAGE_REDO_FAIL;
 		}
 	}
+	
+	public String restore(Task task) throws IOException{
+		writer.restore(task);
+		return String.format(MESSAGE_RESTORE, task);
+	}
+	
+	public String finish(Task task) throws IOException{
+		writer.setDone(task);
+		return String.format(MESSAGE_FINISH, task);
+	}
 
+	public String notFinish(Task task) throws IOException{
+		return String.format(MESSAGE_NOT_FINISH,task);
+	}
+	
 	private Task createTask(String description, Date startDate,
 			Date endDate){
 		Task task = null;
