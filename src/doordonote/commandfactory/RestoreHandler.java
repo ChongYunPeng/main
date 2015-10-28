@@ -1,13 +1,13 @@
 package doordonote.commandfactory;
 
 import doordonote.command.Command;
-import doordonote.command.FinishCommand;
+import doordonote.command.RestoreCommand;
 import doordonote.common.Util;
 
-public class FinishHandler extends AbstractCommandHandler {
+public class RestoreHandler extends AbstractCommandHandler {
 
-	public FinishHandler(String commmandBody) throws EmptyCommandBodyException {
-		super(commmandBody);
+	public RestoreHandler(String commandBody) throws EmptyCommandBodyException {
+		super(commandBody);
 		if (Util.isEmptyOrNull(commandBody)) {
 			throw new EmptyCommandBodyException();
 		}
@@ -15,11 +15,11 @@ public class FinishHandler extends AbstractCommandHandler {
 
 	@Override
 	public Command generateCommand() throws NumberFormatException, NegativeIndexException {
-		int indexToFinish = getTaskIdFromString(commandBody);
-		if (indexToFinish <= 0) {
+		int indexToRestore = getTaskIdFromString(commandBody);
+		if (indexToRestore <= 0) {
 			throw new NegativeIndexException();
 		} else {
-			return new FinishCommand(indexToFinish);
+			return new RestoreCommand(indexToRestore);
 		}	
 	}
 

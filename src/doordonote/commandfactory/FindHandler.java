@@ -6,17 +6,22 @@ import com.joestelmach.natty.repackaged.edu.emory.mathcs.backport.java.util.Arra
 
 import doordonote.command.Command;
 import doordonote.command.FindCommand;
+import doordonote.command.HomeCommand;
+import doordonote.common.Util;
 
 public class FindHandler extends AbstractCommandHandler {
 
-	public FindHandler(String commmandBody) {
+	public FindHandler(String commmandBody) throws EmptyCommandBodyException {
 		super(commmandBody);
+		if (Util.isEmptyOrNull(commandBody)) {
+			throw new EmptyCommandBodyException();
+		}
 	}
 
 	@Override
 	public Command generateCommand() {
 		if (commandBody.isEmpty()) {
-			return new FindCommand();
+			return new HomeCommand();
 		} else {
 			String[] keywordsArray= commandBody.split("\\s+");
 			@SuppressWarnings("unchecked")

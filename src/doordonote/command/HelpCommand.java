@@ -2,6 +2,10 @@ package doordonote.command;
 
 import doordonote.logic.CommandToController;
 
+/**
+ * @author yunpeng
+ *
+ */
 public class HelpCommand implements Command {
 	protected String commandType = null;
 	

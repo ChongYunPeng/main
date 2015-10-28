@@ -3,19 +3,11 @@ package doordonote.logic;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 
 import doordonote.command.Command;
 import doordonote.commandfactory.CommandFactory;
-import doordonote.commandfactory.EmptyCommandBodyException;
-import doordonote.commandfactory.ExcessArgumentException;
-import doordonote.commandfactory.InvalidCommandException;
-import doordonote.commandfactory.NegativeIndexException;
-import doordonote.common.EventTask;
 import doordonote.common.Task;
-import doordonote.common.TaskTest;
 import doordonote.storage.Storage;
 import doordonote.storage.StorageHandler;
 
@@ -111,16 +103,19 @@ public class Controller implements UIToController, CommandToController {
 	}
 
 	@Override
-	public String find(String taskType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String finish(int taskID) {
-		// TODO Auto-generated method stub
+		Task taskToFinish = getTask(taskID);
+		String outputMsg = storage.finish(taskToFinish);
+		try {
+			fullTaskList = getStorageTaskList();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		userTaskList = fullTaskList;
 		UIState = STATE_UPDATE;
-		return null;
+
+		return outputMsg;
 	}
 	
 	@Override
@@ -215,6 +210,35 @@ public class Controller implements UIToController, CommandToController {
 		UIState = STATE_HOME;
 		userTaskList = fullTaskList;
 		return MESSAGE_HOME;
+	}
+
+
+	@Override
+	public String restore(int taskID) {
+		Task taskToRestore = getTask(taskID);
+		String outputMsg = storage.restore(taskToRestore);
+		try {
+			fullTaskList = getStorageTaskList();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		userTaskList = fullTaskList;
+		return outputMsg;
+	}
+
+
+	@Override
+	public String displayFinished() {
+		fullTaskList = storage.readFinishedTasks();
+		return "Displaying finished tasks";
+	}
+
+
+	@Override
+	public String displayDeleted() throws IOException {
+		fullTaskList = storage.readDeletedTasks();
+		return "Displaying deleted tasks";
 	}
 	
 //	public static void main(String[] args) {

@@ -10,8 +10,6 @@ public interface CommandToController {
 
 	String find(List<String> keywords);
 	
-	String find(String taskType);
-	
 	String finish(int taskID);
 	
 	String help();
@@ -25,4 +23,10 @@ public interface CommandToController {
 	String update(int taskID, String taskDescription, Date startDate, Date endDate);
 	
 	String home();
+
+	String restore(int taskID);
+
+	String displayFinished();
+
+	String displayDeleted();
 }

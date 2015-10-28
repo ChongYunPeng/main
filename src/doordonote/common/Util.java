@@ -18,4 +18,9 @@ public final class Util {
 	public static boolean isEmptyOrNull(String input) {
 		return (input == null || input.trim().isEmpty());
 	}
+	
+	
+	public static boolean isBlankString(String input) {
+		return input.trim().isEmpty();
+	}
 }

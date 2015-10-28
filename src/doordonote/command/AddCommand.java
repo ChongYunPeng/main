@@ -2,6 +2,7 @@ package doordonote.command;
 
 import java.util.Date;
 
+import doordonote.common.Util;
 import doordonote.logic.CommandToController;
 
 public class AddCommand implements Command {
@@ -19,7 +20,7 @@ public class AddCommand implements Command {
 	 */
 	public AddCommand(String taskDescription, Date startDate, Date endDate) {
 		// AddHandler should have checked that task is not null and not empty
-		assert(taskDescription != null && !taskDescription.isEmpty());
+		assert(taskDescription != null && !Util.isBlankString(taskDescription));
 		
 		this.taskDescription = taskDescription;
 		this.startDate = startDate;
