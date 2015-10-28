@@ -21,7 +21,7 @@ import doordonote.common.Task;
  */
 
 
-public class Writer {
+public class TaskWriter {
 
 	private static final String DEFAULT_NAME = "data.json";
 	private static final String FILE_TYPE = ".json";
@@ -36,22 +36,22 @@ public class Writer {
 	private Stack<String> redo = new Stack<String>();
 
 	private static String currentFile;
-	Reader reader;
+	TaskReader reader;
 
 
-	public Writer(){
+	public TaskWriter(){
 		currentFile = DEFAULT_NAME;
 		initialize();
-		reader = new Reader();
+		reader = new TaskReader();
 	}
 
-	public Writer(String name){
+	public TaskWriter(String name){
 		if(!name.contains(FILE_TYPE)){
 			name += FILE_TYPE;
 		}
 		currentFile = name;
 		initialize();
-		reader = new Reader(currentFile);
+		reader = new TaskReader(currentFile);
 	}
 
 	public String getFileName() {
@@ -75,7 +75,7 @@ public class Writer {
 				writeToFile(INITIAL_JSONSTRING);
 				toUndoStack(INITIAL_JSONSTRING);
 			}	else{
-				currentJsonString = Reader.getFileString(currentFile);
+				currentJsonString = TaskReader.getFileString(currentFile);
 				toUndoStack(currentJsonString);
 			}
 		}

@@ -24,18 +24,18 @@ public class StorageHandler implements Storage {
 	private final String MESSAGE_REDO_SUCCESS = "Redo executed";
 	private final String MESSAGE_REDO_FAIL = "Redo not executed";
 
-	protected Writer jsonFileIO;
-	protected Reader reader;
+	protected TaskWriter jsonFileIO;
+	protected TaskReader reader;
 	private static StorageHandler taskStorage;
 
 	public StorageHandler(){
-		jsonFileIO = new Writer();
-		reader = new Reader();
+		jsonFileIO = new TaskWriter();
+		reader = new TaskReader();
 	}
 
 	public StorageHandler(String fileName){
-		jsonFileIO = new Writer(fileName);
-		reader = new Reader(fileName);
+		jsonFileIO = new TaskWriter(fileName);
+		reader = new TaskReader(fileName);
 	}
 
 	public static Storage getInstance(){
