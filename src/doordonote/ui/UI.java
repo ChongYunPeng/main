@@ -4,7 +4,6 @@ import doordonote.common.Task;
 import doordonote.logic.Controller;
 import doordonote.logic.UIToController;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
