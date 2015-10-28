@@ -34,11 +34,11 @@ public class Controller implements UIToController, CommandToController {
 		storage = StorageHandler.getInstance();
 		try {
 			fullTaskList = getStorageTaskList();
-			userTaskList = fullTaskList;
 		} catch (IOException e) {
-			// TODO Add exception handling
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		userTaskList = fullTaskList;
 	}
 	
 
@@ -151,14 +151,10 @@ public class Controller implements UIToController, CommandToController {
 	}
 
 	@Override
-	public String undo() {
+	public String undo() throws IOException {
 		String outputMsg = storage.undo();
-		try {
-			fullTaskList = getStorageTaskList();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fullTaskList = getStorageTaskList();
+
 		UIState = STATE_UPDATE;
 		userTaskList = fullTaskList;
 		return outputMsg;
@@ -168,25 +164,17 @@ public class Controller implements UIToController, CommandToController {
 	public String update(int taskId, String taskDescription, Date startDate, Date endDate) throws Exception {
 		Task taskToUpdate = getTask(taskId);
 		String outputMsg = storage.update(taskToUpdate, taskDescription, startDate, endDate);
-		try {
-			fullTaskList = getStorageTaskList();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fullTaskList = getStorageTaskList();
+
 		UIState = STATE_UPDATE;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
 	
 	@Override
-	public String home() {
-		try {
-			fullTaskList = getStorageTaskList();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public String home() throws IOException {
+		fullTaskList = getStorageTaskList();
+
 		UIState = STATE_HOME;
 		userTaskList = fullTaskList;
 		return MESSAGE_HOME;

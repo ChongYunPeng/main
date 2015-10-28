@@ -76,7 +76,7 @@ public abstract class AbstractAddCommandHandler extends CommandHandler {
 	}
 	
 	private int getEventStartDateIndex() {
-		return commandBody.toLowerCase().lastIndexOf("from");
+		return commandBody.toLowerCase().lastIndexOf(" from ");
 	}
 	
 	private int getEventEndDateIndex() {
@@ -88,7 +88,7 @@ public abstract class AbstractAddCommandHandler extends CommandHandler {
 	}
 	
 	private String getTaskDescription(int endIndex) {
-		return commandBody.substring(0, endIndex);
+		return commandBody.substring(0, endIndex).trim();
 	}
 	
 	protected String getTaskDescription() {

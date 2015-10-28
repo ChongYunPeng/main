@@ -19,11 +19,11 @@ public interface CommandToController {
 	
 	String redo() throws IOException;
 	
-	String undo();
+	String undo() throws IOException;
 	
 	String update(int taskId, String taskDescription, Date startDate, Date endDate) throws Exception;
 	
-	String home();
+	String home() throws IOException;
 
 	String restore(int taskId) throws IOException, Exception;
 

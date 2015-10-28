@@ -1,5 +1,7 @@
 package doordonote.command;
 
+import java.io.IOException;
+
 import doordonote.logic.CommandToController;
 
 /**
@@ -10,7 +12,7 @@ import doordonote.logic.CommandToController;
  */
 public class UndoCommand implements Command {
 	@Override
-	public String execute(CommandToController controller) {
+	public String execute(CommandToController controller) throws IOException {
 		return controller.undo();
 	}
 
