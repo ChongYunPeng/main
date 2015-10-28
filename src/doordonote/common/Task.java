@@ -55,13 +55,14 @@ public abstract class Task implements Comparable<Task>{
 	public abstract boolean equals(Object obj);
 
 	public int compareTo(Task task){
-		if(getEndDate() == null){
+		if(getEndDate() == null && task.getEndDate() == null){
+			return getDescription().compareTo(task.getDescription());
+		} else if(getEndDate() == null){
 			return 1;
 		} else if(task.getEndDate() == null){
 			return -1;
 		} else{
 			return getEndDate().compareTo(task.getEndDate());
-
 		}
 	}
 

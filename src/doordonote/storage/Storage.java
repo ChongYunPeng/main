@@ -15,10 +15,14 @@ public interface Storage {
 			Date startDate, Date endDate);
 	public String update(Task oldTask, Task newTask);
 	public String delete(Task taskToDelete);
-	public String remove(Task taskToRemove);
+	public String remove(Task taskToRemove) throws IOException;
 	public ArrayList<Task> readTasks() throws IOException;
 	public ArrayList<Task> readDeletedTasks() throws IOException;
+	public ArrayList<Task> readDoneTasks() throws IOException;
 	public String clear();
 	public String undo();
 	public String redo();
+	public String restore(Task task) throws IOException;
+	public String finish(Task task) throws IOException;
+	public String notFinish(Task task) throws IOException;
 }

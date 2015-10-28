@@ -65,7 +65,7 @@ public class TaskReader {
 		set = jsonToSet();
 		ArrayList<Task> listTask = new ArrayList<Task>();
 		for(Task t : set){
-			if(!t.isDeleted()){
+			if(!t.isDeleted() && !t.isDone()){
 				listTask.add(t);
 			}
 		}
@@ -84,9 +84,21 @@ public class TaskReader {
 		Collections.sort(listTask);
 		return listTask;
 	}
+	
+	protected ArrayList<Task> readDoneTasks() throws IOException{
+		set = jsonToSet();
+		ArrayList<Task> listTask = new ArrayList<Task>();
+		for(Task t : set){
+			if(t.isDone()){
+				listTask.add(t);
+			}
+		}
+		Collections.sort(listTask);
+		return listTask;
+	}
 
 	// This method gets json string from currentFile and map it
-	private HashSet<Task> jsonToSet() throws IOException {
+	protected HashSet<Task> jsonToSet() throws IOException {
 		String json = getFileString(currentFile);
 		HashSet<Task> jsonSet = gson.fromJson(json, type);
 		return jsonSet;

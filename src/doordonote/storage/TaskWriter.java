@@ -29,11 +29,14 @@ public class TaskWriter {
 	private static final Gson gson = new GsonBuilder().registerTypeAdapter(Task.class, 
 			new TaskClassAdapter<Task>()).create();
 	private static final Type type = new TypeToken<HashSet<Task>>(){}.getType();
-	
+	private final Originator originator = new Originator();
+	private final CareTaker careTaker = new CareTaker();
+
 	private String currentJsonString = INITIAL_JSONSTRING;
 
 	private final Stack<String> undo = new Stack<String>();
 	private Stack<String> redo = new Stack<String>();
+	int index = 0;
 
 	private static String currentFile;
 	TaskReader reader;
@@ -84,15 +87,16 @@ public class TaskWriter {
 		}
 	}
 
-	protected void add(Task task){
+	protected void add(Task task) throws IOException{
 		String json = writeTask(task);
 		if(json!=null){
 			toUndoStack(json);
 		}
 	}
 
-	private String writeTask(Task task) {
-		Set<Task> set = reader.getJsonSet();
+	private String writeTask(Task task)throws IOException {
+		Set<Task> set = reader.jsonToSet();
+		set.remove(task);
 		set.add(task);
 		String json = gson.toJson(set, type);
 		try{
@@ -117,15 +121,15 @@ public class TaskWriter {
 		}
 	}
 
-	protected void delete(Task task) throws EmptyTaskListException{
+	protected void delete(Task task) throws EmptyTaskListException, IOException{
 		String json = writeDeleteTask(task);
 		if(json!=null){
 			toUndoStack(json);
 		}
 	}
-	
-	protected void remove(Task task){
-		Set<Task> set = reader.getJsonSet();
+
+	protected void remove(Task task) throws IOException{
+		Set<Task> set = reader.jsonToSet();
 		set.remove(task);
 		String json = gson.toJson(set,type);
 		try{
@@ -137,8 +141,8 @@ public class TaskWriter {
 		toUndoStack(json);
 	}
 
-	private String writeDeleteTask(Task task) throws EmptyTaskListException {
-		Set<Task> set = reader.getJsonSet();
+	private String writeDeleteTask(Task task) throws EmptyTaskListException, IOException {
+		Set<Task> set = reader.jsonToSet();
 		if(!set.isEmpty()){
 			set.remove(task);
 			task.setDeleted();
@@ -157,9 +161,28 @@ public class TaskWriter {
 			throw  new EmptyTaskListException();
 		}
 	}
+	
+	protected void restore(Task task) throws IOException{
+		if(task.isDeleted()){
+			task.setNotDeleted();
+		} else if(task.isDone()){
+			task.setNotDone();
+		}
+		add(task);
+	}
+	
+	protected void setDone(Task task)throws IOException{
+		task.setDone();
+		add(task);
+	}
+	
+	protected void setNotDone(Task task) throws IOException{
+		task.setNotDone();
+		add(task);
+	}
 
 	protected void update(Task taskToUpdate, Task newUpdatedTask) 
-			throws EmptyTaskListException{
+			throws EmptyTaskListException, IOException{
 		writeDeleteTask(taskToUpdate);
 		String json = writeTask(newUpdatedTask);
 		if(json!=null){
@@ -167,7 +190,7 @@ public class TaskWriter {
 		}
 	}
 
-
+	/*
 	public boolean undo() {
 		if(!undo.isEmpty()){
 			try{
@@ -183,17 +206,37 @@ public class TaskWriter {
 		return false;
 	}
 
+	 */
+
+	public boolean undo(){
+			originator.getStateFromMemento(careTaker.get());
+			String state = originator.getState();
+			if(state!=null){
+				try{
+					writeToFile(state);
+				}
+				catch (IOException e){
+					e.printStackTrace();
+				}
+				currentJsonString = state;
+				careTaker.toRedoStack(careTaker.get());
+				careTaker.removeLast();
+				return true;				
+			}							
+			return false;		
+	}
 
 	public boolean redo(){
-		if(!redo.isEmpty()){
+		originator.getStateFromMemento(careTaker.restore());
+		String state = originator.getState();
+		if(state!=null){
 			try{
-				writeToFile(redo.peek());
+				writeToFile(state);
 			}
 			catch (IOException e){
 				e.printStackTrace();
 			}
-			currentJsonString = redo.peek();
-			undo.push(redo.pop());
+			currentJsonString = state;
 			return true;
 		}
 		return false;
@@ -205,10 +248,13 @@ public class TaskWriter {
 		writer.close();	
 	}
 
-	private void toUndoStack(String str) {
-		undo.push(currentJsonString);
-		currentJsonString = str;
-		redo = new Stack<String>();
+	private void toUndoStack(String json) {
+		originator.setState(currentJsonString);
+		careTaker.add(originator.saveStateToMemento());
+		originator.setState(json);
+		careTaker.initRedoStack(originator.saveStateToMemento());
+		currentJsonString = json;
+		//		redo = new Stack<String>();
 	}
 
 }

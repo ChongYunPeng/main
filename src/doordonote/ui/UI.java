@@ -54,6 +54,8 @@ public class UI extends Application {
 	private static final String STATE_HELP_GET = "Helpget";
 	private static final String STATE_FIND = "Find";
 	private static final String STATE_HOME = "Home";
+	private static final String STATE_DISPLAY_FINISH = "Display finish";
+	private static final String STATE_DISPLAY_DELETE = "Display delete";
     
     Text output = new Text("Feedback Message");
     UIToController controller = new Controller();
@@ -261,14 +263,14 @@ public class UI extends Application {
  	                     
  	                       break;
                     	}
-                    	case "find complete": {
+                    	case STATE_DISPLAY_FINISH: {
                     		border.setCenter(addHBox());
                     		border.setTop(addCompleteHeader());
 		                    commandBox.clear();
 		                    output.setText("");
 		                    break;
                     	}
-                    	case "find delete": {
+                    	case STATE_DISPLAY_DELETE: {
                     		border.setCenter(addHBox());
                     		border.setTop(addDeleteHeader());
 		                    commandBox.clear();
