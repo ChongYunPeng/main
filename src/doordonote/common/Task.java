@@ -70,7 +70,7 @@ public abstract class Task implements Comparable<Task>{
 		String str = "\"";
 		str += getDescription();
 		str += "\"";
-		return str;
+		return str.trim();
 	}
 
 

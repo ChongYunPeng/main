@@ -18,12 +18,10 @@ public class CareTaker {
 			mementoDeque.removeFirst();
 			mementoDeque.addLast(state);
 		}
-		//		redoStack = new Stack<Memento>();
 	}
 
 	public Memento get(){
 		if(mementoDeque.size()>0){
-			//			redoStack.push(mementoDeque.peekLast());
 			return mementoDeque.peekLast();
 		} else{
 			return null;
@@ -32,7 +30,6 @@ public class CareTaker {
 	
 	public Memento removeLast(){
 		if(mementoDeque.size()>0){
-			//			redoStack.push(mementoDeque.peekLast());
 			return mementoDeque.pollLast();
 		} else{
 			return null;
@@ -50,7 +47,6 @@ public class CareTaker {
 
 	public void initRedoStack(Memento memento){
 		redoStack = new Stack<Memento>();
-		redoStack.push(memento);
 	}
 
 	public void toRedoStack(Memento memento){

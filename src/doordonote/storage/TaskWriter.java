@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Stack;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -33,10 +32,6 @@ public class TaskWriter {
 	private final CareTaker careTaker = new CareTaker();
 
 	private String currentJsonString = INITIAL_JSONSTRING;
-
-	private final Stack<String> undo = new Stack<String>();
-	private Stack<String> redo = new Stack<String>();
-	int index = 0;
 
 	private static String currentFile;
 	TaskReader reader;
@@ -190,23 +185,6 @@ public class TaskWriter {
 		}
 	}
 
-	/*
-	public boolean undo() {
-		if(!undo.isEmpty()){
-			try{
-				writeToFile(undo.peek());
-			}
-			catch (IOException e){
-				e.printStackTrace();
-			}
-			currentJsonString = undo.peek();
-			redo.push(undo.pop());
-			return true;
-		}
-		return false;
-	}
-
-	 */
 
 	public boolean undo(){
 			originator.getStateFromMemento(careTaker.get());
@@ -218,8 +196,8 @@ public class TaskWriter {
 				catch (IOException e){
 					e.printStackTrace();
 				}
+				toRedoStack(currentJsonString);
 				currentJsonString = state;
-				careTaker.toRedoStack(careTaker.get());
 				careTaker.removeLast();
 				return true;				
 			}							
@@ -227,6 +205,8 @@ public class TaskWriter {
 	}
 
 	public boolean redo(){
+		originator.setState(currentJsonString);
+		careTaker.add(originator.saveStateToMemento());
 		originator.getStateFromMemento(careTaker.restore());
 		String state = originator.getState();
 		if(state!=null){
@@ -251,10 +231,13 @@ public class TaskWriter {
 	private void toUndoStack(String json) {
 		originator.setState(currentJsonString);
 		careTaker.add(originator.saveStateToMemento());
-		originator.setState(json);
 		careTaker.initRedoStack(originator.saveStateToMemento());
 		currentJsonString = json;
-		//		redo = new Stack<String>();
+	}
+	
+	private void toRedoStack(String json){
+		originator.setState(currentJsonString);
+		careTaker.toRedoStack(originator.saveStateToMemento());
 	}
 
 }
