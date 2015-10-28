@@ -1,16 +1,16 @@
 package doordonote.commandfactory;
 
 import java.util.Date;
-import com.joestelmach.natty.Parser;
 
 import doordonote.command.AddCommand;
 import doordonote.command.Command;
+import doordonote.common.Util;
 
 public class AddHandler extends AbstractAddCommandHandler {	
 	
-	public AddHandler(String commandBody, Parser dateParser) throws EmptyCommandBodyException {
+	public AddHandler(String commandBody, DateParser dateParser) throws EmptyCommandBodyException {
 		super(commandBody, dateParser);
-		if (commandBody.isEmpty()) {
+		if (Util.isEmptyOrNull(commandBody)) {
 			throw new EmptyCommandBodyException();
 		}
 	}
@@ -18,18 +18,8 @@ public class AddHandler extends AbstractAddCommandHandler {
 	@Override
 	public Command generateCommand() {
 		String taskDescription = getTaskDescription();
-		Date startDate = null;
-		Date endDate = null;
-		if (isEvent()) {
-			startDate = getEventStartDate();
-			endDate = getEventEndDate();
-			
-			assert(startDate != null && endDate != null);
-		} else if (isDeadline()) {
-			endDate = getDeadlineDate();
-			
-			assert(endDate != null);
-		} 
+		Date startDate = getStartDate();
+		Date endDate = getEndDate();
 		
 		return new AddCommand(taskDescription, startDate, endDate);
 	}

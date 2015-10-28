@@ -2,14 +2,12 @@ package doordonote.commandfactory;
 
 import java.util.Date;
 
-import com.joestelmach.natty.Parser;
-
 import doordonote.command.Command;
 import doordonote.command.UpdateCommand;
 import doordonote.common.Util;
 
 public class UpdateHandler extends AbstractAddCommandHandler {
-	public UpdateHandler(String commandBody, Parser dateParser) throws EmptyCommandBodyException {
+	public UpdateHandler(String commandBody, DateParser dateParser) throws EmptyCommandBodyException {
 		super(commandBody, dateParser);
 		if (commandBody.isEmpty()) {
 			throw new EmptyCommandBodyException();
@@ -22,18 +20,8 @@ public class UpdateHandler extends AbstractAddCommandHandler {
 	public Command generateCommand() throws NumberFormatException, NegativeIndexException {
 		int indexToUpdate = getIndexToUpdate();
 		String taskDescription = getTaskDescription();
-		Date startDate = null;
-		Date endDate = null;
-		if (isEvent()) {
-			startDate = getEventStartDate();
-			endDate = getEventEndDate();
-			
-			// Make sure that both dates are defined
-			assert(startDate != null && endDate != null);
-		} else if (isDeadline()) {
-			endDate = getDeadlineDate();
-			assert(endDate != null);
-		} 
+		Date startDate = getStartDate();
+		Date endDate = getEndDate();
 		return new UpdateCommand(indexToUpdate, taskDescription, startDate, endDate);
 	}
 	

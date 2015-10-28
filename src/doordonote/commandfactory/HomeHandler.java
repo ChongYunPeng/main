@@ -14,12 +14,12 @@ public class HomeHandler extends AbstractCommandHandler {
 	}
 
 	@Override
-	public Command generateCommand() {
+	public Command generateCommand() throws ExcessArgumentException {
 		if (Util.isEmptyOrNull(commandBody)) {
 			return new HomeCommand();
 		} else {
-			// throw exception
-			return null;
+			// this command should not have any arguments
+			throw new ExcessArgumentException();
 		}
 	}
 

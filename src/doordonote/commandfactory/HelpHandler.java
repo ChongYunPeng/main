@@ -1,18 +1,22 @@
 package doordonote.commandfactory;
 
 import doordonote.command.Command;
+import doordonote.command.HelpCommand;
+import doordonote.common.Util;
 
 public class HelpHandler extends AbstractCommandHandler {
 
 	public HelpHandler(String commmandBody) {
 		super(commmandBody);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public Command generateCommand() {
-		// TODO Auto-generated method stub
-		return null;
+		if (Util.isEmptyOrNull(commandBody)) {
+			return new HelpCommand();
+		} else {
+			return new HelpCommand(commandBody);
+		}
 	}
 
 }

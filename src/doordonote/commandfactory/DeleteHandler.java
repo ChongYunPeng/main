@@ -6,19 +6,16 @@ import doordonote.common.Util;
 
 public class DeleteHandler extends AbstractCommandHandler {
 	
-	private static final int MAX_NUM_ARG = 1;
-
-
-	public DeleteHandler(String commmandBody) throws ExcessArgumentException {
+	public DeleteHandler(String commmandBody) throws EmptyCommandBodyException {
 		super(commmandBody);
-		if (commandBody.split("\\s+").length > MAX_NUM_ARG) {
-			throw new ExcessArgumentException();
+		if (Util.isEmptyOrNull(commandBody)) {
+			throw new EmptyCommandBodyException();
 		}
 	}
 
 	@Override
 	public Command generateCommand() throws NumberFormatException, NegativeIndexException {
-		int indexToDelete = Integer.parseInt(Util.getFirstWord(commandBody));
+		int indexToDelete = getTaskIdFromString(commandBody);
 		if (indexToDelete <= 0) {
 			throw new NegativeIndexException();
 		} else {

@@ -8,19 +8,14 @@ public class UndoHandler extends AbstractCommandHandler {
 
 	public UndoHandler(String commmandBody) throws ExcessArgumentException {
 		super(commmandBody);
-		if (!commandBody.isEmpty()) {
+		if (!Util.isEmptyOrNull(commandBody)) {
 			throw new ExcessArgumentException();
 		}
 	}
 
 	@Override
 	public Command generateCommand() {
-		if (Util.isEmptyOrNull(commandBody)) {
-			return new UndoCommand();
-		} else {
-			// throw exception
-			return null;
-		}
+		return new UndoCommand();
 	}
 
 }

@@ -2,9 +2,17 @@ package doordonote.command;
 
 import doordonote.logic.CommandToController;
 
+/**
+ * @author yunpeng
+ *
+ */
 public class FinishCommand implements Command {
 	protected int taskIdToFinish = -1;
 	
+	/**
+	 * @param 	taskIdToFinish
+	 * 			This is the ID of the task users will see in the UI.
+	 */
 	public FinishCommand(int taskIdToFinish) {
 		assert(taskIdToFinish > 0);
 		this.taskIdToFinish = taskIdToFinish;
@@ -12,8 +20,7 @@ public class FinishCommand implements Command {
 
 	@Override
 	public String execute(CommandToController controller) {
-		controller.finish(taskIdToFinish);
-		return null;
+		return controller.finish(taskIdToFinish);
 	}
 
 }
