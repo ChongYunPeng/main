@@ -2,10 +2,10 @@ package doordonote.commandfactory;
 
 import doordonote.command.Command;
 
-public abstract class AbstractCommandHandler {
+public abstract class CommandHandler {
 	protected String commandBody = null;
 	
-	public AbstractCommandHandler(String commandBody) {
+	public CommandHandler(String commandBody) {
 		this.commandBody = commandBody;
 	}
 

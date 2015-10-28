@@ -4,7 +4,7 @@ import doordonote.command.Command;
 import doordonote.command.HomeCommand;
 import doordonote.common.Util;
 
-public class HomeHandler extends AbstractCommandHandler {
+public class HomeHandler extends CommandHandler {
 
 	public HomeHandler(String commmandBody) throws ExcessArgumentException {
 		super(commmandBody);

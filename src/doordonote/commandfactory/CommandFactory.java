@@ -12,9 +12,10 @@ public class CommandFactory {
 
 	public Command parse(String userInput) throws Exception {
 
-		String commandType = getCommandType(userInput);
-		String commandBody = Util.removeFirstWord(userInput);
-		AbstractCommandHandler handler = null;
+		String trimmedInput = userInput.trim();
+		String commandType = getCommandType(trimmedInput);
+		String commandBody = Util.removeFirstWord(trimmedInput);
+		CommandHandler handler = null;
 
 		switch (commandType) {
 
@@ -68,7 +69,7 @@ public class CommandFactory {
 
 		default:
 			// treats user input as adding a new task by default if input does not match any command type
-			handler = new AddHandler(userInput, dateParser);
+			handler = new AddHandler(trimmedInput, dateParser);
 		}
 
 		return handler.generateCommand();

@@ -9,7 +9,7 @@ import doordonote.command.FindCommand;
 import doordonote.command.HomeCommand;
 import doordonote.common.Util;
 
-public class FindHandler extends AbstractCommandHandler {
+public class FindHandler extends CommandHandler {
 
 	public FindHandler(String commmandBody) throws EmptyCommandBodyException {
 		super(commmandBody);

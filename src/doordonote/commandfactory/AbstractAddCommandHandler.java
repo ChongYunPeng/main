@@ -6,7 +6,7 @@ import doordonote.common.Util;
 
 // TODO: Change name to make it more understandable
 // TODO: Make parser static
-public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
+public abstract class AbstractAddCommandHandler extends CommandHandler {
 
 	protected DateParser dateParser = null;
 	protected Date startDate = null;
@@ -94,20 +94,4 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 	protected String getTaskDescription() {
 		return taskDescription;
 	}
-	
-//	protected String getTaskDescription() {
-//		if (isEvent()) {
-//			return commandBody.substring(0, getEventStartDateIndex());
-//		} else if (isDeadline()) {
-//			return commandBody.substring(0, getDeadlineDateIndex());
-//		} else {
-//			return commandBody;
-//		}
-//	}
-//	
-//	public static void main(String[] args) {
-//		String test = "test".substring(-1);
-//	}
-	
-
 }

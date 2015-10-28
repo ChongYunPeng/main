@@ -4,7 +4,7 @@ import doordonote.command.Command;
 import doordonote.command.RestoreCommand;
 import doordonote.common.Util;
 
-public class RestoreHandler extends AbstractCommandHandler {
+public class RestoreHandler extends CommandHandler {
 
 	public RestoreHandler(String commandBody) throws EmptyCommandBodyException {
 		super(commandBody);

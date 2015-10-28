@@ -4,7 +4,7 @@ import doordonote.command.Command;
 import doordonote.command.FinishCommand;
 import doordonote.common.Util;
 
-public class FinishHandler extends AbstractCommandHandler {
+public class FinishHandler extends CommandHandler {
 
 	public FinishHandler(String commmandBody) throws EmptyCommandBodyException {
 		super(commmandBody);

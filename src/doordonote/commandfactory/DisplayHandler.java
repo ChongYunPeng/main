@@ -6,7 +6,7 @@ import doordonote.command.Command;
 import doordonote.command.DisplayDeletedTaskCommand;
 import doordonote.command.DisplayFinishedTaskCommand;
 
-public class DisplayHandler extends AbstractCommandHandler {
+public class DisplayHandler extends CommandHandler {
 
 	public DisplayHandler(String commandBody) throws EmptyCommandBodyException {
 		super(commandBody);

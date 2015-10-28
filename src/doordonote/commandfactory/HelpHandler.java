@@ -4,7 +4,7 @@ import doordonote.command.Command;
 import doordonote.command.HelpCommand;
 import doordonote.common.Util;
 
-public class HelpHandler extends AbstractCommandHandler {
+public class HelpHandler extends CommandHandler {
 
 	public HelpHandler(String commmandBody) {
 		super(commmandBody);

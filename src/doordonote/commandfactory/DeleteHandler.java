@@ -4,7 +4,7 @@ import doordonote.command.Command;
 import doordonote.command.DeleteCommand;
 import doordonote.common.Util;
 
-public class DeleteHandler extends AbstractCommandHandler {
+public class DeleteHandler extends CommandHandler {
 	
 	public DeleteHandler(String commmandBody) throws EmptyCommandBodyException {
 		super(commmandBody);

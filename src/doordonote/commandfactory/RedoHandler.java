@@ -4,7 +4,7 @@ import doordonote.command.Command;
 import doordonote.command.RedoCommand;
 import doordonote.common.Util;
 
-public class RedoHandler extends AbstractCommandHandler {
+public class RedoHandler extends CommandHandler {
 
 	public RedoHandler(String commmandBody) throws ExcessArgumentException {
 		super(commmandBody);
