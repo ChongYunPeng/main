@@ -2,11 +2,16 @@ package doordonote.command;
 
 import doordonote.logic.CommandToController;
 
+/**
+ * @author yunpeng
+ *
+ */
 public class DeleteCommand implements Command {
-	int taskID = -1;	
+	int taskID = -1;
+	
 	/**
 	 * @param 	taskID
-	 * 			This is the ID of the task as seen from the UI.
+	 * 			This is the ID of the task users will see in the UI.
 	 */
 	public DeleteCommand(int taskID) {
 		// DeleteHandler should have checked that taskID is more than zero

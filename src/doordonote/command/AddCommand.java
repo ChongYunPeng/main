@@ -5,6 +5,10 @@ import java.util.Date;
 import doordonote.common.Util;
 import doordonote.logic.CommandToController;
 
+/**
+ * @author yunpeng
+ *
+ */
 public class AddCommand implements Command {
 	protected String taskDescription = null;
 	protected Date startDate = null;
