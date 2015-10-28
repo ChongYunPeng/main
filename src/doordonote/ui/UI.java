@@ -72,6 +72,7 @@ public class UI extends Application {
   
         primaryStage.setScene(scene);
         primaryStage.setTitle("DoOrDoNote");
+        primaryStage.getIcons().add(new Image("icon.jpg"));
         primaryStage.show();
         
     }
@@ -329,6 +330,7 @@ public class UI extends Application {
     
     public Stage createHelpWindow() {
     	Stage stage = new Stage();
+    	
     	HBox hb = new HBox();
     	hb.setSpacing(15);
     	hb.setAlignment(CENTER);
@@ -365,6 +367,7 @@ public class UI extends Application {
         Scene sc = new Scene(vb);
         
         stage.setTitle("Help!");
+        stage.getIcons().add(image1);
         stage.setScene(sc);
         
         bt.setOnAction(new EventHandler<ActionEvent>() {
@@ -411,6 +414,7 @@ public class UI extends Application {
         Scene sc = new Scene(vb);
         
         stage.setTitle("Help!");
+        stage.getIcons().add(image1);
         stage.setScene(sc);
         
         bt.setOnAction(new EventHandler<ActionEvent>() {
@@ -457,6 +461,7 @@ public class UI extends Application {
         Scene sc = new Scene(vb);
         
         stage.setTitle("Help!");
+        stage.getIcons().add(image1);
         stage.setScene(sc);
         
         bt.setOnAction(new EventHandler<ActionEvent>() {
@@ -503,6 +508,7 @@ public class UI extends Application {
         Scene sc = new Scene(vb);
         
         stage.setTitle("Help!");
+        stage.getIcons().add(image1);
         stage.setScene(sc);
         
         bt.setOnAction(new EventHandler<ActionEvent>() {
@@ -549,6 +555,7 @@ public class UI extends Application {
         Scene sc = new Scene(vb);
         
         stage.setTitle("Help!");
+        stage.getIcons().add(image1);
         stage.setScene(sc);
         
         bt.setOnAction(new EventHandler<ActionEvent>() {
@@ -595,6 +602,7 @@ public class UI extends Application {
         Scene sc = new Scene(vb);
         
         stage.setTitle("Help!");
+        stage.getIcons().add(image1);
         stage.setScene(sc);
         
         bt.setOnAction(new EventHandler<ActionEvent>() {
@@ -641,6 +649,7 @@ public class UI extends Application {
         Scene sc = new Scene(vb);
         
         stage.setTitle("Help!");
+        stage.getIcons().add(image1);
         stage.setScene(sc);
         
         bt.setOnAction(new EventHandler<ActionEvent>() {
@@ -687,6 +696,7 @@ public class UI extends Application {
         Scene sc = new Scene(vb);
         
         stage.setTitle("Help!");
+        stage.getIcons().add(image1);
         stage.setScene(sc);
         
         bt.setOnAction(new EventHandler<ActionEvent>() {
@@ -733,6 +743,7 @@ public class UI extends Application {
         Scene sc = new Scene(vb);
         
         stage.setTitle("Help!");
+        stage.getIcons().add(image1);
         stage.setScene(sc);
         
         bt.setOnAction(new EventHandler<ActionEvent>() {
