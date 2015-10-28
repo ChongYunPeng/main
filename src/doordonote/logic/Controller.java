@@ -20,6 +20,8 @@ public class Controller implements UIToController, CommandToController {
 	private static final String STATE_HELP = "Help";
 	private static final String STATE_FIND = "Find";
 	private static final String STATE_HOME = "Home";
+	private static final String STATE_DISPLAY_FINISH = "Display finish";
+	private static final String STATE_DISPLAY_DELETE = "Display delete";
 	
 	protected CommandFactory cmdFactory = null;
 	protected Storage storage = null;
@@ -223,6 +225,7 @@ public class Controller implements UIToController, CommandToController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		UIState = STATE_UPDATE;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -232,6 +235,7 @@ public class Controller implements UIToController, CommandToController {
 	public String displayFinished() {
 		fullTaskList = storage.readFinishedTasks();
 		return "Displaying finished tasks";
+		UIState = STATE_DISPLAY_FINISH;
 	}
 
 
@@ -239,6 +243,7 @@ public class Controller implements UIToController, CommandToController {
 	public String displayDeleted() throws IOException {
 		fullTaskList = storage.readDeletedTasks();
 		return "Displaying deleted tasks";
+		UIState = STATE_DISPLAY_DELETE;
 	}
 	
 //	public static void main(String[] args) {
