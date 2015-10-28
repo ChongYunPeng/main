@@ -40,6 +40,20 @@ import javafx.scene.text.TextAlignment;
  * @author Priyanka
  */
 public class UI extends Application {
+	
+	private static final String MESSAGE_HOME = "Back to homescreen";
+	private static final String STATE_UPDATE = "Update";
+	private static final String STATE_HELP = "Help";
+	private static final String STATE_HELP_ADD = "Helpadd";
+	private static final String STATE_HELP_DELETE = "Helpdelete";
+	private static final String STATE_HELP_UPDATE = "Helpupdate";
+	private static final String STATE_HELP_FIND = "Helpfind";
+	private static final String STATE_HELP_FINISH = "Helpfinish";
+	private static final String STATE_HELP_PATH = "Helppath";
+	private static final String STATE_HELP_RESTORE = "Helprestore";
+	private static final String STATE_HELP_GET = "Helpget";
+	private static final String STATE_FIND = "Find";
+	private static final String STATE_HOME = "Home";
     
     Text output = new Text("Feedback Message");
     UIToController controller = new Controller();
@@ -111,28 +125,177 @@ public class UI extends Application {
                 if(commandBox.getText() != null) {
                     try {
                     	feedback = controller.parseAndExecuteCommand(commandBox.getText());
-		                if (feedback != null) {
-		            	   //if(getFirstWord(feedback).equals("invalid")||getFirstWord(feedback).equals("no")){
-		                	output.setText(feedback);   
+                    	String state = controller.getState();
+                    	switch(state) {
+                    	case STATE_HELP: {
+                    	   Stage helpStage = createHelpWindow();
+ 	                       helpStage.show();
+ 	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+ 	                          @Override
+ 	                          public void handle(KeyEvent evt) {
+ 	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+ 	                                helpStage.close();
+ 	                            }
+ 	                          }
+ 	                       });
+ 	                      commandBox.clear();
+ 	                       break;
+                    	}
+                    	case STATE_HELP_ADD: {
+                    		Stage helpStage = createHelpAddWindow();
+  	                       helpStage.show();
+  	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+  	                          @Override
+  	                          public void handle(KeyEvent evt) {
+  	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+  	                                helpStage.close();
+  	                            }
+  	                          }
+  	                       });
+  	                     commandBox.clear();
+  	                     
+  	                       break;
+                    	}
+                    	case STATE_HELP_DELETE: {
+                    		Stage helpStage = createHelpDeleteWindow();
+   	                       helpStage.show();
+   	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+   	                          @Override
+   	                          public void handle(KeyEvent evt) {
+   	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+   	                                helpStage.close();
+   	                            }
+   	                          }
+   	                       });
+   	                     commandBox.clear();
+   	                     
+   	                       break;
+                    	}
+                    	case STATE_HELP_UPDATE: {
+                    		Stage helpStage = createHelpUpdateWindow();
+    	                       helpStage.show();
+    	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+    	                          @Override
+    	                          public void handle(KeyEvent evt) {
+    	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+    	                                helpStage.close();
+    	                            }
+    	                          }
+    	                       });
+    	                     commandBox.clear();
+    	                     
+    	                       break;
+                    	}
+                    	case STATE_HELP_FIND: {
+                    		Stage helpStage = createHelpFindWindow();
+ 	                       helpStage.show();
+ 	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+ 	                          @Override
+ 	                          public void handle(KeyEvent evt) {
+ 	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+ 	                                helpStage.close();
+ 	                            }
+ 	                          }
+ 	                       });
+ 	                     commandBox.clear();
+ 	                     
+ 	                       break;
+                    	}
+                    	case STATE_HELP_FINISH: {
+                    		Stage helpStage = createHelpFinishWindow();
+  	                       helpStage.show();
+  	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+  	                          @Override
+  	                          public void handle(KeyEvent evt) {
+  	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+  	                                helpStage.close();
+  	                            }
+  	                          }
+  	                       });
+  	                     commandBox.clear();
+  	                     
+  	                       break;
+                    	}
+                    	case STATE_HELP_PATH: {
+                    		Stage helpStage = createHelpPathWindow();
+   	                       helpStage.show();
+   	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+   	                          @Override
+   	                          public void handle(KeyEvent evt) {
+   	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+   	                                helpStage.close();
+   	                            }
+   	                          }
+   	                       });
+   	                     commandBox.clear();
+   	                     
+   	                       break;
+                    	}
+                    	case STATE_HELP_RESTORE: {
+                    		Stage helpStage = createHelpRestoreWindow();
+    	                       helpStage.show();
+    	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+    	                          @Override
+    	                          public void handle(KeyEvent evt) {
+    	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+    	                                helpStage.close();
+    	                            }
+    	                          }
+    	                       });
+    	                     commandBox.clear();
+    	                     
+    	                       break;
+                    	}
+                    	case STATE_HELP_GET: {
+                    		Stage helpStage = createHelpGetWindow();
+ 	                       helpStage.show();
+ 	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+ 	                          @Override
+ 	                          public void handle(KeyEvent evt) {
+ 	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+ 	                                helpStage.close();
+ 	                            }
+ 	                          }
+ 	                       });
+ 	                     commandBox.clear();
+ 	                     
+ 	                       break;
+                    	}
+                    	case "find complete": {
+                    		border.setCenter(addHBox());
+                    		border.setTop(addCompleteHeader());
+		                    commandBox.clear();
+		                    output.setText("");
+		                    break;
+                    	}
+                    	case "find delete": {
+                    		border.setCenter(addHBox());
+                    		border.setTop(addDeleteHeader());
+		                    commandBox.clear();
+		                    output.setText("");
+		                    break;
+                    	}
+                    	case STATE_FIND: {
+                    		border.setCenter(addHBox());
+                    		border.setTop(addFindHeader());
+		                    commandBox.clear();
+		                    output.setText(feedback);
+		                    break;         		
+                    	}
+                    	case STATE_UPDATE: {
+                    		output.setText(feedback);   
 		                	output.setFill(Color.web("#00811C"));
-		            	   }
-		            	/*else {
-		            		output.setFill(Color.web("#00811C"));
-		            	}
-			            */
-			         
-	                    else {
-	                	   Stage helpStage = createHelpWindow();
-	                       helpStage.show();
-	                       helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-	                          @Override
-	                          public void handle(KeyEvent evt) {
-	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
-	                                helpStage.close();
-	                            }
-	                          }
-	                       });
-	                    }
+				            border.setCenter(addHBox());
+		                    commandBox.clear();
+                    	}
+                    	case STATE_HOME: {
+                    		output.setText(feedback);   
+		                	output.setFill(Color.web("#00811C"));
+				            border.setCenter(addHBox());
+                    		border.setTop(addHeader());
+                    		commandBox.clear();
+                    	}
+                    	}
                     }
                     catch (Exception e) {
                     	feedback = e.getMessage();
@@ -140,8 +303,6 @@ public class UI extends Application {
                     	output.setFill(Color.web("#F20505"));
                     }
 		            
-		            border.setCenter(addHBox());
-                    commandBox.clear();
                 }
             }
         }
@@ -198,6 +359,373 @@ public class UI extends Application {
     	
     }
     
+    public Stage createHelpAddWindow() {
+    	Stage stage = new Stage();
+    	HBox hb = new HBox();
+    	hb.setSpacing(15);
+    	hb.setAlignment(CENTER);
+        Image image1 = new Image("question_mark.png");
+        ImageView imv1 = new ImageView(image1);
+        imv1.setFitWidth(30);
+        imv1.setPreserveRatio(true);
+        imv1.setSmooth(true);
+        imv1.setCache(true);
+        Text helpHeader = new Text("Hello! Here is a table of the commands you can use for ADD:");
+        helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
+        helpHeader.setFill(Color.web("#00143E")); //#00143E
+        hb.getChildren().addAll(helpHeader, imv1);
+        
+        Image image2 = new Image("helpadd.jpg");
+        ImageView imv2 = new ImageView(image2);
+        imv2.setFitWidth(700);
+        imv2.setPreserveRatio(true);
+        imv2.setSmooth(true);
+        imv2.setCache(true);
+        
+        Button bt = new Button(" OK! ");
+       
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(15, 30, 10, 30));
+        vb.setSpacing(10);
+        vb.getChildren().addAll(hb, imv2, bt);
+        vb.setAlignment(TOP_CENTER);
+        vb.setStyle("-fx-background-color: #eff4ff;");
+        Scene sc = new Scene(vb);
+        
+        stage.setTitle("Help!");
+        stage.setScene(sc);
+        
+        bt.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            stage.close();      
+            }
+        });
+        
+        return stage;
+    	
+    }
+    
+    public Stage createHelpDeleteWindow() {
+    	Stage stage = new Stage();
+    	HBox hb = new HBox();
+    	hb.setSpacing(15);
+    	hb.setAlignment(CENTER);
+        Image image1 = new Image("question_mark.png");
+        ImageView imv1 = new ImageView(image1);
+        imv1.setFitWidth(30);
+        imv1.setPreserveRatio(true);
+        imv1.setSmooth(true);
+        imv1.setCache(true);
+        Text helpHeader = new Text("Hello! Here is the command you can use for DELETE:");
+        helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
+        helpHeader.setFill(Color.web("#00143E")); //#00143E
+        hb.getChildren().addAll(helpHeader, imv1);
+        
+        Image image2 = new Image("helpdelete.jpg");
+        ImageView imv2 = new ImageView(image2);
+        imv2.setFitWidth(700);
+        imv2.setPreserveRatio(true);
+        imv2.setSmooth(true);
+        imv2.setCache(true);
+        
+        Button bt = new Button(" OK! ");
+       
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(15, 30, 10, 30));
+        vb.setSpacing(10);
+        vb.getChildren().addAll(hb, imv2, bt);
+        vb.setAlignment(TOP_CENTER);
+        vb.setStyle("-fx-background-color: #eff4ff;");
+        Scene sc = new Scene(vb);
+        
+        stage.setTitle("Help!");
+        stage.setScene(sc);
+        
+        bt.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            stage.close();      
+            }
+        });
+        
+        return stage;
+    	
+    }
+    
+    public Stage createHelpUpdateWindow() {
+    	Stage stage = new Stage();
+    	HBox hb = new HBox();
+    	hb.setSpacing(15);
+    	hb.setAlignment(CENTER);
+        Image image1 = new Image("question_mark.png");
+        ImageView imv1 = new ImageView(image1);
+        imv1.setFitWidth(30);
+        imv1.setPreserveRatio(true);
+        imv1.setSmooth(true);
+        imv1.setCache(true);
+        Text helpHeader = new Text("Hello! Here is the command you can use for UPDATE:");
+        helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
+        helpHeader.setFill(Color.web("#00143E")); //#00143E
+        hb.getChildren().addAll(helpHeader, imv1);
+        
+        Image image2 = new Image("helpupdate.jpg");
+        ImageView imv2 = new ImageView(image2);
+        imv2.setFitWidth(700);
+        imv2.setPreserveRatio(true);
+        imv2.setSmooth(true);
+        imv2.setCache(true);
+        
+        Button bt = new Button(" OK! ");
+       
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(15, 30, 10, 30));
+        vb.setSpacing(10);
+        vb.getChildren().addAll(hb, imv2, bt);
+        vb.setAlignment(TOP_CENTER);
+        vb.setStyle("-fx-background-color: #eff4ff;");
+        Scene sc = new Scene(vb);
+        
+        stage.setTitle("Help!");
+        stage.setScene(sc);
+        
+        bt.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            stage.close();      
+            }
+        });
+        
+        return stage;
+    	
+    }
+    
+    public Stage createHelpFindWindow() {
+    	Stage stage = new Stage();
+    	HBox hb = new HBox();
+    	hb.setSpacing(15);
+    	hb.setAlignment(CENTER);
+        Image image1 = new Image("question_mark.png");
+        ImageView imv1 = new ImageView(image1);
+        imv1.setFitWidth(30);
+        imv1.setPreserveRatio(true);
+        imv1.setSmooth(true);
+        imv1.setCache(true);
+        Text helpHeader = new Text("Hello! Here is a table of the commands you can use for FIND:");
+        helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
+        helpHeader.setFill(Color.web("#00143E")); //#00143E
+        hb.getChildren().addAll(helpHeader, imv1);
+        
+        Image image2 = new Image("helpfind.jpg");
+        ImageView imv2 = new ImageView(image2);
+        imv2.setFitWidth(700);
+        imv2.setPreserveRatio(true);
+        imv2.setSmooth(true);
+        imv2.setCache(true);
+        
+        Button bt = new Button(" OK! ");
+       
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(15, 30, 10, 30));
+        vb.setSpacing(10);
+        vb.getChildren().addAll(hb, imv2, bt);
+        vb.setAlignment(TOP_CENTER);
+        vb.setStyle("-fx-background-color: #eff4ff;");
+        Scene sc = new Scene(vb);
+        
+        stage.setTitle("Help!");
+        stage.setScene(sc);
+        
+        bt.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            stage.close();      
+            }
+        });
+        
+        return stage;
+    	
+    }
+    
+    public Stage createHelpFinishWindow() {
+    	Stage stage = new Stage();
+    	HBox hb = new HBox();
+    	hb.setSpacing(15);
+    	hb.setAlignment(CENTER);
+        Image image1 = new Image("question_mark.png");
+        ImageView imv1 = new ImageView(image1);
+        imv1.setFitWidth(30);
+        imv1.setPreserveRatio(true);
+        imv1.setSmooth(true);
+        imv1.setCache(true);
+        Text helpHeader = new Text("Hello! Here is the command you can use for FINISH:");
+        helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
+        helpHeader.setFill(Color.web("#00143E")); //#00143E
+        hb.getChildren().addAll(helpHeader, imv1);
+        
+        Image image2 = new Image("helpfinish.jpg");
+        ImageView imv2 = new ImageView(image2);
+        imv2.setFitWidth(700);
+        imv2.setPreserveRatio(true);
+        imv2.setSmooth(true);
+        imv2.setCache(true);
+        
+        Button bt = new Button(" OK! ");
+       
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(15, 30, 10, 30));
+        vb.setSpacing(10);
+        vb.getChildren().addAll(hb, imv2, bt);
+        vb.setAlignment(TOP_CENTER);
+        vb.setStyle("-fx-background-color: #eff4ff;");
+        Scene sc = new Scene(vb);
+        
+        stage.setTitle("Help!");
+        stage.setScene(sc);
+        
+        bt.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            stage.close();      
+            }
+        });
+        
+        return stage;
+    	
+    }
+    
+    public Stage createHelpPathWindow() {
+    	Stage stage = new Stage();
+    	HBox hb = new HBox();
+    	hb.setSpacing(15);
+    	hb.setAlignment(CENTER);
+        Image image1 = new Image("question_mark.png");
+        ImageView imv1 = new ImageView(image1);
+        imv1.setFitWidth(30);
+        imv1.setPreserveRatio(true);
+        imv1.setSmooth(true);
+        imv1.setCache(true);
+        Text helpHeader = new Text("Hello! Here the command you can use for PATH:");
+        helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
+        helpHeader.setFill(Color.web("#00143E")); //#00143E
+        hb.getChildren().addAll(helpHeader, imv1);
+        
+        Image image2 = new Image("helppath.jpg");
+        ImageView imv2 = new ImageView(image2);
+        imv2.setFitWidth(700);
+        imv2.setPreserveRatio(true);
+        imv2.setSmooth(true);
+        imv2.setCache(true);
+        
+        Button bt = new Button(" OK! ");
+       
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(15, 30, 10, 30));
+        vb.setSpacing(10);
+        vb.getChildren().addAll(hb, imv2, bt);
+        vb.setAlignment(TOP_CENTER);
+        vb.setStyle("-fx-background-color: #eff4ff;");
+        Scene sc = new Scene(vb);
+        
+        stage.setTitle("Help!");
+        stage.setScene(sc);
+        
+        bt.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            stage.close();      
+            }
+        });
+        
+        return stage;
+    	
+    }
+    
+    public Stage createHelpRestoreWindow() {
+    	Stage stage = new Stage();
+    	HBox hb = new HBox();
+    	hb.setSpacing(15);
+    	hb.setAlignment(CENTER);
+        Image image1 = new Image("question_mark.png");
+        ImageView imv1 = new ImageView(image1);
+        imv1.setFitWidth(30);
+        imv1.setPreserveRatio(true);
+        imv1.setSmooth(true);
+        imv1.setCache(true);
+        Text helpHeader = new Text("Hello! Here is the command you can use for RESTORE:");
+        helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
+        helpHeader.setFill(Color.web("#00143E")); //#00143E
+        hb.getChildren().addAll(helpHeader, imv1);
+        
+        Image image2 = new Image("helprestore.jpg");
+        ImageView imv2 = new ImageView(image2);
+        imv2.setFitWidth(700);
+        imv2.setPreserveRatio(true);
+        imv2.setSmooth(true);
+        imv2.setCache(true);
+        
+        Button bt = new Button(" OK! ");
+       
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(15, 30, 10, 30));
+        vb.setSpacing(10);
+        vb.getChildren().addAll(hb, imv2, bt);
+        vb.setAlignment(TOP_CENTER);
+        vb.setStyle("-fx-background-color: #eff4ff;");
+        Scene sc = new Scene(vb);
+        
+        stage.setTitle("Help!");
+        stage.setScene(sc);
+        
+        bt.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            stage.close();      
+            }
+        });
+        
+        return stage;
+    	
+    }
+    
+    public Stage createHelpGetWindow() {
+    	Stage stage = new Stage();
+    	HBox hb = new HBox();
+    	hb.setSpacing(15);
+    	hb.setAlignment(CENTER);
+        Image image1 = new Image("question_mark.png");
+        ImageView imv1 = new ImageView(image1);
+        imv1.setFitWidth(30);
+        imv1.setPreserveRatio(true);
+        imv1.setSmooth(true);
+        imv1.setCache(true);
+        Text helpHeader = new Text("Hello! Here is the command you can use for GET:");
+        helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
+        helpHeader.setFill(Color.web("#00143E")); //#00143E
+        hb.getChildren().addAll(helpHeader, imv1);
+        
+        Image image2 = new Image("helpget.jpg");
+        ImageView imv2 = new ImageView(image2);
+        imv2.setFitWidth(700);
+        imv2.setPreserveRatio(true);
+        imv2.setSmooth(true);
+        imv2.setCache(true);
+        
+        Button bt = new Button(" OK! ");
+       
+        VBox vb = new VBox();
+        vb.setPadding(new Insets(15, 30, 10, 30));
+        vb.setSpacing(10);
+        vb.getChildren().addAll(hb, imv2, bt);
+        vb.setAlignment(TOP_CENTER);
+        vb.setStyle("-fx-background-color: #eff4ff;");
+        Scene sc = new Scene(vb);
+        
+        stage.setTitle("Help!");
+        stage.setScene(sc);
+        
+        bt.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            stage.close();      
+            }
+        });
+        
+        return stage;
+    	
+    }
     
     protected HBox addHBox() {
         
@@ -403,6 +931,75 @@ public class UI extends Application {
         ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
         
         Text title = new Text("Ongoing Tasks");
+        title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
+        title.setFill(Color.WHITE);
+        title.setEffect(ds);
+        title.setCache(true);
+        title.setX(10.0f);
+        title.setY(270.0f);	
+        
+        hbox.getChildren().add(title);
+        hbox.setAlignment(CENTER);
+        
+        return hbox;
+    }
+    
+    protected HBox addCompleteHeader() {
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(20, 25, 20, 25));
+        hbox.setStyle("-fx-background-color: #001B4D;");
+        
+        DropShadow ds = new DropShadow();
+        ds.setOffsetY(3.0f);
+        ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
+        
+        Text title = new Text("Finished Tasks");
+        title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
+        title.setFill(Color.WHITE);
+        title.setEffect(ds);
+        title.setCache(true);
+        title.setX(10.0f);
+        title.setY(270.0f);	
+        
+        hbox.getChildren().add(title);
+        hbox.setAlignment(CENTER);
+        
+        return hbox;
+    }
+    
+    protected HBox addDeleteHeader() {
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(20, 25, 20, 25));
+        hbox.setStyle("-fx-background-color: #001B4D;");
+        
+        DropShadow ds = new DropShadow();
+        ds.setOffsetY(3.0f);
+        ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
+        
+        Text title = new Text("Deleted Tasks");
+        title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
+        title.setFill(Color.WHITE);
+        title.setEffect(ds);
+        title.setCache(true);
+        title.setX(10.0f);
+        title.setY(270.0f);	
+        
+        hbox.getChildren().add(title);
+        hbox.setAlignment(CENTER);
+        
+        return hbox;
+    }
+    
+    protected HBox addFindHeader() {
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(20, 25, 20, 25));
+        hbox.setStyle("-fx-background-color: #001B4D;");
+        
+        DropShadow ds = new DropShadow();
+        ds.setOffsetY(3.0f);
+        ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
+        
+        Text title = new Text("Ongoing Tasks Found");
         title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
         title.setFill(Color.WHITE);
         title.setEffect(ds);

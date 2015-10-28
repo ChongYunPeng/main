@@ -17,7 +17,7 @@ import doordonote.common.Task;
 
 
 
-public class Reader {
+public class TaskReader {
 
 	private static final String DEFAULT_NAME = "data.json";
 	private static final int HASHSET_SIZE = 4099;
@@ -29,7 +29,7 @@ public class Reader {
 
 	private static String currentFile;
 
-	public Reader(){
+	public TaskReader(){
 		currentFile = DEFAULT_NAME;
 		try{
 			set = jsonToSet();
@@ -39,7 +39,7 @@ public class Reader {
 			}
 	}
 	
-	public Reader(String name){
+	public TaskReader(String name){
 		currentFile = name;
 		try{
 		set = jsonToSet();

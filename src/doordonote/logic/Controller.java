@@ -16,11 +16,16 @@ import doordonote.storage.StorageHandler;
 public class Controller implements UIToController, CommandToController {
 	
 	private static final String MESSAGE_HOME = "Back to homescreen";
+	private static final String STATE_UPDATE = "Update";
+	private static final String STATE_HELP = "Help";
+	private static final String STATE_FIND = "Find";
+	private static final String STATE_HOME = "Home";
 	
 	protected CommandFactory cmdFactory = null;
 	protected Storage storage = null;
 	protected List<Task> fullTaskList = null;
 	protected List<Task> userTaskList = null;
+	protected String UIState = null;
 	
 	public Controller() {
 		cmdFactory = new CommandFactory();
@@ -44,6 +49,7 @@ public class Controller implements UIToController, CommandToController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		UIState = STATE_UPDATE;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -58,6 +64,7 @@ public class Controller implements UIToController, CommandToController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		UIState = STATE_UPDATE;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -87,8 +94,10 @@ public class Controller implements UIToController, CommandToController {
 		}
 		
 		if (!userTaskList.isEmpty()) {
-			return "Tasks found!";
+			UIState = STATE_FIND;
+			return "Tasks found";
 		} else {
+			UIState = STATE_UPDATE;
 			return "No task found!";
 		}
 	}
@@ -104,7 +113,14 @@ public class Controller implements UIToController, CommandToController {
 			e.printStackTrace();
 		}
 		userTaskList = fullTaskList;
+		UIState = STATE_UPDATE;
+
 		return outputMsg;
+	}
+	
+	@Override
+	public String getState() {
+		return UIState;
 	}
 
 	@Override
@@ -115,12 +131,14 @@ public class Controller implements UIToController, CommandToController {
 	@Override
 	public String help() {
 		// TODO Auto-generated method stub
+		UIState = STATE_HELP;
 		return null;
 	}
 
 	@Override
 	public String help(String commandType) {
 		// TODO Auto-generated method stub
+		UIState = STATE_HELP + commandType;
 		return null;
 	}
 
@@ -148,6 +166,7 @@ public class Controller implements UIToController, CommandToController {
 			e.printStackTrace();
 		}
 		userTaskList = fullTaskList;
+		UIState = STATE_UPDATE;
 		return outputMsg;
 	}
 
@@ -160,6 +179,7 @@ public class Controller implements UIToController, CommandToController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		UIState = STATE_UPDATE;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -174,6 +194,7 @@ public class Controller implements UIToController, CommandToController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		UIState = STATE_UPDATE;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -186,6 +207,7 @@ public class Controller implements UIToController, CommandToController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		UIState = STATE_HOME;
 		userTaskList = fullTaskList;
 		return MESSAGE_HOME;
 	}
