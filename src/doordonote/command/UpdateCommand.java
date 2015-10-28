@@ -34,7 +34,7 @@ public class UpdateCommand implements Command {
 	}
 
 	@Override
-	public String execute(CommandToController controller) {
+	public String execute(CommandToController controller) throws Exception {
 		return controller.update(taskID, taskDescription, startDate, endDate);
 	}
 	

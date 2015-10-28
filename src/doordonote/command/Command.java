@@ -13,6 +13,7 @@ public interface Command {
 	 * 			methods in the controller will be called
 	 * @return 	feedback that gives information about the outcome of the execution of the command
 	 * @throws IOException 
+	 * @throws Exception 
 	 */
-	String execute(CommandToController controller) throws IOException;
+	String execute(CommandToController controller) throws IOException, Exception;
 }

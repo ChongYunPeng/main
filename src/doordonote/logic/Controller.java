@@ -43,37 +43,30 @@ public class Controller implements UIToController, CommandToController {
 	
 
 	@Override
-	public String add(String taskDescription, Date startDate, Date endDate) {
+	public String add(String taskDescription, Date startDate, Date endDate) throws IOException {
 		String outputMsg = storage.add(taskDescription, startDate, endDate);
-		try {
-			fullTaskList = getStorageTaskList();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fullTaskList = getStorageTaskList();
 		UIState = STATE_UPDATE;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
 
 	@Override
-	public String delete(int taskID) {
-		Task taskToDelete = getTask(taskID);
+	public String delete(int taskId) throws Exception {
+		Task taskToDelete = getTask(taskId);
 		String outputMsg = storage.delete(taskToDelete);
-		try {
-			fullTaskList = getStorageTaskList();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fullTaskList = getStorageTaskList();
 		UIState = STATE_UPDATE;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
 	
-	// TODO add exception handling for when taskID > List size
-	protected Task getTask(int taskID) {
-		return userTaskList.get(taskID - 1);
+	// TODO add exception handling for when taskId > List size
+	protected Task getTask(int taskId) throws Exception {
+		if (taskId > userTaskList.size()) {
+			throw new Exception("Invalid taskID!");
+		}
+		return userTaskList.get(taskId - 1);
 	}
 	
 	protected List<Task> getStorageTaskList() throws IOException {
@@ -105,15 +98,11 @@ public class Controller implements UIToController, CommandToController {
 	}
 
 	@Override
-	public String finish(int taskID) throws IOException {
-		Task taskToFinish = getTask(taskID);
+	public String finish(int taskId) throws Exception {
+		Task taskToFinish = getTask(taskId);
 		String outputMsg = storage.finish(taskToFinish);
-		try {
-			fullTaskList = getStorageTaskList();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fullTaskList = getStorageTaskList();
+
 		userTaskList = fullTaskList;
 		UIState = STATE_UPDATE;
 
@@ -147,26 +136,15 @@ public class Controller implements UIToController, CommandToController {
 	@Override
 	public String parseAndExecuteCommand(String userInput) throws Exception {
 		Command cmd;
-		/*try {
-			cmd = cmdFactory.parse(userInput);
-			return cmd.execute(this);
-		} catch (Exception e) {
-			return e.getMessage();
-		}
-		*/
 		cmd = cmdFactory.parse(userInput);
 		return cmd.execute(this);
 	}
 
 	@Override
-	public String redo() {
+	public String redo() throws IOException {
 		String outputMsg = storage.redo();
-		try {
-			fullTaskList = getStorageTaskList();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fullTaskList = getStorageTaskList();
+
 		userTaskList = fullTaskList;
 		UIState = STATE_UPDATE;
 		return outputMsg;
@@ -187,8 +165,8 @@ public class Controller implements UIToController, CommandToController {
 	}
 
 	@Override
-	public String update(int taskID, String taskDescription, Date startDate, Date endDate) {
-		Task taskToUpdate = getTask(taskID);
+	public String update(int taskId, String taskDescription, Date startDate, Date endDate) throws Exception {
+		Task taskToUpdate = getTask(taskId);
 		String outputMsg = storage.update(taskToUpdate, taskDescription, startDate, endDate);
 		try {
 			fullTaskList = getStorageTaskList();
@@ -202,7 +180,7 @@ public class Controller implements UIToController, CommandToController {
 	}
 	
 	@Override
-	public String home(){
+	public String home() {
 		try {
 			fullTaskList = getStorageTaskList();
 		} catch (IOException e) {
@@ -216,15 +194,11 @@ public class Controller implements UIToController, CommandToController {
 
 
 	@Override
-	public String restore(int taskID) throws IOException {
-		Task taskToRestore = getTask(taskID);
+	public String restore(int taskId) throws Exception {
+		Task taskToRestore = getTask(taskId);
 		String outputMsg = storage.restore(taskToRestore);
-		try {
-			fullTaskList = getStorageTaskList();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fullTaskList = getStorageTaskList();
+
 		UIState = STATE_UPDATE;
 		userTaskList = fullTaskList;
 		return outputMsg;
@@ -234,6 +208,7 @@ public class Controller implements UIToController, CommandToController {
 	@Override
 	public String displayFinished() throws IOException {
 		fullTaskList = storage.readDoneTasks();
+		userTaskList = fullTaskList;
 		UIState = STATE_DISPLAY_FINISH;
 		return "Displaying finished tasks";
 	}
@@ -242,6 +217,7 @@ public class Controller implements UIToController, CommandToController {
 	@Override
 	public String displayDeleted() throws IOException {
 		fullTaskList = storage.readDeletedTasks();
+		userTaskList = fullTaskList;
 		UIState = STATE_DISPLAY_DELETE;
 		return "Displaying deleted tasks";
 	}

@@ -30,7 +30,7 @@ public abstract class AbstractAddCommandHandler extends AbstractCommandHandler {
 				Date startDate = dateParser.parse(startDateString);
 				Date endDate = dateParser.parse(endDateString);
 				
-				if (startDate == null || endDate == null || startDate.compareTo(endDate) >= 0) {
+				if (startDate == null || endDate == null) {
 					taskDescription = commandBody;
 				} else {
 					taskDescription = getTaskDescription(getEventStartDateIndex());

@@ -72,7 +72,7 @@ public class UI extends Application {
   
         primaryStage.setScene(scene);
         primaryStage.setTitle("DoOrDoNote");
-        primaryStage.getIcons().add(new Image("icon.jpg"));
+//        primaryStage.getIcons().add(new Image("icon.jpg"));
         primaryStage.show();
         
     }

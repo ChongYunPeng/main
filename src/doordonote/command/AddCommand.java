@@ -1,5 +1,6 @@
 package doordonote.command;
 
+import java.io.IOException;
 import java.util.Date;
 
 import doordonote.common.Util;
@@ -32,7 +33,7 @@ public class AddCommand implements Command {
 	}
 	
 	@Override
-	public String execute(CommandToController controller) {
+	public String execute(CommandToController controller) throws IOException {
 		assert(controller != null);
 		return controller.add(taskDescription, startDate, endDate);
 	}

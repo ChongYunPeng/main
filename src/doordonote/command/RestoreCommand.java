@@ -1,7 +1,5 @@
 package doordonote.command;
 
-import java.io.IOException;
-
 import doordonote.logic.CommandToController;
 
 /**
@@ -22,7 +20,7 @@ public class RestoreCommand implements Command {
 	}
 
 	@Override
-	public String execute(CommandToController controller) throws IOException {
+	public String execute(CommandToController controller) throws Exception {
 		return controller.restore(indexToRestore);
 	}
 

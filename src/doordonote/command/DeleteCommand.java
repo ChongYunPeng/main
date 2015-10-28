@@ -20,7 +20,7 @@ public class DeleteCommand implements Command {
 	}
 
 	@Override
-	public String execute(CommandToController controller) {
+	public String execute(CommandToController controller) throws Exception {
 		return controller.delete(taskID);
 	}
 
