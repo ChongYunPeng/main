@@ -105,7 +105,7 @@ public class Controller implements UIToController, CommandToController {
 	}
 
 	@Override
-	public String finish(int taskID) {
+	public String finish(int taskID) throws IOException {
 		Task taskToFinish = getTask(taskID);
 		String outputMsg = storage.finish(taskToFinish);
 		try {
@@ -216,7 +216,7 @@ public class Controller implements UIToController, CommandToController {
 
 
 	@Override
-	public String restore(int taskID) {
+	public String restore(int taskID) throws IOException {
 		Task taskToRestore = getTask(taskID);
 		String outputMsg = storage.restore(taskToRestore);
 		try {
@@ -232,18 +232,18 @@ public class Controller implements UIToController, CommandToController {
 
 
 	@Override
-	public String displayFinished() {
-		fullTaskList = storage.readFinishedTasks();
-		return "Displaying finished tasks";
+	public String displayFinished() throws IOException {
+		fullTaskList = storage.readDoneTasks();
 		UIState = STATE_DISPLAY_FINISH;
+		return "Displaying finished tasks";
 	}
 
 
 	@Override
 	public String displayDeleted() throws IOException {
 		fullTaskList = storage.readDeletedTasks();
-		return "Displaying deleted tasks";
 		UIState = STATE_DISPLAY_DELETE;
+		return "Displaying deleted tasks";
 	}
 	
 //	public static void main(String[] args) {

@@ -1,5 +1,6 @@
 package doordonote.logic;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public interface CommandToController {
 
 	String find(List<String> keywords);
 	
-	String finish(int taskID);
+	String finish(int taskID) throws IOException;
 	
 	String help();
 	
@@ -24,9 +25,9 @@ public interface CommandToController {
 	
 	String home();
 
-	String restore(int taskID);
+	String restore(int taskID) throws IOException;
 
-	String displayFinished();
+	String displayFinished() throws IOException;
 
-	String displayDeleted();
+	String displayDeleted() throws IOException;
 }
