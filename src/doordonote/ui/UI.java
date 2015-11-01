@@ -41,8 +41,8 @@ import javafx.scene.text.TextAlignment;
  */
 public class UI extends Application {
 	
-	private static final String MESSAGE_HOME = "Back to homescreen";
 	private static final String STATE_UPDATE = "Update";
+	private static final String STATE_DISPLAY = "Display";
 	private static final String STATE_HELP = "Help";
 	private static final String STATE_HELP_ADD = "Helpadd";
 	private static final String STATE_HELP_DELETE = "Helpdelete";
@@ -72,7 +72,7 @@ public class UI extends Application {
   
         primaryStage.setScene(scene);
         primaryStage.setTitle("DoOrDoNote");
-//        primaryStage.getIcons().add(new Image("icon.jpg"));
+        primaryStage.getIcons().add(new Image("icon.jpg"));
         primaryStage.show();
         
     }
@@ -285,11 +285,12 @@ public class UI extends Application {
 		                    output.setText(feedback);
 		                    break;         		
                     	}
-                    	case STATE_UPDATE: {
+                    	case STATE_DISPLAY: {
                     		output.setText(feedback);   
 		                	output.setFill(Color.web("#00811C"));
 				            border.setCenter(addHBox());
 		                    commandBox.clear();
+		                    break;
                     	}
                     	case STATE_HOME: {
                     		output.setText(feedback);   
@@ -297,6 +298,12 @@ public class UI extends Application {
 				            border.setCenter(addHBox());
                     		border.setTop(addHeader());
                     		commandBox.clear();
+                    		break;
+                    	}
+                    	case STATE_UPDATE: {
+                    	    commandBox.setText(controller.getTaskToBeUpdated());
+                    	    output.setText(null);
+                    	    break;
                     	}
                     	}
                     }

@@ -18,6 +18,7 @@ public class Controller implements UIToController, CommandToController {
 	
 	private static final String MESSAGE_HOME = "Back to homescreen";
 	private static final String STATE_UPDATE = "Update";
+	private static final String STATE_DISPLAY = "Display";
 	private static final String STATE_HELP = "Help";
 	private static final String STATE_FIND = "Find";
 	private static final String STATE_HOME = "Home";
@@ -48,7 +49,7 @@ public class Controller implements UIToController, CommandToController {
 	public String add(String taskDescription, Date startDate, Date endDate) throws IOException {
 		String outputMsg = storage.add(taskDescription, startDate, endDate);
 		fullTaskList = getStorageTaskList();
-		UIState = STATE_UPDATE;
+		UIState = STATE_DISPLAY;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -58,7 +59,7 @@ public class Controller implements UIToController, CommandToController {
 		Task taskToDelete = getTask(taskId);
 		String outputMsg = storage.delete(taskToDelete);
 		fullTaskList = getStorageTaskList();
-		UIState = STATE_UPDATE;
+		UIState = STATE_DISPLAY;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -94,7 +95,7 @@ public class Controller implements UIToController, CommandToController {
 			UIState = STATE_FIND;
 			return "Tasks found";
 		} else {
-			UIState = STATE_UPDATE;
+			UIState = STATE_DISPLAY;
 			return "No task found!";
 		}
 	}
@@ -106,7 +107,7 @@ public class Controller implements UIToController, CommandToController {
 		fullTaskList = getStorageTaskList();
 
 		userTaskList = fullTaskList;
-		UIState = STATE_UPDATE;
+		UIState = STATE_DISPLAY;
 
 		return outputMsg;
 	}
@@ -148,7 +149,7 @@ public class Controller implements UIToController, CommandToController {
 		fullTaskList = getStorageTaskList();
 
 		userTaskList = fullTaskList;
-		UIState = STATE_UPDATE;
+		UIState = STATE_DISPLAY;
 		return outputMsg;
 	}
 
@@ -157,7 +158,7 @@ public class Controller implements UIToController, CommandToController {
 		String outputMsg = storage.undo();
 		fullTaskList = getStorageTaskList();
 
-		UIState = STATE_UPDATE;
+		UIState = STATE_DISPLAY;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -189,7 +190,7 @@ public class Controller implements UIToController, CommandToController {
 		String outputMsg = storage.restore(taskToRestore);
 		fullTaskList = getStorageTaskList();
 
-		UIState = STATE_UPDATE;
+		UIState = STATE_DISPLAY;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
