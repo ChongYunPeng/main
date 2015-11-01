@@ -1,8 +1,7 @@
 package doordonote.commandfactory;
 
+import java.util.Arrays;
 import java.util.List;
-
-import com.joestelmach.natty.repackaged.edu.emory.mathcs.backport.java.util.Arrays;
 
 import doordonote.command.Command;
 import doordonote.command.FindCommand;
@@ -24,7 +23,7 @@ public class FindHandler extends CommandHandler {
 			return new HomeCommand();
 		} else {
 			String[] keywordsArray= commandBody.split("\\s+");
-			@SuppressWarnings("unchecked")
+//			@SuppressWarnings("unchecked")
 			List<String> keywords = Arrays.asList(keywordsArray);
 			return new FindCommand(keywords);
 		}

@@ -18,16 +18,14 @@ public class DateParserTest {
 	@Test
 	public void parseAndGetDateListTest() {
 		DateTime dt1 = new DateTime(2013, 1, 15, 8, 0, 0, 0);
-		DateTime dt2 = new DateTime(2015, 3, 30, 7, 45, 0, 0);
+		DateTime dt2 = new DateTime(2015, 3, 30, 8, 0, 0, 0);
 	    Date jdkDate1 = dt1.toDate();
 	    Date jdkDate2 = dt2.toDate();
 	    List<Date> createdDateList = new ArrayList<Date>();
 	    createdDateList.add(jdkDate1);
 	    createdDateList.add(jdkDate2);
-	    List<Date> parsedDateList = parser.parseAndGetDateList("from 15 jan 2013 to 30 march  7.45");
+	    List<Date> parsedDateList = parser.parseAndGetDateList("from 15 jan 2013 to 30 march  8");
         
-	    // Comparing with dt1 checks that parser knows the default time is 8am
-	    // Comparing with dt2 checks that the parser knows that this year is 2015
 	    assertEquals("Parser should get list of 2 dates", createdDateList, parsedDateList);
 	    
 	    createdDateList.remove(1);
