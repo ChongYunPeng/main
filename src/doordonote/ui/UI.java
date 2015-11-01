@@ -302,7 +302,9 @@ public class UI extends Application {
                     	}
                     	case STATE_UPDATE: {
                     	    commandBox.setText(controller.getTaskToBeUpdated());
+                    	    commandBox.positionCaret(controller.getTaskToBeUpdated().length() + 1);
                     	    output.setText(feedback);
+                    	    output.setFill(Color.web("#00811C"));
                     	    border.setCenter(addHBox());
                     		border.setTop(addHeader());
                     	    break;
