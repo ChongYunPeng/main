@@ -1,6 +1,7 @@
 package doordonote.commandfactory;
 
 import java.util.Date;
+import java.util.List;
 
 import doordonote.common.Util;
 
@@ -25,17 +26,17 @@ public abstract class AbstractAddCommandHandler extends CommandHandler {
 	private void initialiseParameters(String commandBody) {
 		if (isProbablyEvent()) {
 			try {
-				String startDateString = commandBody.substring(getEventStartDateIndex(), getEventEndDateIndex());
-				String endDateString = commandBody.substring(getEventEndDateIndex());
-				Date startDate = dateParser.parse(startDateString);
-				Date endDate = dateParser.parse(endDateString);
+				String dateString = commandBody.substring(getEventStartDateIndex());
+				List<Date> dateList = dateParser.parseAndGetDateList(dateString);
+//				Date startDate = dateParser.parse(startDateString);
+//				Date endDate = dateParser.parse(endDateString);
 				
-				if (startDate == null || endDate == null) {
+				if (dateList == null || dateList.size() < 2) {
 					taskDescription = commandBody;
 				} else {
 					taskDescription = getTaskDescription(getEventStartDateIndex());
-					this.startDate = startDate;
-					this.endDate = endDate;
+					this.startDate = dateList.get(0);
+					this.endDate = dateList.get(1);
 				}
 			} catch (Exception e) {
 				taskDescription = commandBody;
@@ -78,10 +79,7 @@ public abstract class AbstractAddCommandHandler extends CommandHandler {
 	private int getEventStartDateIndex() {
 		return commandBody.toLowerCase().lastIndexOf(" from ");
 	}
-	
-	private int getEventEndDateIndex() {
-		return commandBody.toLowerCase().lastIndexOf(" to ");
-	}
+
 	
 	private int getDeadlineDateIndex() {
 		return commandBody.toLowerCase().lastIndexOf(" by ");
