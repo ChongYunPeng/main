@@ -8,6 +8,7 @@ import java.util.List;
 import doordonote.command.Command;
 import doordonote.commandfactory.CommandFactory;
 import doordonote.common.Task;
+import doordonote.common.Util;
 import doordonote.storage.Storage;
 import doordonote.storage.StorageHandler;
 
@@ -28,6 +29,7 @@ public class Controller implements UIToController, CommandToController {
 	protected List<Task> fullTaskList = null;
 	protected List<Task> userTaskList = null;
 	protected String UIState = null;
+	protected String taskToBeUpdatedString = null;
 	
 	public Controller() {
 		cmdFactory = new CommandFactory();
@@ -209,6 +211,42 @@ public class Controller implements UIToController, CommandToController {
 		UIState = STATE_DISPLAY_DELETE;
 		return "Displaying deleted tasks";
 	}
+
+
+	@Override
+	public String getTaskID(int taskId) throws Exception {
+		Task taskToBeUpdated = getTask(taskId);
+		setTaskToBeUpdated(taskToBeUpdated);
+		return "Task " + taskId + " found!";
+	}
+
+
+	protected void setTaskToBeUpdated(Task taskToBeUpdated) {
+		String taskDescription = taskToBeUpdated.getDescription();
+		Date startDate = taskToBeUpdated.getStartDate();
+		Date endDate = taskToBeUpdated.getEndDate();
+		String startDateString = Util.getDateString(startDate);
+		String endDateString = Util.getDateString(endDate);
+
+		String taskString = null;
+		if (endDate == null) {
+			taskString = taskDescription;
+		} else if (startDate == null) {
+			taskString = taskDescription + " by " + endDateString;
+		} else {
+			taskString = taskDescription + " from " + startDateString + " to " + endDateString;
+		}
+		taskToBeUpdatedString = taskString;
+	}
+
+
+	@Override
+	public String getTaskToBeUpdated() {
+
+		return taskToBeUpdatedString;
+	}
+	
+	
 	
 //	public static void main(String[] args) {
 //		Controller control = new Controller();

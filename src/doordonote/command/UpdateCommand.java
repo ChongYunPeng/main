@@ -22,8 +22,7 @@ public class UpdateCommand implements Command {
 	 * @param 	endDate
 	 */
 	public UpdateCommand(int taskID, String taskDescription, Date startDate, Date endDate) {
-		// UpdateHandler should have checked that taskID > 0
-		assert(taskID > 0); 				
+		this(taskID);
 		// UpdateHandler should have checked that taskDescription is not null and not empty
 		assert(taskDescription != null && !taskDescription.isEmpty()); 	
 		
@@ -32,9 +31,19 @@ public class UpdateCommand implements Command {
 		this.endDate = endDate;
 		this.taskID = taskID;
 	}
+	
+	public UpdateCommand(int taskID) {
+		// UpdateHandler should have checked that taskID > 0
+		assert(taskID > 0); 
+		this.taskID = taskID;
+		this.taskDescription = null;
+	}
 
 	@Override
 	public String execute(CommandToController controller) throws Exception {
+		if (taskDescription == null) {
+			return controller.getTaskID(this.taskID);
+		}
 		return controller.update(taskID, taskDescription, startDate, endDate);
 	}
 	

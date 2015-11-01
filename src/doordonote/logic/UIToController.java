@@ -9,4 +9,5 @@ public interface UIToController {
 	List<Task> getTasks();
 	String parseAndExecuteCommand(String cmdString) throws Exception;
 	String getState();
+	String getTaskToBeUpdated();
 }

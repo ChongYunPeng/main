@@ -1,5 +1,9 @@
 package doordonote.common;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public final class Util {
 
 	private Util() {
@@ -23,4 +27,14 @@ public final class Util {
 	public static boolean isBlankString(String input) {
 		return input.trim().isEmpty();
 	}
+	
+	public static String getDateString(Date input) {
+		if (input == null) {
+			return null;
+		} else {
+			DateFormat dateFormatter = new SimpleDateFormat();
+			return dateFormatter.format(input);
+		}
+	}
+	
 }

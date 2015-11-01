@@ -30,4 +30,6 @@ public interface CommandToController {
 	String displayFinished() throws IOException;
 
 	String displayDeleted() throws IOException;
+
+	String getTaskID(int taskID) throws Exception;
 }
