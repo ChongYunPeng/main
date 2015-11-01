@@ -22,7 +22,7 @@ public class UpdateHandler extends AbstractAddCommandHandler {
 		String taskDescription = getTaskDescription();
 		Date startDate = getStartDate();
 		Date endDate = getEndDate();
-		if (endDate == null) {
+		if (Util.isBlankString(taskDescription)) {
 			return new UpdateCommand(indexToUpdate);
 		}
 		return new UpdateCommand(indexToUpdate, taskDescription, startDate, endDate);

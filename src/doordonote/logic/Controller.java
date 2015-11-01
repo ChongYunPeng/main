@@ -170,6 +170,7 @@ public class Controller implements UIToController, CommandToController {
 		fullTaskList = getStorageTaskList();
 
 		UIState = STATE_UPDATE;
+		taskToBeUpdatedString = "";
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -217,12 +218,13 @@ public class Controller implements UIToController, CommandToController {
 	@Override
 	public String getTaskID(int taskId) throws Exception {
 		Task taskToBeUpdated = getTask(taskId);
-		setTaskToBeUpdated(taskToBeUpdated);
+		setTaskToBeUpdated(taskToBeUpdated, taskId);
+		UIState = STATE_UPDATE;
 		return "Task " + taskId + " found!";
 	}
 
 
-	protected void setTaskToBeUpdated(Task taskToBeUpdated) {
+	protected void setTaskToBeUpdated(Task taskToBeUpdated, int taskId) {
 		String taskDescription = taskToBeUpdated.getDescription();
 		Date startDate = taskToBeUpdated.getStartDate();
 		Date endDate = taskToBeUpdated.getEndDate();
@@ -237,7 +239,7 @@ public class Controller implements UIToController, CommandToController {
 		} else {
 			taskString = taskDescription + " from " + startDateString + " to " + endDateString;
 		}
-		taskToBeUpdatedString = taskString;
+		taskToBeUpdatedString = "update " + taskId + " " + taskString;
 	}
 
 
