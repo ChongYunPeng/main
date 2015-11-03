@@ -50,15 +50,15 @@ public class UI extends Application {
 	
 	private static final String STATE_UPDATE = "Update";
 	private static final String STATE_DISPLAY = "Display";
-	private static final String STATE_HELP = "Help";
-	private static final String STATE_HELP_ADD = "Helpadd";
-	private static final String STATE_HELP_DELETE = "Helpdelete";
-	private static final String STATE_HELP_UPDATE = "Helpupdate";
-	private static final String STATE_HELP_FIND = "Helpfind";
-	private static final String STATE_HELP_FINISH = "Helpfinish";
-	private static final String STATE_HELP_PATH = "Helppath";
-	private static final String STATE_HELP_RESTORE = "Helprestore";
-	private static final String STATE_HELP_GET = "Helpget";
+	private static final String HELP = "help";
+	private static final String HELP_ADD = "add";
+	private static final String HELP_DELETE = "delete";
+	private static final String HELP_UPDATE = "update";
+	private static final String HELP_FIND = "find";
+	private static final String HELP_FINISH = "finish";
+	private static final String HELP_PATH = "path";
+	private static final String HELP_RESTORE = "restore";
+	private static final String HELP_GET = "get";
 	private static final String STATE_FIND = "Find";
 	private static final String STATE_HOME = "Home";
 	private static final String STATE_DISPLAY_FINISH = "Display finish";
@@ -137,14 +137,72 @@ public class UI extends Application {
                 if(commandBox.getText() != null) {
                     try {
                     	feedback = controller.parseAndExecuteCommand(commandBox.getText());
-                    	border.setCenter(addHBox());
+                    	/*border.setCenter(addHBox());
                     	output.setText(feedback);   
 	                	output.setFill(Color.web("#00811C"));
 	                	commandBox.clear();
-                    	//UIState state = controller.getState();
+	                	*/
+                    	UIState state = controller.getState();
                     	
-                    	/*if(state.getHelpBox().equals("help")){
-                    		Stage helpStage = createHelpWindow();
+                    	if(state.getHelpBox() == null) {
+                    		output.setText(feedback);
+                    	    output.setFill(Color.web("#00811C"));
+                    	    border.setCenter(addHBox());
+                    	    if(state.getTitle() != null) {
+                    	        title.setText(state.getTitle());
+                    	    }
+                    		if(state.getInputBox() == null || state.getInputBox() == "") {
+                    			commandBox.clear();
+                    		}
+                    		else {
+                        		commandBox.setText(state.getInputBox());
+                        	    commandBox.positionCaret(state.getInputBox().length() + 1);
+                    		}
+                    	}
+                    	else {
+                    		output.setText(feedback);
+                    	    output.setFill(Color.web("#00811C"));
+                    	    
+                    	    Stage helpStage;
+                    	    switch(state.getHelpBox()) {
+                    	    case HELP_ADD: {
+                    	    	helpStage = createHelpAddWindow();
+                    	    	break;
+                    	    }
+                    	    case HELP_DELETE: {
+                    	    	helpStage = createHelpDeleteWindow();
+                    	    	break;
+                    	    }
+                    	    case HELP_FIND: {
+                    	    	helpStage = createHelpFindWindow();
+                    	    	break;
+                    	    }
+                    	    case HELP_FINISH: {
+                    	    	helpStage = createHelpFinishWindow();
+                    	    	break;
+                    	    }
+                    	    case HELP_GET: {
+                    	    	helpStage = createHelpGetWindow();
+                    	    	break;
+                    	    }
+                    	    case HELP_PATH: {
+                    	    	helpStage = createHelpPathWindow();
+                    	    	break;
+                    	    }
+                    	    case HELP_RESTORE: {
+                    	    	helpStage = createHelpRestoreWindow();
+                    	    	break;
+                    	    }
+                    	    case HELP_UPDATE: {
+                    	    	helpStage = createHelpUpdateWindow();
+                    	    	break;
+                    	    }
+                    	    default: {
+                    	    	helpStage = createHelpWindow();
+                    	    	break;
+                    	    }
+                    	    }
+                    		
   	                        helpStage.show();
   	                        helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
   	                          @Override
@@ -156,20 +214,7 @@ public class UI extends Application {
   	                        });
   	                        commandBox.clear();
                     	}
-                    	else {
-                    		output.setText(feedback);
-                    	    output.setFill(Color.web("#00811C"));
-                    	    border.setCenter(addHBox());
-                    		title.setText(state.getTitle());
-                    		if(state.getInputBox().equals(null)) {
-                    			commandBox.clear();
-                    		}
-                    		else {
-                        		commandBox.setText(state.getInputBox());
-                        	    commandBox.positionCaret(state.getInputBox().length() + 1);
-                    		}
-                    	}
-                    	*/
+
                     	
                     	/*switch(state) {
                     	case STATE_HELP: {
@@ -365,11 +410,17 @@ public class UI extends Application {
                 
              if (ke.getCode().equals(KeyCode.ESCAPE)) {
                 	try {
+                		UIState state = controller.getState();
                     	feedback = controller.parseAndExecuteCommand("home");
                     	output.setText(feedback);   
 	                	output.setFill(Color.web("#00811C"));
 			            border.setCenter(addHBox());
-                		border.setTop(addHeader());
+			            if(state.getTitle() != null) {
+                	        title.setText(state.getTitle());
+                	    }
+                		if(state.getInputBox() == null || state.getInputBox() != "") {
+                			commandBox.clear();
+                		}
                 		commandBox.clear();
                 	}
                 	catch (Exception e) {

@@ -92,7 +92,7 @@ public class Controller implements UIToLogic, CommandToController {
 			}
 			userTaskList = tempList;
 		}
-		
+		stateObj.setDefault();
 		stateObj.title = "Filter: ";
 		for (String word : keywords) {
 			stateObj.title += word;
@@ -128,12 +128,14 @@ public class Controller implements UIToLogic, CommandToController {
 
 	@Override
 	public String help() {
+		stateObj.setDefault();
 		stateObj.helpBox = "help";
 		return "Displaying help";
 	}
 
 	@Override
 	public String help(String commandType) {
+		stateObj.setDefault();
 		stateObj.helpBox = commandType;
 		return "Displaying " + commandType + " help";
 	}
@@ -170,7 +172,7 @@ public class Controller implements UIToLogic, CommandToController {
 		Task taskToUpdate = getTask(taskId);
 		String outputMsg = storage.update(taskToUpdate, taskDescription, startDate, endDate);
 		fullTaskList = getStorageTaskList();
-
+		stateObj.setDefault();
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -190,7 +192,7 @@ public class Controller implements UIToLogic, CommandToController {
 		Task taskToRestore = getTask(taskId);
 		String outputMsg = storage.restore(taskToRestore);
 		fullTaskList = getStorageTaskList();
-
+		stateObj.setDefault();
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -200,6 +202,7 @@ public class Controller implements UIToLogic, CommandToController {
 	public String displayFinished() throws IOException {
 		fullTaskList = storage.readDoneTasks();
 		userTaskList = fullTaskList;
+		stateObj.setDefault();
 		stateObj.title = "Finished Tasks";
 		return "Displaying finished tasks";
 	}
@@ -209,6 +212,7 @@ public class Controller implements UIToLogic, CommandToController {
 	public String displayDeleted() throws IOException {
 		fullTaskList = storage.readDeletedTasks();
 		userTaskList = fullTaskList;
+		stateObj.setDefault();
 		stateObj.title = "Deleted Tasks";
 		return "Displaying deleted tasks";
 	}
@@ -217,6 +221,7 @@ public class Controller implements UIToLogic, CommandToController {
 	@Override
 	public String getTaskID(int taskId) throws Exception {
 		Task taskToBeUpdated = getTask(taskId);
+		stateObj.setDefault();
 		stateObj.inputBox = getTaskToBeUpdated(taskToBeUpdated, taskId);
 		return "Task " + taskId + " found!";
 	}
