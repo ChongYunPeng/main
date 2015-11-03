@@ -8,6 +8,9 @@ import doordonote.logic.UIState;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.log4j.BasicConfigurator;
+
 import java.text.SimpleDateFormat;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -1310,6 +1313,7 @@ protected HBox displayTasks(HBox main) {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+    	BasicConfigurator.configure();
     	launch(args);
     }
     
