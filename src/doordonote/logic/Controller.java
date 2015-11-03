@@ -32,10 +32,15 @@ public class Controller implements UIToLogic, CommandToController {
 //	protected String UIState = null;
 	protected UIState stateObj = null;
 	
-	public Controller() throws IOException {
+	public Controller() {
 		cmdFactory = new CommandFactory();
 		storage = StorageHandler.getInstance();
-		fullTaskList = getStorageTaskList();
+		try {
+		    fullTaskList = getStorageTaskList();
+		}
+		catch(IOException E) {
+			
+		}
 
 		userTaskList = fullTaskList;
 		stateObj = new UIState();
@@ -57,6 +62,7 @@ public class Controller implements UIToLogic, CommandToController {
 		String outputMsg = storage.delete(taskToDelete);
 		fullTaskList = getStorageTaskList();
 		userTaskList = fullTaskList;
+		stateObj.setDefault();
 		return outputMsg;
 	}
 	
@@ -104,8 +110,9 @@ public class Controller implements UIToLogic, CommandToController {
 		Task taskToFinish = getTask(taskId);
 		String outputMsg = storage.finish(taskToFinish);
 		fullTaskList = getStorageTaskList();
-
+        
 		userTaskList = fullTaskList;
+		stateObj.setDefault();
 		return outputMsg;
 	}
 	

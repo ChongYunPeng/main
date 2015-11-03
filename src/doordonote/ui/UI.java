@@ -3,10 +3,12 @@ package doordonote.ui;
 import doordonote.common.Task;
 import doordonote.logic.Controller;
 import doordonote.logic.UIToLogic;
+import doordonote.logic.UIState; 
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.text.SimpleDateFormat;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -58,6 +60,8 @@ public class UI extends Application {
 	private static final String STATE_DISPLAY_DELETE = "Display delete";
     
     Text output = new Text("Feedback Message");
+    Text title = new Text("Ongoing Tasks");
+    
     UIToLogic controller = new Controller();
     
     BorderPane border = new BorderPane();
@@ -128,8 +132,17 @@ public class UI extends Application {
                 if(commandBox.getText() != null) {
                     try {
                     	feedback = controller.parseAndExecuteCommand(commandBox.getText());
-                    	String state = controller.getState();
-                    	switch(state) {
+                    	UIState state = controller.getState();
+                    	if(state.getHelpBox().equals(null)) {
+                    		commandBox.setText(state.getInputBox());
+                    	    commandBox.positionCaret(state.getInputBox().length() + 1);
+                    	    output.setText(feedback);
+                    	    output.setFill(Color.web("#00811C"));
+                    	    border.setCenter(addHBox());
+                    		title.setText(state.getTitle());
+                    	}
+                    	
+                    	/*switch(state) {
                     	case STATE_HELP: {
                     	   Stage helpStage = createHelpWindow();
  	                       helpStage.show();
@@ -309,7 +322,7 @@ public class UI extends Application {
                     		border.setTop(addHeader());
                     	    break;
                     	}
-                    	}
+                    	} */
                     }
                     catch (Exception e) {
                     	feedback = e.getMessage();
@@ -779,12 +792,14 @@ public class UI extends Application {
         return displayTasks(main);
     }
     
-    protected HBox displayTasks(HBox main) {
+protected HBox displayTasks(HBox main) {
         
+    	SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
         List<Task> taskList = controller.getTasks();
         boolean haveEventsOrDeadlines = true;
         boolean haveFloatingTasks = false;
         boolean haveSameDate = true;
+        boolean haveEventsSpanningDays = false;
         int count = 1;
         int i, j;
         
@@ -826,9 +841,13 @@ public class UI extends Application {
             }
         }); 
         
-        VBox v2 = new VBox();
-        v2.setPrefWidth(500);
-        v2.setStyle("-fx-background-color: #E1F5EF;");
+    	VBox v2_1 = new VBox();
+        v2_1.setPrefWidth(500);
+        v2_1.setStyle("-fx-background-color: #E1F5EF;");
+        
+        VBox v2_2 = new VBox();
+        v2_2.setPrefWidth(500);
+        v2_2.setStyle("-fx-background-color: #E1F5EF;");
         
         VBox vbox2 = new VBox();
         vbox2.setAlignment(TOP_CENTER);
@@ -864,6 +883,17 @@ public class UI extends Application {
         
         for(i = 0; i < taskList.size(); i++) {
             if(!(taskList.get(i).getType().equals("FLOATING_TASK"))) {
+            	if(taskList.get(i).getType().equals("EVENT_TASK")) {
+            		String startDate = formatter.format(taskList.get(i).getStartDate());
+            		String endDate = formatter.format(taskList.get(i).getEndDate());
+            		
+            		
+            		if(!(startDate.equals(endDate))) {
+            			haveEventsSpanningDays = true;
+            			break;
+            		}
+            	}
+            	
                 Calendar calEnd = DateToCalendar(taskList.get(i).getEndDate());
                 String day = getDay(calEnd); 
                 String month = getMonth(calEnd);
@@ -887,6 +917,16 @@ public class UI extends Application {
                 for(j = i+1; j < taskList.size(); j++) {
                    haveSameDate = true;
                    if(!(taskList.get(j).getType().equals("FLOATING_TASK"))) {
+                   	  if(taskList.get(j).getType().equals("EVENT_TASK")) {
+                		String startDate = formatter.format(taskList.get(j).getStartDate());
+                		String endDate = formatter.format(taskList.get(j).getEndDate());
+                		
+                		
+                		if(!(startDate.equals(endDate))) {
+                			haveEventsSpanningDays = true;
+                			continue;
+                		}
+                	  }
                       Calendar calEnd2 = DateToCalendar(taskList.get(j).getEndDate());
                       String month2 = getMonth(calEnd2);
                       int date2 = calEnd2.get(calEnd2.DAY_OF_MONTH);
@@ -929,6 +969,80 @@ public class UI extends Application {
         sp1.setContent(vbox1);
         v1.getChildren().addAll(sp1);
         
+        if(haveEventsSpanningDays == true) {
+            
+            VBox vbox3 = new VBox();
+            vbox3.setAlignment(TOP_CENTER);
+            vbox3.setPadding(new Insets(18, 18, 18, 18));
+            vbox3.setSpacing(15);
+            vbox3.setPrefWidth(500);
+            vbox3.setStyle("-fx-background-color: #E1F5EF;");
+            
+            ScrollPane sp3 = new ScrollPane();
+            VBox.setVgrow(sp3, Priority.ALWAYS);
+            //sp2.setVmax(440);
+            sp3.setFitToHeight(true);
+            sp3.setFitToWidth(true);
+            sp3.setPrefSize(115, 150);
+            sp3.setHbarPolicy(ScrollBarPolicy.NEVER);
+            sp3.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+            
+            scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent evt) {
+                    if (evt.getCode().equals(KeyCode.UP)) {
+                    	if (sp3.getVvalue() > sp3.getVmin()) {
+                            sp3.setVvalue(sp3.getVvalue() - scrollPaneIncrement);
+                        }
+                    }
+                    if (evt.getCode().equals(KeyCode.DOWN)) {
+                    	if (sp3.getVvalue() < sp3.getVmax()) {
+                            sp3.setVvalue(sp3.getVvalue() + scrollPaneIncrement);
+                        }
+                    }
+                }
+            });
+            
+            Text eventsHeader = new Text("Events Spanning Days");
+            eventsHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
+            eventsHeader.setTextAlignment(TextAlignment.CENTER);
+            eventsHeader.setFill(Color.web("#0C1847"));
+            vbox3.getChildren().add(eventsHeader);
+            
+            for(i=0; i<taskList.size(); i++) {
+            	if(taskList.get(i).getType().equals("EVENT_TASK")) {
+                	if(taskList.get(i).getType().equals("EVENT_TASK")) {
+                		String start = formatter.format(taskList.get(i).getStartDate());
+                		String end = formatter.format(taskList.get(i).getEndDate());
+                		
+                		
+                		if(!(start.equals(end))) {
+                			Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
+                			String startDay = getDay(calStart); 
+                            String startMonth = getMonth(calStart);
+                            String startTime = getTime(calStart);
+                            int startDate = calStart.get(calStart.DAY_OF_MONTH);
+                            
+                            Calendar calEnd = DateToCalendar(taskList.get(i).getEndDate());
+                            String endDay = getDay(calEnd); 
+                            String endMonth = getMonth(calEnd);
+                            String endTime = getTime(calEnd);
+                            int endDate = calEnd.get(calEnd.DAY_OF_MONTH);
+                            
+                			String eventTask = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", " + startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] " + taskList.get(i).getDescription()); 
+                            Text eventDisplay = new Text(eventTask);
+                            eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
+                            vbox3.getChildren().add(eventDisplay);
+                		}
+                	}
+            	}
+            	
+            }
+            
+            sp3.setContent(vbox3);
+            v2_1.getChildren().addAll(sp3);
+        }
+        
         Text floatingHeader = new Text("Floating Tasks");
         floatingHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
         floatingHeader.setTextAlignment(TextAlignment.CENTER);
@@ -952,10 +1066,22 @@ public class UI extends Application {
         }
         
         sp2.setContent(vbox2);
-        v2.getChildren().addAll(sp2);
+        v2_2.getChildren().addAll(sp2);
+        
+        if(haveEventsSpanningDays == true) {
+        	VBox v2 = new VBox();
+            v2.setSpacing(10);
+            v2_1.setPrefHeight(235);
+            v2_2.setPrefHeight(235);
+        	v2.getChildren().addAll(v2_1, v2_2);
+        	main.getChildren().addAll(v1, v2);
+        }
+        else {
+        	main.getChildren().addAll(v1, v2_2);
+        }
         
         main.setAlignment(TOP_CENTER);
-        main.getChildren().addAll(v1, v2);
+        
         
         return main;
         
@@ -970,7 +1096,7 @@ public class UI extends Application {
         ds.setOffsetY(3.0f);
         ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
         
-        Text title = new Text("Ongoing Tasks");
+        
         title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
         title.setFill(Color.WHITE);
         title.setEffect(ds);
