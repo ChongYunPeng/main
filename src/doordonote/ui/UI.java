@@ -83,6 +83,7 @@ public class UI extends Application {
         primaryStage.setTitle("DoOrDoNote");
 //        primaryStage.getIcons().add(new Image("icon.jpg"));
         primaryStage.show();
+        primaryStage.setMaximized(true);
         
     }
     
@@ -988,16 +989,16 @@ protected HBox displayTasks(HBox main) {
                 String task ;
                 if(taskList.get(i).getType().equals("DEADLINE_TASK")) {
                 	task = count++ + ". " + "[by " + timeEnd + "] " + taskList.get(i).getDescription();
-                    taskDesc = new Text(WordUtils.wrap(task, 45, "\n", true));
+                    taskDesc = new Text(WordUtils.wrap(task, 50, "\n", true));
                 }
                 else {
                     Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
                     String timeStart = getTime(calStart);
                     task = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + taskList.get(i).getDescription();
-                	taskDesc = new Text(WordUtils.wrap(task, 45, "\n", true));
+                	taskDesc = new Text(WordUtils.wrap(task, 50, "\n", true));
                 }
                 
-                taskDesc.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
+                taskDesc.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
                 vbox1.getChildren().addAll(taskDate, taskDesc);
                 for(j = i+1; j < taskList.size(); j++) {
                    haveSameDate = true;
@@ -1022,15 +1023,15 @@ protected HBox displayTasks(HBox main) {
                           Text taskDesc2;
                           if(taskList.get(j).getType().equals("DEADLINE_TASK")) {
                         	 task = count++ + ". " + "[by " + timeEnd2 + "] " + taskList.get(j).getDescription();
-                             taskDesc2 = new Text(WordUtils.wrap(task, 45, "\n", true));
+                             taskDesc2 = new Text(WordUtils.wrap(task, 50, "\n", true));
                           }
                           else {
                              Calendar calStart2 = DateToCalendar(taskList.get(j).getStartDate());
                              String timeStart2 = getTime(calStart2);
                              task = count++ + ". " + "[" + timeStart2 + "-" + timeEnd2 + "] " + taskList.get(j).getDescription();
-                             taskDesc2 = new Text(WordUtils.wrap(task, 45, "\n", true));
+                             taskDesc2 = new Text(WordUtils.wrap(task, 50, "\n", true));
                           }
-                          taskDesc2.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
+                          taskDesc2.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
                           vbox1.getChildren().addAll(taskDesc2);
                           i++;
                       }
@@ -1117,8 +1118,8 @@ protected HBox displayTasks(HBox main) {
                             int endDate = calEnd.get(calEnd.DAY_OF_MONTH);
                             
                 			String eventTask = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", " + startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] " + taskList.get(i).getDescription());
-                            Text eventDisplay = new Text(WordUtils.wrap(eventTask, 45, "\n", true));
-                            eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
+                            Text eventDisplay = new Text(WordUtils.wrap(eventTask, 50, "\n", true));
+                            eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
                             vbox3.getChildren().add(eventDisplay);
                 		}
                 	}
@@ -1141,15 +1142,15 @@ protected HBox displayTasks(HBox main) {
         		haveFloatingTasks = true;
                         String floatingTask = (count++ + ". " + taskList.get(i).getDescription());
 
-                        Text floatingDisplay = new Text(WordUtils.wrap(floatingTask, 45, "\n", true));
-                        floatingDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
+                        Text floatingDisplay = new Text(WordUtils.wrap(floatingTask, 50, "\n", true));
+                        floatingDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
                         vbox2.getChildren().add(floatingDisplay);
         	}
         }
 
         if(haveFloatingTasks == false) {
             Text noFloatingTasks = new Text("*none*");
-            noFloatingTasks.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
+            noFloatingTasks.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
             vbox2.getChildren().add(noFloatingTasks);
         }
         
