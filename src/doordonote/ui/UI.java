@@ -8,10 +8,12 @@ import doordonote.logic.UIState;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.lang.StringBuilder;
 
 import org.apache.log4j.BasicConfigurator;
+import org.apache.commons.lang.WordUtils;
 
-import java.text.SimpleDateFormat;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -136,13 +138,32 @@ public class UI extends Application {
                     try {
                     	feedback = controller.parseAndExecuteCommand(commandBox.getText());
                     	UIState state = controller.getState();
-                    	if(state.getHelpBox().equals(null)) {
-                    		commandBox.setText(state.getInputBox());
-                    	    commandBox.positionCaret(state.getInputBox().length() + 1);
-                    	    output.setText(feedback);
+                    	
+                    	if(state.getHelpBox().equals("help")){
+                    		Stage helpStage = createHelpWindow();
+  	                        helpStage.show();
+  	                        helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+  	                          @Override
+  	                          public void handle(KeyEvent evt) {
+  	                            if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+  	                                helpStage.close();
+  	                            }
+  	                          }
+  	                        });
+  	                        commandBox.clear();
+                    	}
+                    	else {
+                    		output.setText(feedback);
                     	    output.setFill(Color.web("#00811C"));
                     	    border.setCenter(addHBox());
                     		title.setText(state.getTitle());
+                    		if(state.getInputBox().equals(null)) {
+                    			commandBox.clear();
+                    		}
+                    		else {
+                        		commandBox.setText(state.getInputBox());
+                        	    commandBox.positionCaret(state.getInputBox().length() + 1);
+                    		}
                     	}
                     	
                     	/*switch(state) {
@@ -329,6 +350,7 @@ public class UI extends Application {
                     }
                     catch (Exception e) {
                     	feedback = e.getMessage();
+                    	border.setCenter(addHBox());
                     	output.setText(feedback);
                     	output.setFill(Color.web("#F20505"));
                     }
@@ -907,14 +929,18 @@ protected HBox displayTasks(HBox main) {
                 taskDate.setTextAlignment(TextAlignment.CENTER);
                 taskDate.setFill(Color.web("#0C1847"));
                 Text taskDesc;
+                String task ;
                 if(taskList.get(i).getType().equals("DEADLINE_TASK")) {
-                    taskDesc = new Text(count++ + ". " + "[by " + timeEnd + "] " + taskList.get(i).getDescription());
+                	task = count++ + ". " + "[by " + timeEnd + "] " + taskList.get(i).getDescription();
+                    taskDesc = new Text(WordUtils.wrap(task, 45, "\n", true));
                 }
                 else {
                     Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
                     String timeStart = getTime(calStart);
-                    taskDesc = new Text(count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + taskList.get(i).getDescription());
+                    task = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + taskList.get(i).getDescription();
+                	taskDesc = new Text(WordUtils.wrap(task, 45, "\n", true));
                 }
+                
                 taskDesc.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
                 vbox1.getChildren().addAll(taskDate, taskDesc);
                 for(j = i+1; j < taskList.size(); j++) {
@@ -939,12 +965,14 @@ protected HBox displayTasks(HBox main) {
                       else {
                           Text taskDesc2;
                           if(taskList.get(j).getType().equals("DEADLINE_TASK")) {
-                             taskDesc2 = new Text(count++ + ". " + "[by " + timeEnd2 + "] " + taskList.get(j).getDescription());
+                        	 task = count++ + ". " + "[by " + timeEnd2 + "] " + taskList.get(j).getDescription();
+                             taskDesc2 = new Text(WordUtils.wrap(task, 45, "\n", true));
                           }
                           else {
                              Calendar calStart2 = DateToCalendar(taskList.get(j).getStartDate());
                              String timeStart2 = getTime(calStart2);
-                             taskDesc2 = new Text(count++ + ". " + "[" + timeStart2 + "-" + timeEnd2 + "] " + taskList.get(j).getDescription());
+                             task = count++ + ". " + "[" + timeStart2 + "-" + timeEnd2 + "] " + taskList.get(j).getDescription();
+                             taskDesc2 = new Text(WordUtils.wrap(task, 45, "\n", true));
                           }
                           taskDesc2.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
                           vbox1.getChildren().addAll(taskDesc2);
@@ -1032,8 +1060,8 @@ protected HBox displayTasks(HBox main) {
                             String endTime = getTime(calEnd);
                             int endDate = calEnd.get(calEnd.DAY_OF_MONTH);
                             
-                			String eventTask = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", " + startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] " + taskList.get(i).getDescription()); 
-                            Text eventDisplay = new Text(eventTask);
+                			String eventTask = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", " + startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] " + taskList.get(i).getDescription());
+                            Text eventDisplay = new Text(WordUtils.wrap(eventTask, 45, "\n", true));
                             eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
                             vbox3.getChildren().add(eventDisplay);
                 		}
@@ -1055,8 +1083,9 @@ protected HBox displayTasks(HBox main) {
         for(i=0; i<taskList.size(); i++) {
         	if(taskList.get(i).getType().equals("FLOATING_TASK")) {
         		haveFloatingTasks = true;
-                        String floatingTask = (count++ + ". " + taskList.get(i).getDescription()); 
-                        Text floatingDisplay = new Text(floatingTask);
+                        String floatingTask = (count++ + ". " + taskList.get(i).getDescription());
+
+                        Text floatingDisplay = new Text(WordUtils.wrap(floatingTask, 45, "\n", true));
                         floatingDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 18));
                         vbox2.getChildren().add(floatingDisplay);
         	}
@@ -1309,6 +1338,15 @@ protected HBox displayTasks(HBox main) {
 		return commandTypeString.toLowerCase();
 	}
     
+    public static String wrapText(String text) {
+    	StringBuilder sb = new StringBuilder(text);
+
+    	int x = 0;
+    	while (x + 50 < sb.length() && (x = sb.lastIndexOf(" ", x + 50)) != -1) {
+    	    sb.replace(x, x + 1, "\n");
+    	}
+    	return sb.toString();
+    }
     /**
      * @param args the command line arguments
      */
