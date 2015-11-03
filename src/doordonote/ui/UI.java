@@ -137,9 +137,13 @@ public class UI extends Application {
                 if(commandBox.getText() != null) {
                     try {
                     	feedback = controller.parseAndExecuteCommand(commandBox.getText());
-                    	UIState state = controller.getState();
+                    	border.setCenter(addHBox());
+                    	output.setText(feedback);   
+	                	output.setFill(Color.web("#00811C"));
+	                	commandBox.clear();
+                    	//UIState state = controller.getState();
                     	
-                    	if(state.getHelpBox().equals("help")){
+                    	/*if(state.getHelpBox().equals("help")){
                     		Stage helpStage = createHelpWindow();
   	                        helpStage.show();
   	                        helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
@@ -165,6 +169,7 @@ public class UI extends Application {
                         	    commandBox.positionCaret(state.getInputBox().length() + 1);
                     		}
                     	}
+                    	*/
                     	
                     	/*switch(state) {
                     	case STATE_HELP: {
@@ -915,7 +920,7 @@ protected HBox displayTasks(HBox main) {
             		
             		if(!(startDate.equals(endDate))) {
             			haveEventsSpanningDays = true;
-            			break;
+            			continue;
             		}
             	}
             	
@@ -1338,7 +1343,7 @@ protected HBox displayTasks(HBox main) {
 		return commandTypeString.toLowerCase();
 	}
     
-    public static String wrapText(String text) {
+    /*public static String wrapText(String text) {
     	StringBuilder sb = new StringBuilder(text);
 
     	int x = 0;
@@ -1347,6 +1352,8 @@ protected HBox displayTasks(HBox main) {
     	}
     	return sb.toString();
     }
+    */
+    
     /**
      * @param args the command line arguments
      */
