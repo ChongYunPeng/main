@@ -2,7 +2,7 @@ package doordonote.ui;
 
 import doordonote.common.Task;
 import doordonote.logic.Controller;
-import doordonote.logic.UIToController;
+import doordonote.logic.UIToLogic;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -58,7 +58,7 @@ public class UI extends Application {
 	private static final String STATE_DISPLAY_DELETE = "Display delete";
     
     Text output = new Text("Feedback Message");
-    UIToController controller = new Controller();
+    UIToLogic controller = new Controller();
     
     BorderPane border = new BorderPane();
     Scene scene = new Scene(border);

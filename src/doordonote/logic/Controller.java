@@ -14,34 +14,31 @@ import doordonote.storage.StorageHandler;
 
 //import doordonote.storage.Task;
 
-public class Controller implements UIToController, CommandToController {
+public class Controller implements UIToLogic, CommandToController {
 	
-	private static final String MESSAGE_HOME = "Back to homescreen";
-	private static final String STATE_UPDATE = "Update";
-	private static final String STATE_DISPLAY = "Display";
-	private static final String STATE_HELP = "Help";
-	private static final String STATE_FIND = "Find";
-	private static final String STATE_HOME = "Home";
-	private static final String STATE_DISPLAY_FINISH = "Display finish";
-	private static final String STATE_DISPLAY_DELETE = "Display delete";
+	private static final String MESSAGE_HOME = "HOME";
+//	private static final String STATE_UPDATE = "Update";
+//	private static final String STATE_DISPLAY = "Display";
+//	private static final String STATE_HELP = "Help";
+//	private static final String STATE_FIND = "Find";
+//	private static final String STATE_HOME = "Home";
+//	private static final String STATE_DISPLAY_FINISH = "Display finish";
+//	private static final String STATE_DISPLAY_DELETE = "Display delete";
 	
 	protected CommandFactory cmdFactory = null;
 	protected Storage storage = null;
 	protected List<Task> fullTaskList = null;
 	protected List<Task> userTaskList = null;
-	protected String UIState = null;
-	protected String taskToBeUpdatedString = null;
+//	protected String UIState = null;
+	protected UIState stateObj = null;
 	
-	public Controller() {
+	public Controller() throws IOException {
 		cmdFactory = new CommandFactory();
 		storage = StorageHandler.getInstance();
-		try {
-			fullTaskList = getStorageTaskList();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fullTaskList = getStorageTaskList();
+
 		userTaskList = fullTaskList;
+		stateObj = new UIState();
 	}
 	
 
@@ -49,8 +46,8 @@ public class Controller implements UIToController, CommandToController {
 	public String add(String taskDescription, Date startDate, Date endDate) throws IOException {
 		String outputMsg = storage.add(taskDescription, startDate, endDate);
 		fullTaskList = getStorageTaskList();
-		UIState = STATE_DISPLAY;
 		userTaskList = fullTaskList;
+		stateObj.setDefault();
 		return outputMsg;
 	}
 
@@ -59,7 +56,6 @@ public class Controller implements UIToController, CommandToController {
 		Task taskToDelete = getTask(taskId);
 		String outputMsg = storage.delete(taskToDelete);
 		fullTaskList = getStorageTaskList();
-		UIState = STATE_DISPLAY;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -91,11 +87,14 @@ public class Controller implements UIToController, CommandToController {
 			userTaskList = tempList;
 		}
 		
+		stateObj.title = "Filter: ";
+		for (String word : keywords) {
+			stateObj.title += word;
+		}
+		
 		if (!userTaskList.isEmpty()) {
-			UIState = STATE_FIND;
-			return "Tasks found";
+			return userTaskList.size() + " task(s) found";
 		} else {
-			UIState = STATE_DISPLAY;
 			return "No task found!";
 		}
 	}
@@ -107,14 +106,12 @@ public class Controller implements UIToController, CommandToController {
 		fullTaskList = getStorageTaskList();
 
 		userTaskList = fullTaskList;
-		UIState = STATE_DISPLAY;
-
 		return outputMsg;
 	}
 	
 	@Override
-	public String getState() {
-		return UIState;
+	public UIState getState() {
+		return stateObj;
 	}
 
 	@Override
@@ -124,16 +121,14 @@ public class Controller implements UIToController, CommandToController {
 
 	@Override
 	public String help() {
-		// TODO Auto-generated method stub
-		UIState = STATE_HELP;
-		return null;
+		stateObj.helpBox = "help";
+		return "Displaying help";
 	}
 
 	@Override
 	public String help(String commandType) {
-		// TODO Auto-generated method stub
-		UIState = STATE_HELP + commandType;
-		return null;
+		stateObj.helpBox = commandType;
+		return "Displaying " + commandType + " help";
 	}
 
 	@Override
@@ -149,7 +144,7 @@ public class Controller implements UIToController, CommandToController {
 		fullTaskList = getStorageTaskList();
 
 		userTaskList = fullTaskList;
-		UIState = STATE_DISPLAY;
+		stateObj.setDefault();
 		return outputMsg;
 	}
 
@@ -158,7 +153,7 @@ public class Controller implements UIToController, CommandToController {
 		String outputMsg = storage.undo();
 		fullTaskList = getStorageTaskList();
 
-		UIState = STATE_DISPLAY;
+		stateObj.setDefault();
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -169,8 +164,6 @@ public class Controller implements UIToController, CommandToController {
 		String outputMsg = storage.update(taskToUpdate, taskDescription, startDate, endDate);
 		fullTaskList = getStorageTaskList();
 
-		UIState = STATE_UPDATE;
-		taskToBeUpdatedString = "";
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -179,7 +172,7 @@ public class Controller implements UIToController, CommandToController {
 	public String home() throws IOException {
 		fullTaskList = getStorageTaskList();
 
-		UIState = STATE_HOME;
+		stateObj.setDefault();
 		userTaskList = fullTaskList;
 		return MESSAGE_HOME;
 	}
@@ -191,7 +184,6 @@ public class Controller implements UIToController, CommandToController {
 		String outputMsg = storage.restore(taskToRestore);
 		fullTaskList = getStorageTaskList();
 
-		UIState = STATE_DISPLAY;
 		userTaskList = fullTaskList;
 		return outputMsg;
 	}
@@ -201,7 +193,7 @@ public class Controller implements UIToController, CommandToController {
 	public String displayFinished() throws IOException {
 		fullTaskList = storage.readDoneTasks();
 		userTaskList = fullTaskList;
-		UIState = STATE_DISPLAY_FINISH;
+		stateObj.title = "Finished Tasks";
 		return "Displaying finished tasks";
 	}
 
@@ -210,7 +202,7 @@ public class Controller implements UIToController, CommandToController {
 	public String displayDeleted() throws IOException {
 		fullTaskList = storage.readDeletedTasks();
 		userTaskList = fullTaskList;
-		UIState = STATE_DISPLAY_DELETE;
+		stateObj.title = "Deleted Tasks";
 		return "Displaying deleted tasks";
 	}
 
@@ -218,13 +210,12 @@ public class Controller implements UIToController, CommandToController {
 	@Override
 	public String getTaskID(int taskId) throws Exception {
 		Task taskToBeUpdated = getTask(taskId);
-		setTaskToBeUpdated(taskToBeUpdated, taskId);
-		UIState = STATE_UPDATE;
+		stateObj.inputBox = getTaskToBeUpdated(taskToBeUpdated, taskId);
 		return "Task " + taskId + " found!";
 	}
 
 
-	protected void setTaskToBeUpdated(Task taskToBeUpdated, int taskId) {
+	protected String getTaskToBeUpdated(Task taskToBeUpdated, int taskId) {
 		String taskDescription = taskToBeUpdated.getDescription();
 		Date startDate = taskToBeUpdated.getStartDate();
 		Date endDate = taskToBeUpdated.getEndDate();
@@ -239,15 +230,11 @@ public class Controller implements UIToController, CommandToController {
 		} else {
 			taskString = taskDescription + " from " + startDateString + " to " + endDateString;
 		}
-		taskToBeUpdatedString = "update " + taskId + " " + taskString;
+		return "update " + taskId + " " + taskString;
 	}
 
 
-	@Override
-	public String getTaskToBeUpdated() {
 
-		return taskToBeUpdatedString;
-	}
 	
 	
 	
