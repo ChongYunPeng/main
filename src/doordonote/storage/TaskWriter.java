@@ -1,11 +1,15 @@
 package doordonote.storage;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
 import java.lang.reflect.Type;
 import java.util.Set;
 import java.util.HashSet;
+import java.io.PrintWriter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,6 +29,7 @@ public class TaskWriter {
 	private static final String DEFAULT_NAME = "data.json";
 	private static final String FILE_TYPE = ".json";
 	private static final String INITIAL_JSONSTRING = "[]";
+	private static final String SETTINGS_FILE = "settings.dodn";
 	private static final Gson gson = new GsonBuilder().registerTypeAdapter(Task.class, 
 			new TaskClassAdapter<Task>()).create();
 	private static final Type type = new TypeToken<HashSet<Task>>(){}.getType();
@@ -38,7 +43,6 @@ public class TaskWriter {
 
 
 	public TaskWriter(){
-		currentFile = DEFAULT_NAME;
 		initialize();
 		reader = new TaskReader();
 	}
@@ -56,10 +60,49 @@ public class TaskWriter {
 		return currentFile;
 	}
 
-
-	public void setFile(String fileName){
+	public static void setReadFile(String fileName){
 		currentFile = fileName;
 	}
+
+
+	public int path(String fileName){
+		File file = new File(fileName);
+		if(!file.exists()){
+			file = new File(fileName);
+			try{
+				writeToSettings(fileName);
+			}
+			catch (IOException e){
+				e.printStackTrace();
+			}
+			currentFile = fileName;
+			try{
+			writeToFile(currentJsonString);
+			
+			}
+			catch (IOException e){
+				e.printStackTrace();
+			}
+			
+			TaskReader.setCurrentFile(fileName);
+			return 0;
+			
+		} else{
+			try{
+				file.createNewFile();
+				writeToSettings(fileName);
+				writeToFile(currentJsonString);
+			}
+			catch (IOException e){
+				e.printStackTrace();
+			}
+			currentFile = fileName;
+			TaskReader.setCurrentFile(fileName);
+			return 1;
+		}
+		
+	}
+
 
 	public String getCurrentFileString(){
 		return currentJsonString;
@@ -67,6 +110,16 @@ public class TaskWriter {
 
 	private void initialize(){
 		try {
+			File settings = new File(SETTINGS_FILE);
+			if(!settings.exists()){
+				settings.createNewFile();
+				FileWriter fw = new FileWriter(SETTINGS_FILE);
+				fw.write(DEFAULT_NAME);
+				fw.close();
+				currentFile = DEFAULT_NAME;
+			} else{
+				currentFile = TaskReader.getFileString(SETTINGS_FILE).trim();
+			}
 			File file = new File(currentFile);
 			if(!file.exists()){
 				file.createNewFile();
@@ -80,6 +133,13 @@ public class TaskWriter {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+
+	}
+
+	public static void writeToSettings(String file) throws FileNotFoundException {
+		PrintWriter writer = new PrintWriter(SETTINGS_FILE);
+		writer.println(file);
+		writer.close();
 	}
 
 	protected void add(Task task) throws IOException{
@@ -156,7 +216,7 @@ public class TaskWriter {
 			throw  new EmptyTaskListException();
 		}
 	}
-	
+
 	protected void restore(Task task) throws IOException{
 		if(task.isDeleted()){
 			task.setNotDeleted();
@@ -165,12 +225,12 @@ public class TaskWriter {
 		}
 		add(task);
 	}
-	
+
 	protected void setDone(Task task)throws IOException{
 		task.setDone();
 		add(task);
 	}
-	
+
 	protected void setNotDone(Task task) throws IOException{
 		task.setNotDone();
 		add(task);
@@ -178,7 +238,9 @@ public class TaskWriter {
 
 	protected void update(Task taskToUpdate, Task newUpdatedTask) 
 			throws EmptyTaskListException, IOException{
-		writeDeleteTask(taskToUpdate);
+		Set<Task> set = reader.jsonToSet();
+		set.remove(taskToUpdate);
+		// throw exception here
 		String json = writeTask(newUpdatedTask);
 		if(json!=null){
 			toUndoStack(json);
@@ -187,21 +249,21 @@ public class TaskWriter {
 
 
 	public boolean undo(){
-			originator.getStateFromMemento(careTaker.get());
-			String state = originator.getState();
-			if(state!=null){
-				try{
-					writeToFile(state);
-				}
-				catch (IOException e){
-					e.printStackTrace();
-				}
-				toRedoStack(currentJsonString);
-				currentJsonString = state;
-				careTaker.removeLast();
-				return true;				
-			}							
-			return false;		
+		originator.getStateFromMemento(careTaker.get());
+		String state = originator.getState();
+		if(state!=null){
+			try{
+				writeToFile(state);
+			}
+			catch (IOException e){
+				e.printStackTrace();
+			}
+			toRedoStack(currentJsonString);
+			currentJsonString = state;
+			careTaker.removeLast();
+			return true;				
+		}							
+		return false;		
 	}
 
 	public boolean redo(){
@@ -234,7 +296,7 @@ public class TaskWriter {
 		careTaker.initRedoStack(originator.saveStateToMemento());
 		currentJsonString = json;
 	}
-	
+
 	private void toRedoStack(String json){
 		originator.setState(currentJsonString);
 		careTaker.toRedoStack(originator.saveStateToMemento());

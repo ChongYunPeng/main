@@ -22,11 +22,13 @@ import org.junit.After;
 
 public class StorageTest {
 	
-	private static final String NAME_TEST = "test.json";
+	private static final String NAME_DEFAULT = "data.json";
 	private static final String NAME_CUSTOM = "custom";
+	private static final String NAME_TEST = "test.json";
+	private static final String NAME_SETTINGS = "settings.dodn";
 	
-	TaskWriter str = new TaskWriter(NAME_TEST);
-	TaskReader reader = new TaskReader(NAME_TEST);
+	TaskWriter str = new TaskWriter(NAME_DEFAULT);
+	TaskReader reader = new TaskReader(NAME_DEFAULT);
 	
 	Date date0 = new Date(2000, 10, 6);
 	Date date1 = new Date(2015, 8, 7, 2, 13);
@@ -43,40 +45,53 @@ public class StorageTest {
 	
 	@After
 	public void tearDown(){
-		File test = new File(NAME_CUSTOM+".json");
-		File file = new File(NAME_TEST);
-		test.delete();
+//		File default = new File(NAME_CUSTOM+".json");
+		File file = new File(NAME_DEFAULT);
+		File settings = new File(NAME_SETTINGS);
+		File test = new File(NAME_TEST); 
+	//	default.delete();
 		file.delete();
+		settings.delete();
+		test.delete();
 	}
 	
 	@Test
 	public void testDefaultFileName() {
-		assertEquals(str.getFileName(), NAME_TEST);
+		assertEquals(str.getFileName(), NAME_DEFAULT);
 	}
 	
 	@Test
-	public void testCustomFileName(){
-		TaskWriter str = new TaskWriter(NAME_CUSTOM);
-		assertEquals(str.getFileName(), "custom.json");
+	public void testPathAndGet() throws IOException, EmptyTaskListException{
+		str.add(task0);
+		ArrayList<Task> arrlist = new ArrayList<Task>();
+		arrlist.add(task0);
+		str.path("test.json");
+		str.add(task1);
+		ArrayList<Task> testlist = new ArrayList<Task>();
+		testlist.add(task1);
+		str.delete(task0);
+		assertEquals(testlist, reader.readTasks());
+		reader.read("data.json");
+		assertEquals(arrlist, reader.readTasks());
 	}
 	
 	@Test
 	public void testStorageClear() throws IOException{
 		addTaskToStorage();
 		str.clear();
-		assertEquals("[]", reader.getFileString(NAME_TEST));
+		assertEquals("[]", reader.getFileString(NAME_DEFAULT));
 	}
 	
 	@Test
 	public void testCurrentFileStringWithVariousMethods() throws IOException, EmptyTaskListException{
 		str.add(task0);
-		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_TEST));
+		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
 		str.add(task3);
-		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_TEST));
+		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
 		str.delete(task0);
-		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_TEST));
+		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
 		str.undo();
-		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_TEST));
+		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
 		str.add(task2);
 		str.add(task1);
 		ArrayList<Task> arrlist = addTaskToStorage();

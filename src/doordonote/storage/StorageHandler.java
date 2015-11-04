@@ -9,9 +9,11 @@ import doordonote.common.Task;
 
 import java.util.ArrayList;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class StorageHandler implements Storage {
-
+	
+	private static final String FILE_TYPE = ".json";
 	private final String MESSAGE_ADD = "Task %1$s added";
 	private final String MESSAGE_UPDATE = "Task updated to %1$s";
 	private final String MESSAGE_DELETE = "Task %1$s deleted";
@@ -26,7 +28,12 @@ public class StorageHandler implements Storage {
 	private final String MESSAGE_RESTORE = "Task %1$s restored";
 	private final String MESSAGE_FINISH = "Marked Task %1$s as done";
 	private final String MESSAGE_NOT_FINISH = "Marked Task %1$s as not done";
+	private final String MESSAGE_NOT_FOUND = "File \"%1$s\" is not found.";
+	private final String MESSAGE_READ = "Reading from file \"%1$s\"";
+	private final String MESSAGE_PATH_CREATE = "Creating file \"%1$s\"";
+	private final String MESSAGE_PATH_EXISTS = "File \"%1$s\" exists. Reading from \"%1$s\"";
 
+	
 	protected TaskWriter writer;
 	protected TaskReader reader;
 	private static StorageHandler storageHandler;
@@ -48,8 +55,28 @@ public class StorageHandler implements Storage {
 		return storageHandler;
 	}
 
-	public void setFile(String fileName){
-		writer.setFile(fileName);
+	public String path(String fileName){
+		if((fileName.length() < 5) ||
+				!(fileName.substring(fileName.length()-4)).contains(FILE_TYPE)){
+			fileName += FILE_TYPE;
+		}
+		int create = writer.path(fileName);
+		if(create==0){
+			return String.format(MESSAGE_PATH_CREATE, fileName);
+		} else if(create==1){
+			return String.format(MESSAGE_PATH_EXISTS, fileName);
+		}
+		return null;
+	}
+	
+	public String get(String fileName){
+		try{
+		 String currentFile = reader.read(fileName);
+		 return String.format(MESSAGE_READ, currentFile);		 
+		}
+		catch (FileNotFoundException e){
+			return String.format(MESSAGE_NOT_FOUND, fileName);
+		}
 	}
 
 	public String add(Task task){

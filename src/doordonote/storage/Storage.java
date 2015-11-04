@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.io.IOException;
 
 public interface Storage {
-	public void setFile(String location);
+	public String path(String location);
+	public String get(String location);
 	public String add(Task task);
 	public String add(String description, Date startDate, Date endDate);
 	public String update(Task taskToUpdate, String descirption,
