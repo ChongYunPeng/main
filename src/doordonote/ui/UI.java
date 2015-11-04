@@ -74,7 +74,7 @@ public class UI extends Application {
 	private static final String STATE_DISPLAY_DELETE = "Display delete";
     
     Text output = new Text("Welcome to DoOrDoNote!");
-    Text title = new Text("Ongoing Tasks");
+    Text title = new Text("Home");
     
     UIToLogic controller = new Controller();
     
@@ -86,7 +86,7 @@ public class UI extends Application {
         UIState state = new UIState();
         border.setBottom(addVBoxB());
         border.setCenter(addHBox(0, state.getDisplayType()));
-        border.setTop(addHeader());
+        border.setTop(addHeader(state.getDisplayType()));
         
   
         primaryStage.setScene(scene);
@@ -112,10 +112,10 @@ public class UI extends Application {
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(10, 12, 10, 12));
         vbox.setSpacing(5);
-        vbox.setStyle("-fx-background-color: #336699;");
+        vbox.setStyle("-fx-background-color: #383737;");
         
         HBox hb = new HBox();
-        hb.setStyle("-fx-background-color: #F5F8FF;"); //E9EFFD
+        hb.setStyle("-fx-background-color: #F0F0F0;"); //E9EFFD #F5F8FF
         hb.setAlignment(CENTER);
         hb.setPadding(new Insets(5, 5, 5, 5));
         output.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
@@ -170,6 +170,7 @@ public class UI extends Application {
                     		output.setText(feedback);
                     	    output.setFill(Color.web("#00811C"));
                     	    border.setCenter(addHBox(1, state.getDisplayType()));
+                    	    border.setTop(addHeader(state.getDisplayType()));
                     	    if(state.getTitle() != null) {
                     	        title.setText(state.getTitle());
                     	    }
@@ -438,6 +439,7 @@ public class UI extends Application {
                     	output.setText(feedback);   
 	                	output.setFill(Color.web("#00811C"));
 			            border.setCenter(addHBox(0, state.getDisplayType()));
+			            border.setTop(addHeader(state.getDisplayType()));
 			            if(state.getTitle() != null) {
                 	        title.setText(state.getTitle());
                 	    }
@@ -960,18 +962,18 @@ public class UI extends Application {
         
     	VBox v2_1 = new VBox();
         v2_1.setPrefWidth(500);
-        v2_1.setStyle("-fx-background-color: #E1F5EF;");
+        v2_1.setStyle("-fx-background-color: #FFF3F3;");
         
         VBox v2_2 = new VBox();
         v2_2.setPrefWidth(500);
-        v2_2.setStyle("-fx-background-color: #E1F5EF;");
+        v2_2.setStyle("-fx-background-color: #F9FFC6;");
         
         VBox vbox2 = new VBox();
         vbox2.setAlignment(TOP_CENTER);
         vbox2.setPadding(new Insets(18, 18, 18, 18));
         vbox2.setSpacing(15);
         vbox2.setPrefWidth(500);
-        vbox2.setStyle("-fx-background-color: #E1F5EF;");
+        vbox2.setStyle("-fx-background-color: #F9FFC6;");
         
         ScrollPane sp2 = new ScrollPane();
         VBox.setVgrow(sp2, Priority.ALWAYS);
@@ -1175,7 +1177,7 @@ public class UI extends Application {
             vbox3.setPadding(new Insets(18, 18, 18, 18));
             vbox3.setSpacing(15);
             vbox3.setPrefWidth(500);
-            vbox3.setStyle("-fx-background-color: #E1F5EF;");
+            vbox3.setStyle("-fx-background-color: #FFF3F3;");
             
             ScrollPane sp3 = new ScrollPane();
             VBox.setVgrow(sp3, Priority.ALWAYS);
@@ -1205,7 +1207,7 @@ public class UI extends Application {
             Text eventsHeader = new Text("Events Spanning Days");
             eventsHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
             eventsHeader.setTextAlignment(TextAlignment.CENTER);
-            eventsHeader.setFill(Color.web("#0C1847"));
+            eventsHeader.setFill(Color.web("#560000"));
             vbox3.getChildren().add(eventsHeader);
             
             for(i=0; i<taskList.size(); i++) {
@@ -1268,7 +1270,7 @@ public class UI extends Application {
         Text floatingHeader = new Text("Floating Tasks");
         floatingHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
         floatingHeader.setTextAlignment(TextAlignment.CENTER);
-        floatingHeader.setFill(Color.web("#0C1847"));
+        floatingHeader.setFill(Color.web("#3C220A"));
         vbox2.getChildren().add(floatingHeader);
         
         for(i=0; i<taskList.size(); i++) {
@@ -1372,18 +1374,18 @@ public class UI extends Application {
         
     	VBox v2_1 = new VBox();
         v2_1.setPrefWidth(500);
-        v2_1.setStyle("-fx-background-color: #E1F5EF;");
+        v2_1.setStyle("-fx-background-color: #FFF3F3;");
         
         VBox v2_2 = new VBox();
         v2_2.setPrefWidth(500);
-        v2_2.setStyle("-fx-background-color: #E1F5EF;");
+        v2_2.setStyle("-fx-background-color: #F9FFC6;");
         
         VBox vbox2 = new VBox();
         vbox2.setAlignment(TOP_CENTER);
         vbox2.setPadding(new Insets(18, 18, 18, 18));
         vbox2.setSpacing(15);
         vbox2.setPrefWidth(500);
-        vbox2.setStyle("-fx-background-color: #E1F5EF;");
+        vbox2.setStyle("-fx-background-color: #F9FFC6;");
         
         ScrollPane sp2 = new ScrollPane();
         VBox.setVgrow(sp2, Priority.ALWAYS);
@@ -1443,7 +1445,6 @@ public class UI extends Application {
                 if(taskList.get(i).getType().equals("DEADLINE_TASK")) {
                 	task = count++ + ". " + "[by " + timeEnd + "] " + taskList.get(i).getDescription();
                     taskDesc = new Text(WordUtils.wrap(task, 50, "\n", true));
-                    
                 }
                 else {
                     Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
@@ -1451,6 +1452,7 @@ public class UI extends Application {
                     task = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + taskList.get(i).getDescription();
                 	taskDesc = new Text(WordUtils.wrap(task, 50, "\n", true));
                 }
+                
                 taskDesc.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
                 vbox1.getChildren().addAll(taskDate, taskDesc);
                 for(j = i+1; j < taskList.size(); j++) {
@@ -1477,7 +1479,6 @@ public class UI extends Application {
                           if(taskList.get(j).getType().equals("DEADLINE_TASK")) {
                         	 task = count++ + ". " + "[by " + timeEnd2 + "] " + taskList.get(j).getDescription();
                              taskDesc2 = new Text(WordUtils.wrap(task, 50, "\n", true));
-                             
                           }
                           else {
                              Calendar calStart2 = DateToCalendar(taskList.get(j).getStartDate());
@@ -1518,7 +1519,7 @@ public class UI extends Application {
             vbox3.setPadding(new Insets(18, 18, 18, 18));
             vbox3.setSpacing(15);
             vbox3.setPrefWidth(500);
-            vbox3.setStyle("-fx-background-color: #E1F5EF;");
+            vbox3.setStyle("-fx-background-color: #FFF3F3;");
             
             ScrollPane sp3 = new ScrollPane();
             VBox.setVgrow(sp3, Priority.ALWAYS);
@@ -1548,7 +1549,7 @@ public class UI extends Application {
             Text eventsHeader = new Text("Events Spanning Days");
             eventsHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
             eventsHeader.setTextAlignment(TextAlignment.CENTER);
-            eventsHeader.setFill(Color.web("#0C1847"));
+            eventsHeader.setFill(Color.web("#560000"));
             vbox3.getChildren().add(eventsHeader);
             
             for(i=0; i<taskList.size(); i++) {
@@ -1574,7 +1575,6 @@ public class UI extends Application {
                 			String eventTask = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", " + startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] " + taskList.get(i).getDescription());
                             Text eventDisplay = new Text(WordUtils.wrap(eventTask, 50, "\n", true));
                             eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-
                             vbox3.getChildren().add(eventDisplay);
                 		}
                 	}
@@ -1589,7 +1589,7 @@ public class UI extends Application {
         Text floatingHeader = new Text("Floating Tasks");
         floatingHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
         floatingHeader.setTextAlignment(TextAlignment.CENTER);
-        floatingHeader.setFill(Color.web("#0C1847"));
+        floatingHeader.setFill(Color.web("#3C220A"));
         vbox2.getChildren().add(floatingHeader);
         
         for(i=0; i<taskList.size(); i++) {
@@ -1631,85 +1631,24 @@ public class UI extends Application {
         
     }
     
-    protected HBox addHeader() {
+    protected HBox addHeader(doordonote.logic.UIState.ListType listType) {
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(20, 25, 20, 25));
-        hbox.setStyle("-fx-background-color: #001B4D;");
+        if(listType.equals(doordonote.logic.UIState.ListType.NORMAL)) {
+            hbox.setStyle("-fx-background-color: #0D0D0D;");
+        }
+        else if(listType.equals(doordonote.logic.UIState.ListType.FINISHED)){
+        	hbox.setStyle("-fx-background-color: #000E54;");
+        }
+        else {
+        	hbox.setStyle("-fx-background-color: #560202;");
+        }
         
         DropShadow ds = new DropShadow();
         ds.setOffsetY(3.0f);
         ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
         
         
-        title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
-        title.setFill(Color.WHITE);
-        title.setEffect(ds);
-        title.setCache(true);
-        title.setX(10.0f);
-        title.setY(270.0f);	
-        
-        hbox.getChildren().add(title);
-        hbox.setAlignment(CENTER);
-        
-        return hbox;
-    }
-    
-    protected HBox addCompleteHeader() {
-        HBox hbox = new HBox();
-        hbox.setPadding(new Insets(20, 25, 20, 25));
-        hbox.setStyle("-fx-background-color: #001B4D;");
-        
-        DropShadow ds = new DropShadow();
-        ds.setOffsetY(3.0f);
-        ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
-        
-        Text title = new Text("Finished Tasks");
-        title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
-        title.setFill(Color.WHITE);
-        title.setEffect(ds);
-        title.setCache(true);
-        title.setX(10.0f);
-        title.setY(270.0f);	
-        
-        hbox.getChildren().add(title);
-        hbox.setAlignment(CENTER);
-        
-        return hbox;
-    }
-    
-    protected HBox addDeleteHeader() {
-        HBox hbox = new HBox();
-        hbox.setPadding(new Insets(20, 25, 20, 25));
-        hbox.setStyle("-fx-background-color: #001B4D;");
-        
-        DropShadow ds = new DropShadow();
-        ds.setOffsetY(3.0f);
-        ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
-        
-        Text title = new Text("Deleted Tasks");
-        title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
-        title.setFill(Color.WHITE);
-        title.setEffect(ds);
-        title.setCache(true);
-        title.setX(10.0f);
-        title.setY(270.0f);	
-        
-        hbox.getChildren().add(title);
-        hbox.setAlignment(CENTER);
-        
-        return hbox;
-    }
-    
-    protected HBox addFindHeader() {
-        HBox hbox = new HBox();
-        hbox.setPadding(new Insets(20, 25, 20, 25));
-        hbox.setStyle("-fx-background-color: #001B4D;");
-        
-        DropShadow ds = new DropShadow();
-        ds.setOffsetY(3.0f);
-        ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
-        
-        Text title = new Text("Ongoing Tasks Found");
         title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
         title.setFill(Color.WHITE);
         title.setEffect(ds);
