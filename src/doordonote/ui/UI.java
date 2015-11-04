@@ -169,7 +169,7 @@ public class UI extends Application {
                     	if(state.getHelpBox() == null) {
                     		output.setText(feedback);
                     	    output.setFill(Color.web("#00811C"));
-                    	    border.setCenter(addHBox(1, state.getDisplayType()));
+                    	    border.setCenter(addHBox(state.getIdNewTask()+1, state.getDisplayType()));
                     	    border.setTop(addHeader(state.getDisplayType()));
                     	    if(state.getTitle() != null) {
                     	        title.setText(state.getTitle());
