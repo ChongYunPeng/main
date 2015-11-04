@@ -29,6 +29,8 @@ public class StorageTest {
 	
 	TaskWriter str = new TaskWriter();
 	TaskReader reader = new TaskReader();
+	String settingStr;
+	
 	
 	
 	Date date0 = new Date(2000, 10, 6);
@@ -41,8 +43,16 @@ public class StorageTest {
 	Task task3 = new DeadlineTask("Running", date3);
 	
 	@Before
-	public void setup(){
+	public void setup() throws IOException{
+		File settings = new File(NAME_SETTINGS);
+		settingStr = TaskReader.getFileString(NAME_SETTINGS).trim();
+		File testFile = new File(NAME_DEFAULT);
+		if(!testFile.exists()){
+			testFile.createNewFile();
+		}
+		reader.read(NAME_DEFAULT);
 		str.path(NAME_DEFAULT);
+		str.clear();
 	}
 	
 	@After
@@ -50,10 +60,11 @@ public class StorageTest {
 //		File default = new File(NAME_CUSTOM+".json");
 		File file = new File(NAME_DEFAULT);
 		File settings = new File(NAME_SETTINGS);
-		File test = new File(NAME_TEST); 
+		File test = new File(NAME_TEST);
+		str.path(settingStr);
 	//	default.delete();
 		file.delete();
-		settings.delete();
+	//	settings.delete();
 		test.delete();
 	}
 	
