@@ -68,6 +68,7 @@ public class UIState {
 
 	protected void setDefault() {
 		inputBox = "";
+		displayType = ListType.NORMAL;
 		helpBox = null;
 		displayType = ListType.NORMAL;
 		idNewTask = -1;

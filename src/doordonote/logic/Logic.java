@@ -28,8 +28,16 @@ public class Logic implements UIToLogic {
 	}
 
 	@Override
-	public List<Task> getTasks() throws IOException {
-		return controller.getUserTaskList();
+	public List<Task> getTasks() {
+		List<Task> taskList = null;
+		try {
+			taskList = controller.getUserTaskList();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return taskList;
 	}
+	
 
 }

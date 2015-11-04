@@ -11,6 +11,7 @@ public class FindDateCommand implements Command {
 	
 	public FindDateCommand(Date startDate) {
 		assert(startDate != null);
+		this.startDate = startDate;
 	}
 	
 	public FindDateCommand(Date startDate, Date endDate) {

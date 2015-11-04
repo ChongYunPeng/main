@@ -116,7 +116,7 @@ public class TaskListFilter {
 	}
 
 	private List<Task> getFinishedTasks() throws IOException {
-		return storage.readDoneTasks()();
+		return storage.readDoneTasks();
 	}
 
 	private List<Task> getDeletedTasks() throws IOException {
