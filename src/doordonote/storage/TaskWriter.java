@@ -286,8 +286,10 @@ public class TaskWriter {
 			throws EmptyTaskListException, IOException, DuplicateTaskException{
 		Set<Task> set = reader.jsonToSet();
 		set.remove(taskToUpdate);
+		String json = gson.toJson(set, type);
+		writeToFile(json);
 		// throw exception here
-		String json = writeTask(newUpdatedTask);
+		json = writeTask(newUpdatedTask);
 		if(json!=null){
 			toUndoStack(json);
 		}

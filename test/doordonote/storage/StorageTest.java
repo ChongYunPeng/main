@@ -22,13 +22,14 @@ import org.junit.After;
 
 public class StorageTest {
 	
-	private static final String NAME_DEFAULT = "data.json";
+	private static final String NAME_DEFAULT = "test.json";
 	private static final String NAME_CUSTOM = "custom";
-	private static final String NAME_TEST = "test.json";
+	private static final String NAME_TEST = "test2.json";
 	private static final String NAME_SETTINGS = "settings.dodn";
 	
-	TaskWriter str = new TaskWriter(NAME_DEFAULT);
-	TaskReader reader = new TaskReader(NAME_DEFAULT);
+	TaskWriter str = new TaskWriter();
+	TaskReader reader = new TaskReader();
+	
 	
 	Date date0 = new Date(2000, 10, 6);
 	Date date1 = new Date(2015, 8, 7, 2, 13);
@@ -39,8 +40,9 @@ public class StorageTest {
 	Task task2 = new EventTask("Swimming", date1, date2);
 	Task task3 = new DeadlineTask("Running", date3);
 	
-//	@Before
+	@Before
 	public void setup(){
+		str.path(NAME_DEFAULT);
 	}
 	
 	@After
@@ -65,13 +67,13 @@ public class StorageTest {
 		str.add(task0);
 		ArrayList<Task> arrlist = new ArrayList<Task>();
 		arrlist.add(task0);
-		str.path("test.json");
+		str.path(NAME_TEST);
 		str.add(task1);
 		ArrayList<Task> testlist = new ArrayList<Task>();
 		testlist.add(task1);
 		str.delete(task0);
 		assertEquals(testlist, reader.readTasks());
-		reader.read("data.json");
+		reader.read(NAME_DEFAULT);
 		assertEquals(arrlist, reader.readTasks());
 	}
 	
