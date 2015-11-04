@@ -64,7 +64,7 @@ public class UI extends Application {
 	private static final String STATE_DISPLAY_FINISH = "Display finish";
 	private static final String STATE_DISPLAY_DELETE = "Display delete";
     
-    Text output = new Text("Feedback Message");
+    Text output = new Text("Welcome to DoOrDoNote!");
     Text title = new Text("Ongoing Tasks");
     
     UIToLogic controller = new Controller();
@@ -78,12 +78,24 @@ public class UI extends Application {
         border.setBottom(addVBoxB());
         border.setCenter(addHBox());
         border.setTop(addHeader());
+        
   
         primaryStage.setScene(scene);
         primaryStage.setTitle("DoOrDoNote");
 //        primaryStage.getIcons().add(new Image("icon.jpg"));
         primaryStage.show();
         primaryStage.setMaximized(true);
+        
+        Stage helpStage = createHelpWindow();
+        helpStage.show();
+        helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+              @Override
+              public void handle(KeyEvent evt) {
+                if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+                    helpStage.close();
+                }
+              }
+            });
         
     }
     
