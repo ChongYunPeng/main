@@ -21,6 +21,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import static javafx.geometry.Pos.CENTER;
 import static javafx.geometry.Pos.TOP_CENTER;
+import javafx.geometry.Pos;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -1029,7 +1030,7 @@ public class UI extends Application {
         v1.setStyle("-fx-background-color: #E1F5EF;");
         
         VBox vbox1 = new VBox();
-        vbox1.setAlignment(TOP_CENTER);
+        vbox1.setAlignment(Pos.TOP_LEFT);
         vbox1.setPadding(new Insets(18, 18, 18, 18));
         vbox1.setSpacing(15);
         vbox1.setPrefWidth(500);
@@ -1071,7 +1072,7 @@ public class UI extends Application {
         v2_2.setStyle("-fx-background-color: #F9FFC6;");
         
         VBox vbox2 = new VBox();
-        vbox2.setAlignment(TOP_CENTER);
+        vbox2.setAlignment(Pos.TOP_LEFT);
         vbox2.setPadding(new Insets(18, 18, 18, 18));
         vbox2.setSpacing(15);
         vbox2.setPrefWidth(500);
@@ -1102,6 +1103,7 @@ public class UI extends Application {
             }
         });
         
+        
         for(i = 0; i < taskList.size(); i++) {
             if(!(taskList.get(i).getType().equals("FLOATING_TASK"))) {
             	if(taskList.get(i).getType().equals("EVENT_TASK")) {
@@ -1130,11 +1132,16 @@ public class UI extends Application {
                 taskDate.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
                 taskDate.setTextAlignment(TextAlignment.CENTER);
                 taskDate.setFill(Color.web("#0C1847"));
+                
+                HBox dates = new HBox();
+                dates.setAlignment(TOP_CENTER);
+                dates.getChildren().add(taskDate);
+                
                 Text taskDesc;
                 String task ;
                 if(taskList.get(i).getType().equals("DEADLINE_TASK")) {
                 	task = count++ + ". " + "[by " + timeEnd + "] " + taskList.get(i).getDescription();
-                    taskDesc = new Text(WordUtils.wrap(task, 50, "\n", true));
+                    taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
                     FillTransition colour;
                     if(checkForOverdue(taskList.get(i).getEndDate())) {
                         taskDesc.setFill(Color.RED);
@@ -1158,7 +1165,7 @@ public class UI extends Application {
                     Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
                     String timeStart = getTime(calStart);
                     task = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + taskList.get(i).getDescription();
-                	taskDesc = new Text(WordUtils.wrap(task, 50, "\n", true));
+                	taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
                 	FillTransition colour;
                 	if(checkForOngoing(taskList.get(i).getStartDate(), taskList.get(i).getEndDate())) {
                      	taskDesc.setFill(Color.web("#0F6F00"));
@@ -1184,7 +1191,7 @@ public class UI extends Application {
                 }
                 
                 taskDesc.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-                vbox1.getChildren().addAll(taskDate, taskDesc);
+                vbox1.getChildren().addAll(dates, taskDesc);
                 for(j = i+1; j < taskList.size(); j++) {
                    haveSameDate = true;
                    if(!(taskList.get(j).getType().equals("FLOATING_TASK"))) {
@@ -1209,7 +1216,7 @@ public class UI extends Application {
                           FillTransition colour;
                           if(taskList.get(j).getType().equals("DEADLINE_TASK")) {
                         	 task = count++ + ". " + "[by " + timeEnd2 + "] " + taskList.get(j).getDescription();
-                             taskDesc2 = new Text(WordUtils.wrap(task, 50, "\n", true));
+                             taskDesc2 = new Text(WordUtils.wrap(task, 62, "\n", true));
                              
                              if(checkForOverdue(taskList.get(j).getEndDate())) {
                                 taskDesc2.setFill(Color.RED);
@@ -1223,7 +1230,7 @@ public class UI extends Application {
                              Calendar calStart2 = DateToCalendar(taskList.get(j).getStartDate());
                              String timeStart2 = getTime(calStart2);
                              task = count++ + ". " + "[" + timeStart2 + "-" + timeEnd2 + "] " + taskList.get(j).getDescription();
-                             taskDesc2 = new Text(WordUtils.wrap(task, 50, "\n", true));
+                             taskDesc2 = new Text(WordUtils.wrap(task, 62, "\n", true));
                              if(checkForOngoing(taskList.get(j).getStartDate(), taskList.get(j).getEndDate())) {
                              	taskDesc2.setFill(Color.web("#0F6F00"));
                              	colour = changeColour(taskDesc2, Color.web("#0F6F00"));
@@ -1275,7 +1282,7 @@ public class UI extends Application {
         if(haveEventsSpanningDays == true) {
             
             VBox vbox3 = new VBox();
-            vbox3.setAlignment(TOP_CENTER);
+            vbox3.setAlignment(Pos.TOP_LEFT);
             vbox3.setPadding(new Insets(18, 18, 18, 18));
             vbox3.setSpacing(15);
             vbox3.setPrefWidth(500);
@@ -1306,11 +1313,14 @@ public class UI extends Application {
                 }
             });
             
+            HBox events = new HBox();
+            events.setAlignment(Pos.TOP_CENTER);
             Text eventsHeader = new Text("Events Spanning Days");
             eventsHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
             eventsHeader.setTextAlignment(TextAlignment.CENTER);
             eventsHeader.setFill(Color.web("#560000"));
-            vbox3.getChildren().add(eventsHeader);
+            events.getChildren().add(eventsHeader);
+            vbox3.getChildren().add(events);
             
             for(i=0; i<taskList.size(); i++) {
             	if(taskList.get(i).getType().equals("EVENT_TASK")) {
@@ -1333,7 +1343,7 @@ public class UI extends Application {
                             int endDate = calEnd.get(calEnd.DAY_OF_MONTH);
                             
                 			String eventTask = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", " + startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] " + taskList.get(i).getDescription());
-                            Text eventDisplay = new Text(WordUtils.wrap(eventTask, 50, "\n", true));
+                            Text eventDisplay = new Text(WordUtils.wrap(eventTask, 62, "\n", true));
                             eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
                             FillTransition colour;
                             if(checkForOverdue(taskList.get(i).getEndDate())) {
@@ -1369,18 +1379,21 @@ public class UI extends Application {
             v2_1.getChildren().addAll(sp3);
         }
         
+        HBox floating = new HBox();
+        floating.setAlignment(TOP_CENTER);
         Text floatingHeader = new Text("Floating Tasks");
         floatingHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
         floatingHeader.setTextAlignment(TextAlignment.CENTER);
         floatingHeader.setFill(Color.web("#3C220A"));
-        vbox2.getChildren().add(floatingHeader);
+        floating.getChildren().add(floatingHeader);
+        vbox2.getChildren().add(floating);
         
         for(i=0; i<taskList.size(); i++) {
         	if(taskList.get(i).getType().equals("FLOATING_TASK")) {
         		haveFloatingTasks = true;
                         String floatingTask = (count++ + ". " + taskList.get(i).getDescription());
 
-                        Text floatingDisplay = new Text(WordUtils.wrap(floatingTask, 50, "\n", true));
+                        Text floatingDisplay = new Text(WordUtils.wrap(floatingTask, 62, "\n", true));
                         floatingDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
                         if(count == n+1) {
                        	 Timeline blinker = createBlinker(floatingDisplay);
@@ -1546,13 +1559,13 @@ public class UI extends Application {
                 String task ;
                 if(taskList.get(i).getType().equals("DEADLINE_TASK")) {
                 	task = count++ + ". " + "[by " + timeEnd + "] " + taskList.get(i).getDescription();
-                    taskDesc = new Text(WordUtils.wrap(task, 50, "\n", true));
+                    taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
                 }
                 else {
                     Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
                     String timeStart = getTime(calStart);
                     task = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + taskList.get(i).getDescription();
-                	taskDesc = new Text(WordUtils.wrap(task, 50, "\n", true));
+                	taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
                 }
                 
                 taskDesc.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
@@ -1580,13 +1593,13 @@ public class UI extends Application {
                           Text taskDesc2;
                           if(taskList.get(j).getType().equals("DEADLINE_TASK")) {
                         	 task = count++ + ". " + "[by " + timeEnd2 + "] " + taskList.get(j).getDescription();
-                             taskDesc2 = new Text(WordUtils.wrap(task, 50, "\n", true));
+                             taskDesc2 = new Text(WordUtils.wrap(task, 62, "\n", true));
                           }
                           else {
                              Calendar calStart2 = DateToCalendar(taskList.get(j).getStartDate());
                              String timeStart2 = getTime(calStart2);
                              task = count++ + ". " + "[" + timeStart2 + "-" + timeEnd2 + "] " + taskList.get(j).getDescription();
-                             taskDesc2 = new Text(WordUtils.wrap(task, 50, "\n", true));
+                             taskDesc2 = new Text(WordUtils.wrap(task, 62, "\n", true));
                           }
                           taskDesc2.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
                           vbox1.getChildren().addAll(taskDesc2);
@@ -1675,7 +1688,7 @@ public class UI extends Application {
                             int endDate = calEnd.get(calEnd.DAY_OF_MONTH);
                             
                 			String eventTask = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", " + startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] " + taskList.get(i).getDescription());
-                            Text eventDisplay = new Text(WordUtils.wrap(eventTask, 50, "\n", true));
+                            Text eventDisplay = new Text(WordUtils.wrap(eventTask, 62, "\n", true));
                             eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
                             vbox3.getChildren().add(eventDisplay);
                 		}
@@ -1699,7 +1712,7 @@ public class UI extends Application {
         		haveFloatingTasks = true;
                         String floatingTask = (count++ + ". " + taskList.get(i).getDescription());
 
-                        Text floatingDisplay = new Text(WordUtils.wrap(floatingTask, 50, "\n", true));
+                        Text floatingDisplay = new Text(WordUtils.wrap(floatingTask, 62, "\n", true));
                         floatingDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
                         vbox2.getChildren().add(floatingDisplay);
         	}
@@ -1773,19 +1786,19 @@ public class UI extends Application {
     protected String getDay(Calendar cal) {
         String day = null;
         switch(cal.get(cal.DAY_OF_WEEK)) {
-                    case 1: day = "Sun";
+                    case 1: day = "Sunday";
                             break;
-                    case 2: day = "Mon";
+                    case 2: day = "Monday";
                             break;
-                    case 3: day = "Tues";
+                    case 3: day = "Tuesday";
                             break;
-                    case 4: day = "Wed";
+                    case 4: day = "Wednesday";
                             break;
-                    case 5: day = "Thurs";
+                    case 5: day = "Thursday";
                             break;
-                    case 6: day = "Fri";
+                    case 6: day = "Friday";
                             break;
-                    case 7: day = "Sat";
+                    case 7: day = "Saturday";
                           
                 }
         
