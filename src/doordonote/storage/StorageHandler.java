@@ -86,7 +86,10 @@ public class StorageHandler implements Storage {
 		}
 		catch(IOException e){
 			e.printStackTrace();
-			return "";
+			return "IOException";
+		}
+		catch(DuplicateTaskException e){
+			return e.getMessage();
 		}
 	}
 
@@ -112,6 +115,9 @@ public class StorageHandler implements Storage {
 		catch(IOException e){
 			e.printStackTrace();
 			return "";
+		}
+		catch(DuplicateTaskException e){
+			return e.getMessage();
 		}
 	}
 
@@ -191,12 +197,12 @@ public class StorageHandler implements Storage {
 		}
 	}
 	
-	public String restore(Task task) throws IOException{
+	public String restore(Task task) throws IOException, DuplicateTaskException{
 		writer.restore(task);
 		return String.format(MESSAGE_RESTORE, task);
 	}
 	
-	public String finish(Task task) throws IOException{
+	public String finish(Task task) throws IOException, DuplicateTaskException{
 		writer.setDone(task);
 		return String.format(MESSAGE_FINISH, task);
 	}

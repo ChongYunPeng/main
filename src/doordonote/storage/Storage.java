@@ -23,7 +23,7 @@ public interface Storage {
 	public String clear();
 	public String undo();
 	public String redo();
-	public String restore(Task task) throws IOException;
-	public String finish(Task task) throws IOException;
+	public String restore(Task task) throws IOException, DuplicateTaskException;
+	public String finish(Task task) throws IOException, DuplicateTaskException;
 	public String notFinish(Task task) throws IOException;
 }

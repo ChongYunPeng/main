@@ -61,7 +61,7 @@ public class StorageTest {
 	}
 	
 	@Test
-	public void testPathAndGet() throws IOException, EmptyTaskListException{
+	public void testPathAndGet() throws IOException, EmptyTaskListException, DuplicateTaskException{
 		str.add(task0);
 		ArrayList<Task> arrlist = new ArrayList<Task>();
 		arrlist.add(task0);
@@ -76,14 +76,14 @@ public class StorageTest {
 	}
 	
 	@Test
-	public void testStorageClear() throws IOException{
+	public void testStorageClear() throws IOException, DuplicateTaskException{
 		addTaskToStorage();
 		str.clear();
 		assertEquals("[]", reader.getFileString(NAME_DEFAULT));
 	}
 	
 	@Test
-	public void testCurrentFileStringWithVariousMethods() throws IOException, EmptyTaskListException{
+	public void testCurrentFileStringWithVariousMethods() throws IOException, EmptyTaskListException, DuplicateTaskException{
 		str.add(task0);
 		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
 		str.add(task3);
@@ -94,14 +94,14 @@ public class StorageTest {
 		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
 		str.add(task2);
 		str.add(task1);
-		ArrayList<Task> arrlist = addTaskToStorage();
-		Collections.sort(arrlist);
+//		ArrayList<Task> arrlist = addTaskToStorage();
+	//	Collections.sort(arrlist);
 	//	assertEquals(arrlist, reader.readTasks());
 	}
 	
 	
 	@Test
-	public void testStorageReadAndWrite() throws IOException{
+	public void testStorageReadAndWrite() throws IOException, DuplicateTaskException{
 		ArrayList<Task> expected = addTaskToStorage();
 		assertFalse(expected.equals(reader.readTasks()));
 		Collections.sort(expected);
@@ -109,7 +109,7 @@ public class StorageTest {
 	}
 	
 	@Test
-	public void testStorageDelete() throws EmptyTaskListException, IOException{		
+	public void testStorageDelete() throws EmptyTaskListException, IOException, DuplicateTaskException{		
 		ArrayList<Task> arrlist = addTaskToStorage();
 		ArrayList<Task> dellist = new ArrayList<Task>();
 		arrlist.remove(task0);
@@ -123,7 +123,7 @@ public class StorageTest {
 	}
 	
 	@Test
-	public void testStorageUndoAndRedo() throws IOException, EmptyTaskListException{
+	public void testStorageUndoAndRedo() throws IOException, EmptyTaskListException, DuplicateTaskException{
 		ArrayList<Task> arrlist = new ArrayList<Task>();
 		str.add(task0);
 		str.add(task3);
@@ -143,7 +143,7 @@ public class StorageTest {
 	*/}
 	
 	@Test
-	public void testReadDeleteAndDone() throws IOException, EmptyTaskListException{
+	public void testReadDeleteAndDone() throws IOException, EmptyTaskListException, DuplicateTaskException{
 		ArrayList<Task> arrlist = addTaskToStorage();
 		ArrayList<Task> dellist = new ArrayList<Task>();
 		ArrayList<Task> donelist = new ArrayList<Task>();
@@ -151,8 +151,8 @@ public class StorageTest {
 		arrlist.remove(task0);
 		dellist.add(task0);
 		assertEquals(dellist, reader.readDeletedTasks());
-		str.add(task0);
-		str.delete(task0);
+	//	str.add(task0);
+	//	str.delete(task0);
 		assertEquals(dellist, reader.readDeletedTasks());
 		str.restore(task0);
 		arrlist.add(task0);
@@ -176,7 +176,7 @@ public class StorageTest {
 	}
 	
 	//Returns unsorted ArrayList of Tasks added to Storage
-	private ArrayList<Task> addTaskToStorage(){
+	private ArrayList<Task> addTaskToStorage() throws DuplicateTaskException{
 		ArrayList<Task> arrlist = new ArrayList<Task>();
 		try{
 		str.add(task0);

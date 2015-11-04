@@ -30,6 +30,8 @@ public class TaskWriter {
 	private static final String FILE_TYPE = ".json";
 	private static final String INITIAL_JSONSTRING = "[]";
 	private static final String SETTINGS_FILE = "settings.dodn";
+	private static final String MESSAGE_DUPLICATE_DELETE = "Task %1$s exists in deleted list. Restoring from deleted list.";
+	private static final String MESSAGE_DUPLICATE_DONE = "Task %1$s is marked as done. Restoring from Done list";
 	private static final Gson gson = new GsonBuilder().registerTypeAdapter(Task.class, 
 			new TaskClassAdapter<Task>()).create();
 	private static final Type type = new TypeToken<HashSet<Task>>(){}.getType();
@@ -124,10 +126,10 @@ public class TaskWriter {
 			if(!file.exists()){
 				file.createNewFile();
 				writeToFile(INITIAL_JSONSTRING);
-				toUndoStack(INITIAL_JSONSTRING);
+//				toUndoStack(INITIAL_JSONSTRING);
 			}	else{
 				currentJsonString = TaskReader.getFileString(currentFile);
-				toUndoStack(currentJsonString);
+	//			toUndoStack(currentJsonString);
 			}
 		}
 		catch (IOException e) {
@@ -142,24 +144,50 @@ public class TaskWriter {
 		writer.close();
 	}
 
-	protected void add(Task task) throws IOException{
-		String json = writeTask(task);
-		if(json!=null){
+	protected void add(Task task) throws IOException, DuplicateTaskException{
+		String json = null;
+		try{
+		json = writeTask(task);
+		}
+		catch(DuplicateTaskException e){
+			if(e.getValue()==0 || e.getValue()==1){
+				toUndoStack(json);
+				throw e;
+			} else{
+				throw e;
+			}
+		}
+		if(json != null){
 			toUndoStack(json);
 		}
 	}
 
-	private String writeTask(Task task)throws IOException {
+	private String writeTask(Task task)throws IOException, DuplicateTaskException{
 		Set<Task> set = reader.jsonToSet();
-		set.remove(task);
+		if(set.contains(task)){
+			for(Task t : set){
+				if(t.equals(task) && !t.isDeleted() && !task.isDeleted()){
+					throw new DuplicateTaskException();
+				} else if(t.equals(task) && t.isDeleted()){
+					set.remove(task);
+					task.setNotDeleted();
+					set.add(task);
+					String json = gson.toJson(set, type);
+					writeToFile(json);
+					throw new DuplicateTaskException(String.format(MESSAGE_DUPLICATE_DELETE, task), 0);
+				} else if(t.equals(task) && t.isDone()){
+					set.remove(task);
+					task.setNotDone();
+					set.add(task);
+					String json = gson.toJson(set, type);
+					writeToFile(json);
+					throw new DuplicateTaskException(String.format(MESSAGE_DUPLICATE_DONE, task), 1);
+				}
+			}
+		}
 		set.add(task);
 		String json = gson.toJson(set, type);
-		try{
-			writeToFile(json);
-		}
-		catch(IOException e){
-			e.printStackTrace();
-		}
+		writeToFile(json);
 		return json;
 	}
 
@@ -197,6 +225,9 @@ public class TaskWriter {
 	}
 
 	private String writeDeleteTask(Task task) throws EmptyTaskListException, IOException {
+		// Remove EmptyTaskListException
+		// Throw assertion here
+		
 		Set<Task> set = reader.jsonToSet();
 		if(!set.isEmpty()){
 			set.remove(task);
@@ -217,27 +248,42 @@ public class TaskWriter {
 		}
 	}
 
-	protected void restore(Task task) throws IOException{
+	protected void restore(Task task) throws IOException, DuplicateTaskException{
+		Set<Task> set = reader.jsonToSet();
+		set.remove(task);
 		if(task.isDeleted()){
 			task.setNotDeleted();
 		} else if(task.isDone()){
 			task.setNotDone();
 		}
-		add(task);
+		set.add(task);
+		String json = gson.toJson(set, type);
+		writeToFile(json);
+		toUndoStack(json);
 	}
 
-	protected void setDone(Task task)throws IOException{
+	protected void setDone(Task task)throws IOException, DuplicateTaskException{
+		Set<Task> set = reader.jsonToSet();
+		set.remove(task);
 		task.setDone();
-		add(task);
+		set.add(task);
+		String json = gson.toJson(set, type);
+		writeToFile(json);
+		toUndoStack(json);
 	}
 
-	protected void setNotDone(Task task) throws IOException{
+	protected void setNotDone(Task task) throws IOException, DuplicateTaskException {
+		Set<Task> set = reader.jsonToSet();
+		set.remove(task);
 		task.setNotDone();
-		add(task);
+		set.add(task);
+		String json = gson.toJson(set, type);
+		writeToFile(json);
+		toUndoStack(json);
 	}
 
 	protected void update(Task taskToUpdate, Task newUpdatedTask) 
-			throws EmptyTaskListException, IOException{
+			throws EmptyTaskListException, IOException, DuplicateTaskException{
 		Set<Task> set = reader.jsonToSet();
 		set.remove(taskToUpdate);
 		// throw exception here
