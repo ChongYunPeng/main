@@ -39,6 +39,7 @@ public class UIState {
 	
 	protected void setDefault() {
 		inputBox = "";
+		displayType = ListType.NORMAL;
 		helpBox = null;
 		title = "Home";
 		hasFileError = false;

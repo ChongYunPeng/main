@@ -9,6 +9,7 @@ import doordonote.command.Command;
 import doordonote.commandfactory.CommandFactory;
 import doordonote.common.Task;
 import doordonote.common.Util;
+import doordonote.logic.UIState.ListType;
 import doordonote.storage.Storage;
 import doordonote.storage.StorageHandler;
 
@@ -92,7 +93,9 @@ public class Controller implements UIToLogic, CommandToController {
 			}
 			userTaskList = tempList;
 		}
-		stateObj.setDefault();
+        ListType prev = stateObj.getDisplayType();
+        stateObj.setDefault();
+        stateObj.displayType = prev;
 		stateObj.title = "Filter: ";
 		for (String word : keywords) {
 			stateObj.title += word;
@@ -204,6 +207,7 @@ public class Controller implements UIToLogic, CommandToController {
 		userTaskList = fullTaskList;
 		stateObj.setDefault();
 		stateObj.title = "Finished Tasks";
+		stateObj.displayType = ListType.FINISHED;
 		return "Displaying finished tasks";
 	}
 
@@ -214,6 +218,7 @@ public class Controller implements UIToLogic, CommandToController {
 		userTaskList = fullTaskList;
 		stateObj.setDefault();
 		stateObj.title = "Deleted Tasks";
+		stateObj.displayType = ListType.DELETED;
 		return "Displaying deleted tasks";
 	}
 
