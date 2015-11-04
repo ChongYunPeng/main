@@ -1,6 +1,7 @@
 package doordonote.logic;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import doordonote.common.Task;
@@ -51,6 +52,17 @@ public class TaskListFilter {
 	
 
 	private List<Task> filter(List<Task> userTaskList, List<String> filterList) {
+		List<Task> tempList = fullTaskList;
+		userTaskList = tempList;
+		for (String keyword : filterList) {
+			tempList = new ArrayList<Task>();
+			for (Task task : userTaskList) {
+				if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+					tempList.add(task);
+				}
+			}
+			userTaskList = tempList;
+		}
 		return null;
 	}
 

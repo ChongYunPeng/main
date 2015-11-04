@@ -1,5 +1,6 @@
 package doordonote.logic;
 
+import java.io.IOException;
 import java.util.List;
 
 import doordonote.command.Command;
@@ -10,7 +11,7 @@ public class Logic implements UIToLogic {
 	protected CommandFactory cmdFactory = null;
 	protected CommandToController controller = null;
 	
-	public Logic() {
+	public Logic() throws IOException {
 		cmdFactory = new CommandFactory();
 		controller = new Controller();
 	}
@@ -23,14 +24,12 @@ public class Logic implements UIToLogic {
 	
 	@Override
 	public UIState getState() {
-		return null;
-//		return stateObj;
+		return controller.getState();
 	}
 
 	@Override
-	public List<Task> getTasks() {
-		return null;
-//		return userTaskList;
+	public List<Task> getTasks() throws IOException {
+		return controller.getUserTaskList();
 	}
 
 }

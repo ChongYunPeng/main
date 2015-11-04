@@ -12,7 +12,7 @@ public class UIState {
 	protected String helpBox = null;
 	protected String title = null;
 	protected ListType displayType = null;
-	protected int idNewTask = 0;
+	protected int idNewTask = -1;
 	protected boolean hasFileError = false;
 	protected List<String> filterList = null;
 	
@@ -22,7 +22,7 @@ public class UIState {
 		displayType = ListType.NORMAL;
 		title = "Home";
 		hasFileError = false;
-		idNewTask = 0;
+		idNewTask = -1;
 		filterList = null;
 	}
 	

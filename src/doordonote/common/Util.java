@@ -37,4 +37,21 @@ public final class Util {
 		}
 	}
 	
+	
+	// Yong rui
+	public static Task createTask(String description, Date startDate, Date endDate){
+		Task task = null;
+
+		if(description!=null && startDate==null && endDate==null){
+			task = new FloatingTask(description);
+		} else if(description!=null && startDate==null && endDate!=null){
+			task = new DeadlineTask(description, endDate);
+		} else if(description!=null && startDate!=null && endDate!=null){
+			task = new EventTask(description, startDate, endDate);
+		} else {
+			assert (task != null):"Invalid Task parameters";
+		}
+
+		return task;
+	}
 }

@@ -1,5 +1,6 @@
 package doordonote.command;
 
+import java.io.IOException;
 import java.util.List;
 
 import doordonote.logic.CommandToController;
@@ -21,7 +22,7 @@ public class FindCommand implements Command {
 	}
 
 	@Override
-	public String execute(CommandToController controller) {
+	public String execute(CommandToController controller) throws IOException {
 		return controller.find(keywords);
 	}
 
