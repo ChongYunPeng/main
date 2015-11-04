@@ -1,3 +1,5 @@
+//@@author A0131436N
+
 package doordonote.logic;
 
 import java.io.IOException;
@@ -14,18 +16,17 @@ import doordonote.storage.StorageHandler;
 
 public class Controller implements CommandToController {
 	
-	private static final String MESSAGE_HOME = "Displaying all unfinished tasks";
+	private static final String MESSAGE_HOME = "Displaying all unfinished task(s)";
 	
 	protected Storage storage = null;
 	protected UIState stateObj = null;
 	protected TaskListFilter taskFilter = null;
-	protected List<Task> userTaskList = null;
+	
 	
 	public Controller() throws IOException {
 		storage = StorageHandler.getInstance();		
 		stateObj = new UIState();
 		taskFilter = new TaskListFilter(storage);
-		userTaskList = taskFilter.getUserTaskList(stateObj);
 	}
 	
 	/**
@@ -40,27 +41,29 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String add(String taskDescription, Date startDate, Date endDate) throws IOException {
-		List<Task> oldTaskList = userTaskList;
+		List<Task> oldTaskList = taskFilter.getUserTaskList(stateObj);
 		Task taskToBeAdded = Util.createTask(taskDescription, startDate, endDate);
 		String outputMsg = storage.add(taskToBeAdded);
+		
+		taskFilter.updateFullTaskList();
+		
 		if (stateObj.displayType != ListType.NORMAL) {
 			stateObj.setDefault();
 		} else {
 			List<Task> newTaskList = taskFilter.getUserTaskList(stateObj);
 			if (newTaskList.size() > oldTaskList.size()) {
-				// task is added with the same task filter
-				// Display the task list in the same filter
+				stateObj.clearTempState();				
 			} else {
 				stateObj.setDefault();
 			}
 		}
-		userTaskList = taskFilter.getUserTaskList(stateObj);
 		stateObj.idNewTask = getNewTaskId(taskToBeAdded);
 		return outputMsg;
 	}
 
 	@Override
 	public String delete(int taskId) throws Exception {
+		stateObj.clearTempState();
 		Task taskToDelete = getTask(taskId);
 		String outputMsg = null;
 		if (stateObj.displayType == ListType.DELETED) {
@@ -69,12 +72,12 @@ public class Controller implements CommandToController {
 			outputMsg = storage.delete(taskToDelete);
 
 		}
-		userTaskList = taskFilter.getUserTaskList(stateObj);
+		taskFilter.updateFullTaskList();
 		return outputMsg;
 	}
 	
-	// TODO add exception handling for when taskId > List size
 	protected Task getTask(int taskId) throws Exception {
+		List<Task> userTaskList = taskFilter.getUserTaskList(stateObj);
 		if (taskId > userTaskList.size()) {
 			throw new Exception("Invalid taskID!");
 		}
@@ -84,11 +87,11 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String find(List<String> keywords) throws IOException {
+		stateObj.clearTempState();
 		stateObj.filterList = keywords;
-		userTaskList = taskFilter.getUserTaskList(stateObj);
-		
 		stateObj.startDate = null;
-		stateObj.endDate = null;
+		
+		List<Task> userTaskList = taskFilter.getUserTaskList(stateObj);
 		
 		if (!userTaskList.isEmpty()) {
 			return userTaskList.size() + " task(s) found";
@@ -99,11 +102,11 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String finish(int taskId) throws Exception {
+		stateObj.clearTempState();
+
 		Task taskToFinish = getTask(taskId);
 		String outputMsg = storage.finish(taskToFinish);
-        
-		userTaskList = taskFilter.getUserTaskList(stateObj);
-		return outputMsg;
+    	return outputMsg;
 	}
 	
 	@Override
@@ -113,14 +116,15 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String help() {
-		stateObj.setDefault();
+		stateObj.clearTempState();
 		stateObj.helpBox = "help";
 		return "Displaying help";
 	}
 
 	@Override
 	public String help(String commandType) {
-		stateObj.setDefault();
+		stateObj.clearTempState();
+
 		stateObj.helpBox = commandType;
 		return "Displaying " + commandType + " help";
 	}
@@ -128,6 +132,7 @@ public class Controller implements CommandToController {
 	@Override
 	public String redo() throws IOException {
 		String outputMsg = storage.redo();
+		taskFilter.updateFullTaskList();
 		stateObj.setDefault();
 		return outputMsg;
 	}
@@ -135,13 +140,15 @@ public class Controller implements CommandToController {
 	@Override
 	public String undo() throws IOException {
 		String outputMsg = storage.undo();
-
+		taskFilter.updateFullTaskList();
 		stateObj.setDefault();
 		return outputMsg;
 	}
 
 	@Override
 	public String update(int taskId, String taskDescription, Date startDate, Date endDate) throws Exception {
+		stateObj.clearTempState();
+
 		if (stateObj.displayType == ListType.FINISHED || stateObj.displayType == ListType.DELETED) {
 			throw new Exception("Cannot update deleted/ finished tasks!");
 		}
@@ -150,16 +157,8 @@ public class Controller implements CommandToController {
 		Task newTask = Util.createTask(taskDescription, startDate, endDate);
 		String outputMsg = storage.update(taskToUpdate, newTask);
 
-
-		List<Task> oldTaskList = userTaskList;
-		List<Task> newTaskList = taskFilter.getUserTaskList(stateObj);
-		if (newTaskList.size() > oldTaskList.size()) {
-			// task is added with the same task filter
-			// Display the task list in the same filter
-		} else {
-			stateObj.setDefault();
-		}
-		userTaskList = taskFilter.getUserTaskList(stateObj);
+		taskFilter.updateFullTaskList();
+		
 		stateObj.idNewTask = getNewTaskId(newTask);
 		return outputMsg;
 	}
@@ -167,21 +166,21 @@ public class Controller implements CommandToController {
 	@Override
 	public String home() throws IOException {
 		stateObj.setDefault();
-		userTaskList = taskFilter.getUserTaskList(stateObj);
+		taskFilter.updateFullTaskList();
 		return MESSAGE_HOME;
 	}
 
 
 	@Override
 	public String restore(int taskId) throws Exception {
+		stateObj.clearTempState();
+
 		if (stateObj.displayType == ListType.NORMAL) {
 			throw new Exception("Cannot restore an undeleted/ unfinished task!");
 		}
 		
 		Task taskToRestore = getTask(taskId);
 		String outputMsg = storage.restore(taskToRestore);
-		userTaskList = taskFilter.getUserTaskList(stateObj);		
-
 		return outputMsg;
 	}
 
@@ -190,7 +189,6 @@ public class Controller implements CommandToController {
 	public String displayFinished() throws IOException {
 		stateObj.setDefault();
 		stateObj.displayType = ListType.FINISHED;
-		userTaskList = taskFilter.getUserTaskList(stateObj);
 		return "Displaying finished tasks";
 	}
 
@@ -199,21 +197,19 @@ public class Controller implements CommandToController {
 	public String displayDeleted() throws IOException {
 		stateObj.setDefault();
 		stateObj.displayType = ListType.DELETED;
-		userTaskList = taskFilter.getUserTaskList(stateObj);
 		return "Displaying deleted tasks";
 	}
 
 	public String displayOverDue() throws IOException {
 		stateObj.setDefault();
 		stateObj.displayType = ListType.OVERDUE;
-		userTaskList = taskFilter.getUserTaskList(stateObj);
 		return "Displaying overdue tasks";		
 	}
 	
 	@Override
 	public String getTaskID(int taskId) throws Exception {
+		stateObj.clearTempState();
 		Task taskToBeUpdated = getTask(taskId);
-		stateObj.setDefault();
 		stateObj.inputBox = getTaskToBeUpdated(taskToBeUpdated, taskId);
 		return "Task " + taskId + " found!";
 	}
@@ -242,29 +238,23 @@ public class Controller implements CommandToController {
 	 * @return taskId of new task added
 	 */
 	protected int getNewTaskId(Task newTask) {
+		List<Task> userTaskList = taskFilter.getUserTaskList(stateObj);
 		return userTaskList.indexOf(newTask);
 	}
 
 	@Override
 	public List<Task> getUserTaskList() throws IOException {
-		userTaskList = taskFilter.getUserTaskList(stateObj);
+		List<Task> userTaskList = taskFilter.getUserTaskList(stateObj);
 		return userTaskList;
 	}
 
 	@Override
-	public String find(Date startDate, Date endDate) throws IOException {
+	public String find(Date startDate) throws IOException {
 		assert(startDate != null);
+		stateObj.clearTempState();
 		stateObj.startDate = startDate;
-		stateObj.endDate = endDate;
 		stateObj.filterList = null;
-		
-		userTaskList = taskFilter.getUserTaskList(stateObj);
-		if (endDate != null) {
-			return "Displaying from " + Util.getDateString(startDate) + " to " + Util.getDateString(endDate);
-		} else {
-			return "Displaying from " + Util.getDateString(startDate);
-		}
-		
+		return "Displaying from " + Util.getDateString(startDate);
 	}
 
 

@@ -1,3 +1,5 @@
+//@@author A0131436N
+
 package doordonote.logic;
 
 import java.util.Date;
@@ -15,7 +17,6 @@ public class UIState {
 	protected int idNewTask = -1;
 	protected List<String> filterList = null;
 	protected Date startDate = null;
-	protected Date endDate = null;
 	
 	public UIState() {
 		setDefault();
@@ -66,15 +67,19 @@ public class UIState {
 		
 	}
 
+	protected void clearTempState() {
+		inputBox = "";
+		helpBox = null;
+		idNewTask = -1;
+	}
+	
 	protected void setDefault() {
 		inputBox = "";
 		displayType = ListType.NORMAL;
 		helpBox = null;
-		displayType = ListType.NORMAL;
 		idNewTask = -1;
 		filterList = null;
 		startDate = null;
-		endDate = null;
 	}
 	
 	

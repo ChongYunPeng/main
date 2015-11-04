@@ -1,3 +1,5 @@
+//@@author A0131436N
+
 package doordonote.logic;
 
 import java.io.IOException;
@@ -39,5 +41,5 @@ public interface CommandToController {
 
 	List<Task> getUserTaskList() throws IOException;
 
-	String find(Date startDate, Date endDate) throws IOException;
+	String find(Date startDate) throws IOException;
 }

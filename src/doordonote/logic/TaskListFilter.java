@@ -1,3 +1,5 @@
+//@@author A0131436N
+
 package doordonote.logic;
 
 import java.io.IOException;
@@ -22,10 +24,11 @@ public class TaskListFilter {
 		this.storage = storage;
 	}
 	
-	
-	
-	protected List<Task> getUserTaskList(UIState stateObj) throws IOException {
+	public void updateFullTaskList() throws IOException {
 		fullTaskList = storage.readTasks();
+	}
+	
+	public List<Task> getUserTaskList(UIState stateObj) {
 		List<Task> userTaskList = null;
 		switch (stateObj.displayType) {
 		case DELETED :
@@ -48,7 +51,7 @@ public class TaskListFilter {
 		}
 		
 		if (stateObj.startDate != null) {
-			return filter(userTaskList, stateObj.startDate, stateObj.endDate);
+			return filter(userTaskList, stateObj.startDate);
 		} else if (stateObj.filterList == null || stateObj.filterList.isEmpty()) {
 			return userTaskList;
 		} else {
@@ -57,23 +60,15 @@ public class TaskListFilter {
 	}
 	
 
-	protected List<Task> filter(List<Task> unfilteredUserTaskList, Date startDate, Date endDate) {
+	protected List<Task> filter(List<Task> unfilteredUserTaskList, Date startDate) {
 		assert(startDate != null);
-		List<Task> userTaskList = unfilteredUserTaskList;
+		List<Task> userTaskList = new ArrayList<Task>();
 		for (Task task : unfilteredUserTaskList) {
-			if (task.getEndDate() != null || task.getEndDate().after(startDate)) {
+			if (task.getEndDate() != null && task.getEndDate().after(startDate)) {
 				userTaskList.add(task);
 			}
 		}
-		if (endDate != null) {
-			List<Task> tempList = new ArrayList<Task>();
-			for (Task task : userTaskList) {
-				if (task.getEndDate().before(endDate)) {
-					tempList.add(task);
-				}
-			}			
-			userTaskList = tempList;
-		}
+
 		return userTaskList;		
 	}
 
@@ -92,9 +87,7 @@ public class TaskListFilter {
 		return userTaskList;
 	}
 
-	
-	//@@author yongrui
-	private List<Task> getUnfinishedTasks() {
+		private List<Task> getUnfinishedTasks() {
 		List<Task> unfinishedTaskList = new ArrayList<Task>();
 		for(Task task : fullTaskList) {
 			if (!task.isDone() && !task.isDeleted()) {
@@ -103,7 +96,7 @@ public class TaskListFilter {
 		}
 		return unfinishedTaskList;
 	}
-
+	
 	private List<Task> getOverdueTasks() {
 //		List<Task> overDueTasks = new ArrayList<Task>();
 //		for(Task task : fullTaskList) {
@@ -115,13 +108,29 @@ public class TaskListFilter {
 		return null;
 	}
 
-	private List<Task> getFinishedTasks() throws IOException {
-		return storage.readDoneTasks();
+	//@@author A013
+	private List<Task> getFinishedTasks() {
+		List<Task> finishedTasks = null;
+		try {
+			finishedTasks = storage.readDoneTasks();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return finishedTasks;
 	}
 
-	private List<Task> getDeletedTasks() throws IOException {
-		// TODO Auto-generated method stub
-		return storage.readDeletedTasks();
+	private List<Task> getDeletedTasks() {
+		List<Task> deletedTasks = null;
+		try {
+			deletedTasks = storage.readDeletedTasks();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return deletedTasks;
 	}
 	
 }

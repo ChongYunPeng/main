@@ -1,8 +1,12 @@
+//@@author A0131436N
+
 package doordonote.commandfactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.BasicConfigurator;
 import org.joda.time.DateTime;
 
 import com.joestelmach.natty.CalendarSource;
@@ -19,11 +23,21 @@ public class DateParser {
 
 	public DateParser() {
 		natty = new Parser();
+    	BasicConfigurator.configure();
 	}
 	
 	public Date parse(String input) {
 		List<Date> dateList = parseAndGetDateList(input);
-		if (dateList == null || dateList.isEmpty()) {
+		if (dateList.isEmpty()) {
+			return null;
+		} else {
+			return dateList.get(0);
+		}
+	}
+	
+	public Date parse(String input, Date defaultTime) {
+		List<Date> dateList = parseAndGetDateList(input, defaultTime);
+		if (dateList.isEmpty()) {
 			return null;
 		} else {
 			return dateList.get(0);
@@ -45,13 +59,9 @@ public class DateParser {
 		try {
 			DateGroup baseDateGroup = baseDateList.get(0);
 			List<Date> dateList = baseDateGroup.getDates();
-			if (dateList.isEmpty()) {
-				return null;
-			} else {
-				return dateList;
-			}
+			return dateList;
 		} catch (IndexOutOfBoundsException e) {
-			return null;
+			return new ArrayList<Date>();
 		}	
 	}
 }

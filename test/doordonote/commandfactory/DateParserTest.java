@@ -1,3 +1,5 @@
+//@@author A0131436N
+
 package doordonote.commandfactory;
 
 import static org.junit.Assert.assertEquals;
@@ -8,7 +10,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-
 
 public class DateParserTest {
 	
@@ -33,8 +34,8 @@ public class DateParserTest {
 	    assertEquals("Parser should get only one valid date without 'to'", 
 	    			 createdDateList, 
 	    			 parser.parseAndGetDateList("from 15 jan 2013 30 march  7.45"));
-	    assertEquals("Parser should return null if no dates are found", 
-	    			 null, 
+	    assertEquals("Parser should return empty if no dates are found", 
+	    			 new ArrayList<Date>(), 
 	    			 parser.parseAndGetDateList("do research on database"));
 
 

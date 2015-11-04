@@ -1,3 +1,5 @@
+//@@author A0131436N
+
 package doordonote.commandfactory;
 
 import java.util.Arrays;
@@ -29,14 +31,9 @@ public class FindHandler extends CommandHandler {
 			DateTime midnightToday = new DateTime().withTimeAtStartOfDay();
 			Date defaultTime = midnightToday.toDate();
 
-			List<Date> dateList = dateParser.parseAndGetDateList(commandBody, defaultTime);
-			if (!dateList.isEmpty() && dateList.size() == 1) {
-				Date startDate = dateList.get(0);
+			Date startDate = dateParser.parse(commandBody, defaultTime);
+			if (startDate != null) {
 				return new FindDateCommand(startDate);
-			} else if (!dateList.isEmpty()) {
-				Date startDate = dateList.get(0);
-				Date endDate = dateList.get(1);
-				return new FindDateCommand(startDate, endDate);
 			}
 		}
 		
