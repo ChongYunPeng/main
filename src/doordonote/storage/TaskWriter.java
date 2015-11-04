@@ -80,16 +80,16 @@ public class TaskWriter {
 			}
 			currentFile = fileName;
 			try{
-			writeToFile(currentJsonString);
-			
+				writeToFile(currentJsonString);
+
 			}
 			catch (IOException e){
 				e.printStackTrace();
 			}
-			
+
 			TaskReader.setCurrentFile(fileName);
 			return 0;
-			
+
 		} else{
 			try{
 				file.createNewFile();
@@ -103,7 +103,7 @@ public class TaskWriter {
 			TaskReader.setCurrentFile(fileName);
 			return 1;
 		}
-		
+
 	}
 
 
@@ -127,10 +127,10 @@ public class TaskWriter {
 			if(!file.exists()){
 				file.createNewFile();
 				writeToFile(INITIAL_JSONSTRING);
-//				toUndoStack(INITIAL_JSONSTRING);
+				//				toUndoStack(INITIAL_JSONSTRING);
 			}	else{
 				currentJsonString = TaskReader.getFileString(currentFile);
-	//			toUndoStack(currentJsonString);
+				//			toUndoStack(currentJsonString);
 			}
 		}
 		catch (IOException e) {
@@ -148,7 +148,7 @@ public class TaskWriter {
 	protected void add(Task task) throws IOException, DuplicateTaskException{
 		String json = null;
 		try{
-		json = writeTask(task);
+			json = writeTask(task);
 		}
 		catch(DuplicateTaskException e){
 			if(e.getValue()==0 || e.getValue()==1){
@@ -228,7 +228,7 @@ public class TaskWriter {
 	private String writeDeleteTask(Task task) throws EmptyTaskListException, IOException {
 		// Remove EmptyTaskListException
 		// Throw assertion here
-		
+
 		Set<Task> set = reader.jsonToSet();
 		if(!set.isEmpty()){
 			set.remove(task);
@@ -288,19 +288,26 @@ public class TaskWriter {
 		Set<Task> set = reader.jsonToSet();
 		String json = null;
 		try{
-		json = writeTask(newUpdatedTask);
-		set.remove(taskToUpdate);
-		json = gson.toJson(set, type);
-		writeToFile(json);
-		// throw exception here
+			json = writeTask(newUpdatedTask);
+			set.remove(taskToUpdate);
+			json = gson.toJson(set, type);
+			writeToFile(json);
+			// throw exception here
 		}
 		catch (DuplicateTaskException e){
 			if(e.getValue() == -1){
 				throw new DuplicateTaskException(String.format(MESSAGE_UPDATE_DUPLICATE, newUpdatedTask));
+			} else{
+				set.remove(taskToUpdate);
+				set.remove(newUpdatedTask);
+				set.add(newUpdatedTask);
+				json = gson.toJson(set, type);
+				writeToFile(json);
+				throw e;
 			}
 		}
-		
-		
+
+
 		if(json!=null){
 			toUndoStack(json);
 		}
