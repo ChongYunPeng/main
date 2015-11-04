@@ -9,6 +9,7 @@ import doordonote.command.Command;
 import doordonote.commandfactory.CommandFactory;
 import doordonote.common.Task;
 import doordonote.common.Util;
+import doordonote.logic.UIState.ListType;
 import doordonote.storage.Storage;
 import doordonote.storage.StorageHandler;
 
@@ -16,7 +17,7 @@ import doordonote.storage.StorageHandler;
 
 public class Controller implements UIToLogic, CommandToController {
 	
-	private static final String MESSAGE_HOME = "HOME";
+	private static final String MESSAGE_HOME = "Displaying all unfinished tasks";
 //	private static final String STATE_UPDATE = "Update";
 //	private static final String STATE_DISPLAY = "Display";
 //	private static final String STATE_HELP = "Help";
@@ -25,41 +26,67 @@ public class Controller implements UIToLogic, CommandToController {
 //	private static final String STATE_DISPLAY_FINISH = "Display finish";
 //	private static final String STATE_DISPLAY_DELETE = "Display delete";
 	
-	protected CommandFactory cmdFactory = null;
+//	protected CommandFactory cmdFactory = null;
 	protected Storage storage = null;
-	protected List<Task> fullTaskList = null;
+//	protected List<Task> fullTaskList = null;
 	protected List<Task> userTaskList = null;
-//	protected String UIState = null;
 	protected UIState stateObj = null;
 	
 	public Controller() {
 		cmdFactory = new CommandFactory();
 		storage = StorageHandler.getInstance();
-		try {
-		    fullTaskList = getStorageTaskList();
-		}
-		catch(IOException E) {
-			
-		}
+		
+//		try {
+//		    fullTaskList = getStorageTaskList();
+//		}
+//		catch(IOException E) {
+//			
+//		}
 
 		userTaskList = fullTaskList;
 		stateObj = new UIState();
 	}
 	
+	/**
+	 * @param store
+	 * 
+	 * Used for injection dependency to replace Storage with a stub for testing
+	 */
+	protected void setStorageTaskList(Storage store) {
+		storage = store;
+	}
 
 	@Override
 	public String add(String taskDescription, Date startDate, Date endDate) throws IOException {
 		String outputMsg = storage.add(taskDescription, startDate, endDate);
 		fullTaskList = getStorageTaskList();
-		userTaskList = fullTaskList;
-		stateObj.setDefault();
+		if (stateObj.displayType != ListType.NORMAL) {
+			userTaskList = fullTaskList;
+			stateObj.setDefault();
+		} else {
+			List<Task> oldUserTaskList = userTaskList;
+			find(stateObj.filterList);
+			if (userTaskList.size() <= oldUserTaskList.size()) {
+				// New task added does not contain keyword
+				
+			}
+		}
+		
+		
+
 		return outputMsg;
 	}
 
 	@Override
 	public String delete(int taskId) throws Exception {
 		Task taskToDelete = getTask(taskId);
-		String outputMsg = storage.delete(taskToDelete);
+		String outputMsg = null;
+		if (taskToDelete.isDeleted()) {
+			outputMsg = storage.remove(taskToDelete);
+		} else {
+			outputMsg = storage.delete(taskToDelete);
+
+		}
 		fullTaskList = getStorageTaskList();
 		userTaskList = fullTaskList;
 		stateObj.setDefault();
@@ -77,6 +104,13 @@ public class Controller implements UIToLogic, CommandToController {
 	protected List<Task> getStorageTaskList() throws IOException {
 		return storage.readTasks();
 	}
+	
+	protected List<Task> getUserTaskList() throws IOException {
+		fullTaskList = getStorageTaskList();
+		
+		return null;
+	}
+	
 
 	@Override
 	public String find(List<String> keywords) {
@@ -91,11 +125,6 @@ public class Controller implements UIToLogic, CommandToController {
 				}
 			}
 			userTaskList = tempList;
-		}
-		
-		stateObj.title = "Filter: ";
-		for (String word : keywords) {
-			stateObj.title += word;
 		}
 		
 		if (!userTaskList.isEmpty()) {
@@ -170,8 +199,12 @@ public class Controller implements UIToLogic, CommandToController {
 		Task taskToUpdate = getTask(taskId);
 		String outputMsg = storage.update(taskToUpdate, taskDescription, startDate, endDate);
 		fullTaskList = getStorageTaskList();
-
+		
+		userTaskList.remove(taskId);
+		List<Task> oldList = userTaskList;
 		userTaskList = fullTaskList;
+		int taskIdNewTask = getNewTask(oldList);
+		stateObj.idNewTask = taskIdNewTask;
 		return outputMsg;
 	}
 	
@@ -213,7 +246,11 @@ public class Controller implements UIToLogic, CommandToController {
 		return "Displaying deleted tasks";
 	}
 
-
+	public String displayOverDue() {
+		return null;
+		
+	}
+	
 	@Override
 	public String getTaskID(int taskId) throws Exception {
 		Task taskToBeUpdated = getTask(taskId);
@@ -238,6 +275,25 @@ public class Controller implements UIToLogic, CommandToController {
 			taskString = taskDescription + " from " + startDateString + " to " + endDateString;
 		}
 		return "update " + taskId + " " + taskString;
+	}
+	
+	/**
+	 * @param oldTaskList
+	 * @return taskId of new task added
+	 */
+	protected int getNewTask(List<Task> oldTaskList) {
+		if (userTaskList.size() < oldTaskList.size()) {
+			return 0;
+		} else if (userTaskList.size() > oldTaskList.size()) {
+			for (int i = 0; i < oldTaskList.size(); i++) {
+				if (!userTaskList.get(i).equals(oldTaskList.get(i))) {
+					return i + 1;
+				}
+			}
+			return userTaskList.size();
+		} else {
+			return 0;
+		}
 	}
 
 
