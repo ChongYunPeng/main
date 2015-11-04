@@ -1,7 +1,6 @@
 package doordonote.common;
 
 import java.util.Date;
-import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTimeComparator;
 
 public abstract class Task implements Comparable<Task>{

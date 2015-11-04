@@ -43,7 +43,7 @@ public class CommandFactory {
 			break;
 
 		case "find" :
-			handler = new FindHandler(commandBody);
+			handler = new FindHandler(commandBody, dateParser);
 			break;
 
 		case "finish" :

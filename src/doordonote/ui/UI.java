@@ -1,7 +1,7 @@
 package doordonote.ui;
 
 import doordonote.common.Task;
-import doordonote.logic.Controller;
+import doordonote.logic.Logic;
 import doordonote.logic.UIToLogic;
 import doordonote.logic.UIState; 
 
@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.lang.StringBuilder;
 
 import org.apache.log4j.BasicConfigurator;
@@ -77,7 +78,16 @@ public class UI extends Application {
     Text output = new Text("Welcome to DoOrDoNote!");
     Text title = new Text("Home");
     
-    UIToLogic controller = new Controller();
+    UIToLogic logic = null;
+    
+    public UI() {
+        try {
+			logic = new Logic();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
     
     BorderPane border = new BorderPane();
     Scene scene = new Scene(border);
@@ -158,13 +168,13 @@ public class UI extends Application {
             if (ke.getCode().equals(KeyCode.ENTER)) {
                 if(commandBox.getText() != null) {
                     try {
-                    	feedback = controller.parseAndExecuteCommand(commandBox.getText());
+                    	feedback = logic.parseAndExecuteCommand(commandBox.getText());
                     	/*border.setCenter(addHBox());
                     	output.setText(feedback);   
 	                	output.setFill(Color.web("#00811C"));
 	                	commandBox.clear();
 	                	*/
-                    	UIState state = controller.getState();
+                    	UIState state = logic.getState();
                     	
                     	if(state.getHelpBox() == null) {
                     		output.setText(feedback);
@@ -411,8 +421,8 @@ public class UI extends Application {
                     		break;
                     	}
                     	case STATE_UPDATE: {
-                    	    commandBox.setText(controller.getTaskToBeUpdated());
-                    	    commandBox.positionCaret(controller.getTaskToBeUpdated().length() + 1);
+                    	    commandBox.setText(logic.getTaskToBeUpdated());
+                    	    commandBox.positionCaret(logic.getTaskToBeUpdated().length() + 1);
                     	    output.setText(feedback);
                     	    output.setFill(Color.web("#00811C"));
                     	    border.setCenter(addHBox());
@@ -434,8 +444,8 @@ public class UI extends Application {
                 
              if (ke.getCode().equals(KeyCode.ESCAPE)) {
                 	try {
-                		UIState state = controller.getState();
-                    	feedback = controller.parseAndExecuteCommand("home");
+                		UIState state = logic.getState();
+                    	feedback = logic.parseAndExecuteCommand("home");
                     	output.setText(feedback);   
 	                	output.setFill(Color.web("#00811C"));
 			            border.setCenter(addHBox(0, state.getDisplayType()));
@@ -454,8 +464,8 @@ public class UI extends Application {
              
              if (ke.getCode().equals(KeyCode.Z) && ke.isControlDown()) {
              	try {
-             		UIState state = controller.getState();
-                 	feedback = controller.parseAndExecuteCommand("undo");
+             		UIState state = logic.getState();
+                 	feedback = logic.parseAndExecuteCommand("undo");
                  	output.setText(feedback);   
 	                	output.setFill(Color.web("#00811C"));
 			            border.setCenter(addHBox(0, state.getDisplayType()));
@@ -474,8 +484,8 @@ public class UI extends Application {
              
              if (ke.getCode().equals(KeyCode.Y) && ke.isControlDown()) {
               	try {
-              		UIState state = controller.getState();
-                  	feedback = controller.parseAndExecuteCommand("redo");
+              		UIState state = logic.getState();
+                  	feedback = logic.parseAndExecuteCommand("redo");
                   	output.setText(feedback);   
  	                	output.setFill(Color.web("#00811C"));
  			            border.setCenter(addHBox(0, state.getDisplayType()));
@@ -494,8 +504,8 @@ public class UI extends Application {
              
              if (ke.getCode().equals(KeyCode.D) && ke.isControlDown()) {
               	try {
-              		UIState state = controller.getState();
-                  	feedback = controller.parseAndExecuteCommand("display deleted");
+              		UIState state = logic.getState();
+                  	feedback = logic.parseAndExecuteCommand("display deleted");
                   	output.setText(feedback);   
  	                	output.setFill(Color.web("#00811C"));
  			            border.setCenter(addHBox(0, state.getDisplayType()));
@@ -514,8 +524,8 @@ public class UI extends Application {
              
              if (ke.getCode().equals(KeyCode.F) && ke.isControlDown()) {
               	try {
-              		UIState state = controller.getState();
-                  	feedback = controller.parseAndExecuteCommand("display finished");
+              		UIState state = logic.getState();
+                  	feedback = logic.parseAndExecuteCommand("display finished");
                   	output.setText(feedback);   
  	                	output.setFill(Color.web("#00811C"));
  			            border.setCenter(addHBox(0, state.getDisplayType()));
@@ -534,7 +544,7 @@ public class UI extends Application {
              
              if (ke.getCode().equals(KeyCode.H) && ke.isControlDown()) {
                	try {
-                   	feedback = controller.parseAndExecuteCommand(HELP);
+                   	feedback = logic.parseAndExecuteCommand(HELP);
                    	output.setText(feedback);   
   	                output.setFill(Color.web("#00811C"));
   	                Stage helpStage = createHelpWindow();
@@ -1017,7 +1027,7 @@ public class UI extends Application {
     protected HBox displayHomeTasks(HBox main, int n) {
         
     	SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-        List<Task> taskList = controller.getTasks();
+        List<Task> taskList = logic.getTasks();
         boolean haveEventsOrDeadlines = true;
         boolean haveFloatingTasks = false;
         boolean haveSameDate = true;
@@ -1441,7 +1451,7 @@ public class UI extends Application {
     protected HBox displayDeletedOrFinishedTasks(HBox main) {
         
     	SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-        List<Task> taskList = controller.getTasks();
+        List<Task> taskList = logic.getTasks();
         boolean haveEventsOrDeadlines = true;
         boolean haveFloatingTasks = false;
         boolean haveSameDate = true;

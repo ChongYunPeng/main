@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import doordonote.common.Task;
+
 public interface CommandToController {
 	String add(String taskDescription, Date startDate, Date endDate) throws IOException;
 
 	String delete(int taskId) throws Exception;
 
-	String find(List<String> keywords);
+	String find(List<String> keywords) throws IOException;
 	
 	String finish(int taskId) throws IOException, Exception;
 	
@@ -32,4 +34,10 @@ public interface CommandToController {
 	String displayDeleted() throws IOException;
 
 	String getTaskID(int taskID) throws Exception;
+
+	UIState getState();
+
+	List<Task> getUserTaskList() throws IOException;
+
+	String find(Date startDate, Date endDate) throws IOException;
 }

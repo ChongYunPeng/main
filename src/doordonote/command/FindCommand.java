@@ -1,5 +1,6 @@
 package doordonote.command;
 
+import java.io.IOException;
 import java.util.List;
 
 import doordonote.logic.CommandToController;
@@ -13,7 +14,7 @@ public class FindCommand implements Command {
 	
 	/**
 	 * @param 	keywords
-	 * 		  	Filters and displays only tasks that contains (not case senstive) 
+	 * 		  	Filters and displays only tasks that contains (not case sensitive) 
 	 * 			every String in this {@code List}.
 	 */
 	public FindCommand(List<String> keywords) {
@@ -21,7 +22,7 @@ public class FindCommand implements Command {
 	}
 
 	@Override
-	public String execute(CommandToController controller) {
+	public String execute(CommandToController controller) throws IOException {
 		return controller.find(keywords);
 	}
 
