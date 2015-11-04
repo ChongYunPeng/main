@@ -105,7 +105,6 @@ public class UI extends Application {
                 }
               }
             });
-        
     }
     
     protected VBox addVBoxB() {
@@ -443,9 +442,6 @@ public class UI extends Application {
 			            if(state.getTitle() != null) {
                 	        title.setText(state.getTitle());
                 	    }
-                		if(state.getInputBox() == null || state.getInputBox() != "") {
-                			commandBox.clear();
-                		}
                 		commandBox.clear();
                 	}
                 	catch (Exception e) {
@@ -454,6 +450,112 @@ public class UI extends Application {
                     	output.setFill(Color.web("#F20505"));
                     }
                 }
+             
+             if (ke.getCode().equals(KeyCode.Z) && ke.isControlDown()) {
+             	try {
+             		UIState state = controller.getState();
+                 	feedback = controller.parseAndExecuteCommand("undo");
+                 	output.setText(feedback);   
+	                	output.setFill(Color.web("#00811C"));
+			            border.setCenter(addHBox(0, state.getDisplayType()));
+			            border.setTop(addHeader(state.getDisplayType()));
+			            if(state.getTitle() != null) {
+             	        title.setText(state.getTitle());
+             	    }
+             		commandBox.clear();
+             	}
+             	catch (Exception e) {
+                 	feedback = e.getMessage();
+                 	output.setText(feedback);
+                 	output.setFill(Color.web("#F20505"));
+                 }
+             }
+             
+             if (ke.getCode().equals(KeyCode.Y) && ke.isControlDown()) {
+              	try {
+              		UIState state = controller.getState();
+                  	feedback = controller.parseAndExecuteCommand("redo");
+                  	output.setText(feedback);   
+ 	                	output.setFill(Color.web("#00811C"));
+ 			            border.setCenter(addHBox(0, state.getDisplayType()));
+ 			            border.setTop(addHeader(state.getDisplayType()));
+ 			            if(state.getTitle() != null) {
+              	        title.setText(state.getTitle());
+              	    }
+              		commandBox.clear();
+              	}
+              	catch (Exception e) {
+                  	feedback = e.getMessage();
+                  	output.setText(feedback);
+                  	output.setFill(Color.web("#F20505"));
+                  }
+              }
+             
+             if (ke.getCode().equals(KeyCode.D) && ke.isControlDown()) {
+              	try {
+              		UIState state = controller.getState();
+                  	feedback = controller.parseAndExecuteCommand("display deleted");
+                  	output.setText(feedback);   
+ 	                	output.setFill(Color.web("#00811C"));
+ 			            border.setCenter(addHBox(0, state.getDisplayType()));
+ 			            border.setTop(addHeader(state.getDisplayType()));
+ 			            if(state.getTitle() != null) {
+              	        title.setText(state.getTitle());
+              	    }
+              		commandBox.clear();
+              	}
+              	catch (Exception e) {
+                  	feedback = e.getMessage();
+                  	output.setText(feedback);
+                  	output.setFill(Color.web("#F20505"));
+                  }
+              }
+             
+             if (ke.getCode().equals(KeyCode.F) && ke.isControlDown()) {
+              	try {
+              		UIState state = controller.getState();
+                  	feedback = controller.parseAndExecuteCommand("display finished");
+                  	output.setText(feedback);   
+ 	                	output.setFill(Color.web("#00811C"));
+ 			            border.setCenter(addHBox(0, state.getDisplayType()));
+ 			            border.setTop(addHeader(state.getDisplayType()));
+ 			            if(state.getTitle() != null) {
+              	        title.setText(state.getTitle());
+              	    }
+              		commandBox.clear();
+              	}
+              	catch (Exception e) {
+                  	feedback = e.getMessage();
+                  	output.setText(feedback);
+                  	output.setFill(Color.web("#F20505"));
+                  }
+              }
+             
+             if (ke.getCode().equals(KeyCode.H) && ke.isControlDown()) {
+               	try {
+                   	feedback = controller.parseAndExecuteCommand(HELP);
+                   	output.setText(feedback);   
+  	                output.setFill(Color.web("#00811C"));
+  	                Stage helpStage = createHelpWindow();
+  	                helpStage.show();
+                    helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+                      @Override
+                      public void handle(KeyEvent evt) {
+                        if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+                            helpStage.close();
+                        }
+                      }
+                    });
+
+               		commandBox.clear();
+               	}
+               	catch (Exception e) {
+                   	feedback = e.getMessage();
+                   	output.setText(feedback);
+                   	output.setFill(Color.web("#F20505"));
+                   }
+               }
+             
         }
         });
     }
