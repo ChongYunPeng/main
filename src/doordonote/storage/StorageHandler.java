@@ -86,7 +86,7 @@ public class StorageHandler implements Storage {
 		}
 		catch(IOException e){
 			e.printStackTrace();
-			return "IOException";
+			return "IOException!";
 		}
 		catch(DuplicateTaskException e){
 			return e.getMessage();
@@ -114,7 +114,7 @@ public class StorageHandler implements Storage {
 		}
 		catch(IOException e){
 			e.printStackTrace();
-			return "";
+			return "IOException!";
 		}
 		catch(DuplicateTaskException e){
 			return e.getMessage();

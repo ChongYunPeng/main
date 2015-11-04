@@ -32,6 +32,7 @@ public class TaskWriter {
 	private static final String SETTINGS_FILE = "settings.dodn";
 	private static final String MESSAGE_DUPLICATE_DELETE = "Task %1$s exists in deleted list. Restoring from deleted list.";
 	private static final String MESSAGE_DUPLICATE_DONE = "Task %1$s is marked as done. Restoring from Done list";
+	private static final String MESSAGE_UPDATE_DUPLICATE = "Task %1$s already exists. Update will not be executed";
 	private static final Gson gson = new GsonBuilder().registerTypeAdapter(Task.class, 
 			new TaskClassAdapter<Task>()).create();
 	private static final Type type = new TypeToken<HashSet<Task>>(){}.getType();
@@ -285,11 +286,21 @@ public class TaskWriter {
 	protected void update(Task taskToUpdate, Task newUpdatedTask) 
 			throws EmptyTaskListException, IOException, DuplicateTaskException{
 		Set<Task> set = reader.jsonToSet();
+		String json = null;
+		try{
+		json = writeTask(newUpdatedTask);
 		set.remove(taskToUpdate);
-		String json = gson.toJson(set, type);
+		json = gson.toJson(set, type);
 		writeToFile(json);
 		// throw exception here
-		json = writeTask(newUpdatedTask);
+		}
+		catch (DuplicateTaskException e){
+			if(e.getValue() == -1){
+				throw new DuplicateTaskException(String.format(MESSAGE_UPDATE_DUPLICATE, newUpdatedTask));
+			}
+		}
+		
+		
 		if(json!=null){
 			toUndoStack(json);
 		}
