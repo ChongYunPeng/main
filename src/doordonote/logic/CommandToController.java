@@ -38,4 +38,6 @@ public interface CommandToController {
 	UIState getState();
 
 	List<Task> getUserTaskList() throws IOException;
+
+	String find(Date startDate, Date endDate) throws IOException;
 }

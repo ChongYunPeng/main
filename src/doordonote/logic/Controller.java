@@ -87,6 +87,9 @@ public class Controller implements CommandToController {
 		stateObj.filterList = keywords;
 		userTaskList = taskFilter.getUserTaskList(stateObj);
 		
+		stateObj.startDate = null;
+		stateObj.endDate = null;
+		
 		if (!userTaskList.isEmpty()) {
 			return userTaskList.size() + " task(s) found";
 		} else {
@@ -242,6 +245,22 @@ public class Controller implements CommandToController {
 	public List<Task> getUserTaskList() throws IOException {
 		userTaskList = taskFilter.getUserTaskList(stateObj);
 		return userTaskList;
+	}
+
+	@Override
+	public String find(Date startDate, Date endDate) throws IOException {
+		assert(startDate != null);
+		stateObj.startDate = startDate;
+		stateObj.endDate = endDate;
+		stateObj.filterList = null;
+		
+		userTaskList = taskFilter.getUserTaskList(stateObj);
+		if (endDate != null) {
+			return "Displaying from " + Util.getDateString(startDate) + " to " + Util.getDateString(endDate);
+		} else {
+			return "Displaying from " + Util.getDateString(startDate);
+		}
+		
 	}
 
 

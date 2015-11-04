@@ -1,5 +1,6 @@
 package doordonote.logic;
 
+import java.util.Date;
 import java.util.List;
 
 public class UIState {
@@ -10,20 +11,14 @@ public class UIState {
 	
 	protected String inputBox = null;
 	protected String helpBox = null;
-	protected String title = null;
 	protected ListType displayType = null;
 	protected int idNewTask = -1;
-	protected boolean hasFileError = false;
 	protected List<String> filterList = null;
+	protected Date startDate = null;
+	protected Date endDate = null;
 	
 	public UIState() {
-		inputBox = "";
-		helpBox = null;
-		displayType = ListType.NORMAL;
-		title = "Home";
-		hasFileError = false;
-		idNewTask = -1;
-		filterList = null;
+		setDefault();
 	}
 	
 	public int getIdNewTask() {
@@ -70,16 +65,15 @@ public class UIState {
 		
 		
 	}
-	public boolean isHasFileError() {
-		return hasFileError;
-	}
-	
+
 	protected void setDefault() {
 		inputBox = "";
 		helpBox = null;
-		title = "Home";
-		hasFileError = false;
+		displayType = ListType.NORMAL;
+		idNewTask = -1;
 		filterList = null;
+		startDate = null;
+		endDate = null;
 	}
 	
 	

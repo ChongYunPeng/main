@@ -3,6 +3,8 @@ package doordonote.commandfactory;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import com.joestelmach.natty.CalendarSource;
 import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;
@@ -14,11 +16,9 @@ import com.joestelmach.natty.Parser;
  */
 public class DateParser {
 	protected Parser natty = null;
-	protected Date defaultDate = null;
 
 	public DateParser() {
 		natty = new Parser();
-		defaultDate = parse("today 8am");
 	}
 	
 	public Date parse(String input) {
@@ -31,9 +31,16 @@ public class DateParser {
 	}
 	
 	public List<Date> parseAndGetDateList(String input) {
+		DateTime midnightToday = new DateTime().withTimeAtStartOfDay();
+		DateTime eightAm = midnightToday.plusHours(8);
+		Date defaultDate = eightAm.toDate();
+		return parseAndGetDateList(input, defaultDate);
+	}
+	
+	public List<Date> parseAndGetDateList(String input, Date defaultTime) {
 		// input should always be checked to be no null
 		assert(input != null);
-		CalendarSource.setBaseDate(defaultDate);
+		CalendarSource.setBaseDate(defaultTime);
 		List<DateGroup> baseDateList = natty.parse(input);
 		try {
 			DateGroup baseDateGroup = baseDateList.get(0);
@@ -45,7 +52,6 @@ public class DateParser {
 			}
 		} catch (IndexOutOfBoundsException e) {
 			return null;
-		}
-		
+		}	
 	}
 }

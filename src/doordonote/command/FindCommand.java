@@ -14,7 +14,7 @@ public class FindCommand implements Command {
 	
 	/**
 	 * @param 	keywords
-	 * 		  	Filters and displays only tasks that contains (not case senstive) 
+	 * 		  	Filters and displays only tasks that contains (not case sensitive) 
 	 * 			every String in this {@code List}.
 	 */
 	public FindCommand(List<String> keywords) {
