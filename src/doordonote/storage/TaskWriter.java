@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.lang.reflect.Type;
 import java.util.Set;
 import java.util.HashSet;
@@ -17,13 +15,12 @@ import com.google.gson.reflect.TypeToken;
 
 import doordonote.common.Task;
 
-/*
- * 
- *  @author: Chen Yongrui
- *  
+
+
+/**
+ * @@author A0131716M
+ *
  */
-
-
 public class TaskWriter {
 
 	private static final String DEFAULT_NAME = "data.json";
@@ -290,6 +287,7 @@ public class TaskWriter {
 		try{
 			json = writeTask(newUpdatedTask);
 			set.remove(taskToUpdate);
+			set.add(newUpdatedTask);
 			json = gson.toJson(set, type);
 			writeToFile(json);
 			// throw exception here
