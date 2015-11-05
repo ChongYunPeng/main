@@ -13,7 +13,7 @@ public final class Util {
 	}
 	
 	public static String removeFirstWord(String input) {
-		return input.replace(getFirstWord(input), "").trim();
+		return input.replaceFirst(getFirstWord(input), "").trim();
 	}
 
 	public static String getFirstWord(String input) {

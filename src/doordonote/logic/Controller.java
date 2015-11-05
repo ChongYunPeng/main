@@ -12,8 +12,6 @@ import doordonote.logic.UIState.ListType;
 import doordonote.storage.Storage;
 import doordonote.storage.StorageHandler;
 
-//import doordonote.storage.Task;
-
 public class Controller implements CommandToController {
 	
 	private static final String MESSAGE_HOME = "Displaying all unfinished task(s)";
@@ -207,7 +205,7 @@ public class Controller implements CommandToController {
 	}
 	
 	@Override
-	public String getTaskID(int taskId) throws Exception {
+	public String getTaskById(int taskId) throws Exception {
 		stateObj.clearTempState();
 		Task taskToBeUpdated = getTask(taskId);
 		stateObj.inputBox = getTaskToBeUpdated(taskToBeUpdated, taskId);

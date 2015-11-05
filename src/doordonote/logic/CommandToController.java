@@ -35,7 +35,7 @@ public interface CommandToController {
 
 	String displayDeleted() throws IOException;
 
-	String getTaskID(int taskID) throws Exception;
+	String getTaskById(int taskID) throws Exception;
 
 	UIState getState();
 
