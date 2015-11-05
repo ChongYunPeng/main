@@ -441,6 +441,11 @@ public class UI extends Application {
                     }
 		            
                 }
+                else {
+                	UIState state = new UIState();
+                	border.setCenter(addHBox(0, state.getDisplayType()));
+                	output.setText("");
+                }
             }
                 
              if (ke.getCode().equals(KeyCode.ESCAPE)) {
