@@ -40,7 +40,7 @@ public class UIState {
 		String title = "";
 		switch (displayType) {
 		case NORMAL :
-			title = "";
+			title = "Home";
 			break;
 		case FINISHED :
 			title = "Finished Tasks";
