@@ -1,6 +1,7 @@
 package doordonote.storage;
 
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.File;
 import java.nio.file.Files;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonParseException;
 
 import doordonote.common.Task;
 
@@ -24,11 +26,15 @@ import doordonote.common.Task;
  *
  */
 
+/**
+ * @@author A0131716M
+ *
+ */
 public class TaskReader {
 
 	private static final String DEFAULT_NAME = "data.json";
 	private static final String FILE_TYPE = ".json";
-	private static final String SETTINGS_FILE = "settings.dodn";
+	private static final String INITIAL_JSONSTRING = "[]";
 	private static final Charset ENCODING = StandardCharsets.UTF_8;
 	private static final int HASHSET_SIZE = 4099;
 	private static final Gson gson = new GsonBuilder().registerTypeAdapter(Task.class, 
@@ -93,6 +99,12 @@ public class TaskReader {
 	protected ArrayList<Task> readTasks() throws IOException{
 		set = jsonToSet();
 		ArrayList<Task> listTask = new ArrayList<Task>();
+		if(set == null){
+			FileWriter writer = new FileWriter(currentFile);
+			writer.write(INITIAL_JSONSTRING);
+			writer.close();
+			return listTask;
+		} else{
 		for(Task t : set){
 			if(!t.isDeleted() && !t.isDone()){
 				listTask.add(t);
@@ -100,6 +112,7 @@ public class TaskReader {
 		}
 		Collections.sort(listTask);
 		return listTask;
+		}
 	}
 
 	protected ArrayList<Task> readDeletedTasks() throws IOException{
@@ -129,7 +142,8 @@ public class TaskReader {
 	// This method gets json string from currentFile and map it
 	protected HashSet<Task> jsonToSet() throws IOException {
 		String json = getFileString(currentFile);
-		HashSet<Task> jsonSet = gson.fromJson(json, type);
+		HashSet<Task> jsonSet = null;
+		jsonSet = gson.fromJson(json, type);
 		return jsonSet;
 	}
 

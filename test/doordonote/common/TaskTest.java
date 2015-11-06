@@ -71,15 +71,19 @@ public class TaskTest {
 		Date date1 = new Date(2015, 1, 1, 1, 1);
 		Date date2 = new Date(1999, 3, 3, 3, 3);
 		Date date3 = new Date(2014, 1, 1, 1, 2);
+		Date date4 = new Date(2015, 1, 1, 3, 3);
+		Date date5 = new Date(2016, 5, 5, 5, 5);
 		Task task1 = new DeadlineTask("test", date1);
 		Task task2 = new EventTask("swim", date1, date3);
 		Task task3 = new DeadlineTask("run", date2);
 		Task task4 = new FloatingTask("float");
 		Task task5 = new FloatingTask("soccer");
+		Task task6 = new EventTask("Exams", date4, date5);
 		List<Task> expected = new ArrayList<Task>();
 		expected.add(task3);
-		expected.add(task2);
 		expected.add(task1);
+		expected.add(task2);
+		expected.add(task6);
 		expected.add(task4);
 		expected.add(task5);
 		List<Task> arrlist = new ArrayList<Task>();
@@ -88,9 +92,11 @@ public class TaskTest {
 		arrlist.add(task1);
 		arrlist.add(task2);
 		arrlist.add(task3);
+		arrlist.add(task6);
 		assertFalse(expected.equals(arrlist));
 		Collections.sort(arrlist);
 		assertEquals(expected, arrlist);
 	}
+	
 
 }
