@@ -1,3 +1,4 @@
+//@@author A0131716M
 package doordonote.common;
 
 import static org.junit.Assert.*;
@@ -9,6 +10,10 @@ import java.util.List;
 
 import org.junit.Test;
 
+/**
+ * @author A0131716M
+ *
+ */
 public class TaskTest {
 
 	
@@ -70,7 +75,7 @@ public class TaskTest {
 	public void testDateSorting(){
 		Date date1 = new Date(2015, 1, 1, 1, 1);
 		Date date2 = new Date(1999, 3, 3, 3, 3);
-		Date date3 = new Date(2014, 1, 1, 1, 2);
+		Date date3 = new Date(2015, 1, 1, 1, 2);
 		Date date4 = new Date(2015, 1, 1, 3, 3);
 		Date date5 = new Date(2016, 5, 5, 5, 5);
 		Task task1 = new DeadlineTask("test", date1);
