@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+/**
+ * @@author A0131716M
+ *
+ */
+
 public class StorageHandler implements Storage {
 	
 	private static final String FILE_TYPE = ".json";
@@ -149,6 +154,7 @@ public class StorageHandler implements Storage {
 			throw e;
 		}		
 		assert(listTask!=null);
+		System.out.print(listTask);
 		return listTask;
 	}
 

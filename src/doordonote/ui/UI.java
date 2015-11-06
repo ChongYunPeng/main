@@ -60,8 +60,8 @@ public class UI extends Application {
 	    DELETED, FINISHED, NORMAL
 	}
 	
-	private static final String STATE_UPDATE = "Update";
-	private static final String STATE_DISPLAY = "Display";
+	//private static final String STATE_UPDATE = "Update";
+	//private static final String STATE_DISPLAY = "Display";
 	private static final String HELP = "help";
 	private static final String HELP_ADD = "add";
 	private static final String HELP_DELETE = "delete";
@@ -71,10 +71,10 @@ public class UI extends Application {
 	private static final String HELP_PATH = "path";
 	private static final String HELP_RESTORE = "restore";
 	private static final String HELP_GET = "get";
-	private static final String STATE_FIND = "Find";
-	private static final String STATE_HOME = "Home";
-	private static final String STATE_DISPLAY_FINISH = "Display finish";
-	private static final String STATE_DISPLAY_DELETE = "Display delete";
+	//private static final String STATE_FIND = "Find";
+	//private static final String STATE_HOME = "Home";
+	//private static final String STATE_DISPLAY_FINISH = "Display finish";
+	//private static final String STATE_DISPLAY_DELETE = "Display delete";
     
     Text output = new Text("Welcome to DoOrDoNote!");
     Text title = new Text("Home");
@@ -130,7 +130,7 @@ public class UI extends Application {
         hb.setAlignment(CENTER);
         hb.setPadding(new Insets(5, 5, 5, 5));
         output.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-        output.setFill(Color.web("#00811C"));
+        output.setFill(Color.web("#00811C")); //use .text from css
         hb.getChildren().add(output);
         
         vbox.getChildren().addAll(hb, addHBox2());

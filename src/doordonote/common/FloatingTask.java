@@ -2,6 +2,11 @@ package doordonote.common;
 
 import java.util.Date;
 
+/**
+ * @@author A0131716M
+ *
+ */
+
 public class FloatingTask extends Task {
 	
 	

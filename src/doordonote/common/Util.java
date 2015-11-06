@@ -40,7 +40,10 @@ public final class Util {
 	}
 	
 	
-	// Yong rui
+	/**
+	 * @@author A0131716M
+	 *
+	 */
 	public static Task createTask(String description, Date startDate, Date endDate){
 		Task task = null;
 

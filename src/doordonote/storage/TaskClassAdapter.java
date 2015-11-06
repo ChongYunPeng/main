@@ -12,6 +12,11 @@ import com.google.gson.JsonSerializer;
 
 //This class extends Gson library to write sub classes onto json file.
 
+/**
+ * @@author A0131716M
+ *
+ */
+
 public class TaskClassAdapter<Task> implements JsonSerializer<Task>, JsonDeserializer<Task> {
 
 	@Override
