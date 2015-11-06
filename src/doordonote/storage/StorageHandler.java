@@ -1,3 +1,4 @@
+//@@author A0131716M
 package doordonote.storage;
 
 import java.util.Date;
@@ -19,6 +20,7 @@ import java.io.FileNotFoundException;
 public class StorageHandler implements Storage {
 	
 	private static final String FILE_TYPE = ".json";
+	private final String TASK_STRING_TAIL = "...\"";
 	private final String MESSAGE_ADD = "Task %1$s added";
 	private final String MESSAGE_UPDATE = "Task updated to %1$s";
 	private final String MESSAGE_DELETE = "Task %1$s deleted";
@@ -87,7 +89,8 @@ public class StorageHandler implements Storage {
 	public String add(Task task){
 		try{
 			writer.add(task);
-			return String.format(MESSAGE_ADD, task);
+			String taskStr = shortenTaskName(task);
+			return String.format(MESSAGE_ADD, taskStr);
 		}
 		catch(IOException e){
 			e.printStackTrace();
@@ -112,7 +115,8 @@ public class StorageHandler implements Storage {
 	public String update(Task taskToUpdate, Task updatedTask){
 		try{
 			writer.update(taskToUpdate, updatedTask);
-			return String.format(MESSAGE_UPDATE, updatedTask);
+			String taskStr = shortenTaskName(updatedTask);
+			return String.format(MESSAGE_UPDATE, taskStr);
 		}
 		catch(EmptyTaskListException e){
 			return MESSAGE_NO_TASK_TO_UPDATE;
@@ -136,13 +140,14 @@ public class StorageHandler implements Storage {
 		}
 		catch(IOException e){
 			e.printStackTrace();
-			return "";
+			return "IOException!";
 		}
 	}
 
-	public String remove(Task taskToRemove) throws IOException{
-		writer.remove(taskToRemove);
-		return String.format(MESSAGE_REMOVE, taskToRemove);
+	public String remove(Task task) throws IOException{
+		writer.remove(task);
+		String taskStr = shortenTaskName(task);
+		return String.format(MESSAGE_REMOVE, taskStr);
 	}
 
 	public ArrayList<Task> readTasks() throws IOException{
@@ -205,16 +210,19 @@ public class StorageHandler implements Storage {
 	
 	public String restore(Task task) throws IOException, DuplicateTaskException{
 		writer.restore(task);
-		return String.format(MESSAGE_RESTORE, task);
+		String taskStr = shortenTaskName(task);
+		return String.format(MESSAGE_RESTORE, taskStr);
 	}
 	
 	public String finish(Task task) throws IOException, DuplicateTaskException{
 		writer.setDone(task);
-		return String.format(MESSAGE_FINISH, task);
+		String taskStr = shortenTaskName(task);
+		return String.format(MESSAGE_FINISH, taskStr);
 	}
 
 	public String notFinish(Task task) throws IOException{
-		return String.format(MESSAGE_NOT_FINISH,task);
+		String taskStr = shortenTaskName(task);
+		return String.format(MESSAGE_NOT_FINISH,taskStr);
 	}
 	
 	private Task createTask(String description, Date startDate,
@@ -232,6 +240,15 @@ public class StorageHandler implements Storage {
 		}
 
 		return task;
+	}
+	
+	private String shortenTaskName(Task task){
+		String taskStr = task.toString();
+		if(taskStr.length()>32){
+			taskStr = taskStr.substring(0, 31);
+			taskStr += TASK_STRING_TAIL;
+		}
+		return taskStr;
 	}
 
 }
