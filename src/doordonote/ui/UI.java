@@ -8,24 +8,26 @@ import doordonote.logic.UIState;
 import doordonote.ui.DateUtil;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.io.IOException;
 import java.lang.StringBuilder;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.commons.lang.WordUtils;
 
-import javafx.animation.*;
+import javafx.animation.FillTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Interpolator;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import static javafx.geometry.Pos.CENTER;
-import static javafx.geometry.Pos.TOP_CENTER;
 import javafx.geometry.Pos;
-
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -39,8 +41,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import javafx.util.Duration;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -72,49 +72,59 @@ public class UI extends Application {
 	private static final String COMMAND_DISPLAY_DELETE = "view deleted";
 	private static final String COMMAND_UNDO = "undo";
 	private static final String COMMAND_REDO = "redo";
-	
+
 	private static final String MESSAGE_WELCOME = "Welcome to DoOrDoNote! "
 			+ "Type in \"help\" for all the help you need!";
 	private static final String MESSAGE_TABLE = "Here is a table of all the commands you can use:";
 	private static final String MESSAGE_HELP = "Hello! "
 			+ "This is the page to provide you with all the help you need for DoOrDoNote";
-	
+	private static final String MESSAGE_NO_INPUT = "Try typing one of our commands. For help, just type \"help\"!";
+
 	private static final String TITLE_APP = "DoOrDoNote";
 	private static final String TITLE_HOME = "Home";
 	private static final String TITLE_HELP = "Help!";
-	
+	private static final String TITLE_FLOATING = "Floating Tasks";
+	private static final String TITLE_EVENTS = "Events Spanning Tasks";
+
 	private static final String LABEL_OK = " OK ";
+	private static final String LABEL_COMMAND = "Command:";
 
-	private Text output = new Text(MESSAGE_WELCOME);
-	private Text title = new Text(TITLE_HOME);
-	
-	private int count;
+	private static final String TYPE_EVENT = "EVENT_TASK";
+	private static final String TYPE_DEADLINE = "DEADLINE_TASK";
+	private static final String TYPE_FLOATING = "FLOATING_TASK";
 
-	private UIToLogic logic = null;
-	private DateUtil util;
+	private static final String FONT_CALIBRI = "Calibri";
+	private static final String FONT_TAHOMA = "Tahoma";
+	private static final String FONT_AHARONI = "Aharoni";
+
+	private static Text output = new Text(MESSAGE_WELCOME);
+	private static Text title = new Text(TITLE_HOME);
+	private static BorderPane border = new BorderPane();
+	private static Scene scene = new Scene(border);
+
+	private static int count;
+
+	private static UIToLogic logic = null;
 
 	public UI() {
+		
 		try {
 			logic = new Logic();
-			util = new DateUtil();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	BorderPane border = new BorderPane();
-	Scene scene = new Scene(border);
-
 	@Override
 	public void start(Stage primaryStage) {
+		
 		UIState state = new UIState();
+		
 		border.setBottom(addBottomArea());
 		border.setCenter(addMainDisplay(0, state.getDisplayType()));
 		border.setTop(addHeader(state.getDisplayType()));
 
-		scene.getStylesheets().add("UiStyleSheet.css");
-		
 		primaryStage.setScene(scene);
 		primaryStage.setTitle(TITLE_APP);
 		primaryStage.getIcons().add(new Image("icon1.jpg"));
@@ -122,134 +132,167 @@ public class UI extends Application {
 		primaryStage.setMaximized(true);
 
 	}
-
-	protected VBox addBottomArea() {
+    
+	/**
+	 * Return a vertical box containing elements of the bottom 
+	 * section of the display
+	 *
+	 * @return     vertical box VBox.
+	 */
+	protected static VBox addBottomArea() {
+		
 		VBox vBox = new VBox();
 		vBox.setPadding(new Insets(10, 12, 10, 12));
 		vBox.setSpacing(5);
 		vBox.setStyle("-fx-background-color: #383737;");
 
 		HBox hBox = new HBox();
-		hBox.setStyle("-fx-background-color: #F0F0F0;"); //E9EFFD #F5F8FF
-		hBox.setAlignment(CENTER);
+		hBox.setStyle("-fx-background-color: #F0F0F0;"); 
+		hBox.setAlignment(Pos.CENTER);
 		hBox.setPadding(new Insets(5, 5, 5, 5));
-		output.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-		//output.getStyleClass().add("text");
-		output.setFill(Color.web("#00811C")); //use .text from css
+		
+		output.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
+		output.setFill(Color.web("#00811C"));
+		
 		hBox.getChildren().add(output);
 
 		vBox.getChildren().addAll(hBox, addCommandArea());
-		vBox.setAlignment(CENTER);
+		vBox.setAlignment(Pos.CENTER);
+		
 		return vBox;
 
 	}
-	protected HBox addCommandArea() {
+	
+	/**
+	 * Return a horizontal box containing elements of the  
+	 * command section of the display
+	 *
+	 * @return     horizontal box HBox.
+	 */
+	protected static HBox addCommandArea() {
 
 		HBox hBox = new HBox();
 		hBox.setPadding(new Insets(5, 12, 5, 12));
 		hBox.setSpacing(10);
-		//hbox.setStyle("-fx-background-color: #336699;");
+		// hbox.setStyle("-fx-background-color: #336699;");
 
-		Label command = new Label("Command:");
-		command.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+		Label command = new Label(LABEL_COMMAND);
+		command.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
 		command.setTextFill(Color.web("#FFFFFF"));
+		
 		TextField commandBox = new TextField();
 		commandBox.setPrefWidth(500);
 
-		getUserInput(commandBox);  
+		handleUserInput(commandBox);
 
 		hBox.getChildren().addAll(command, commandBox);
-		hBox.setAlignment(CENTER);
+		hBox.setAlignment(Pos.CENTER);
 
 		return hBox;
 	}
-
-	protected void getUserInput(TextField commandBox) {
+	
+	/**
+	 * Handles user input given in commandBox.
+	 * Passes the user input to Logic and
+	 * displays feedback returned as output.
+	 * Also calls Logic's getState() to get UIState
+	 * object for information regarding display
+	 *
+	 * @param commandBox  TextField where user can enter input      
+	 * @return            void
+	 */
+	protected static void handleUserInput(TextField commandBox) {
 
 		commandBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			String feedback;
+
 			@Override
-			public void handle(KeyEvent ke)
-			{
+			public void handle(KeyEvent ke) {
 				if (ke.getCode().equals(KeyCode.ENTER)) {
-					if(commandBox.getText() != null) {
-						try {
+					if (commandBox.getText() != null && ! commandBox.getText().trim().isEmpty()) {
+						try { 
 							feedback = logic.parseAndExecuteCommand(commandBox.getText());
+							
 							UIState state = logic.getState();
 
-							if(state.getHelpBox() == null) {
+							if (state.getHelpBox() == null) {
 								output.setText(feedback);
 								output.setFill(Color.web("#00811C"));
-								border.setCenter(addMainDisplay(state.getIdNewTask()+1, state.getDisplayType()));
+		
+								border.setCenter(addMainDisplay(state.getIdNewTask() + 1, state.getDisplayType()));
 								border.setTop(addHeader(state.getDisplayType()));
-								if(state.getTitle() != null) {
+								
+								if (state.getTitle() != null) {
 									title.setText(state.getTitle());
 								}
-								if(state.getInputBox() == null || state.getInputBox() == "") {
+								if (state.getInputBox() == null || state.getInputBox() == "") {
 									commandBox.clear();
-								}
-								else {
+								} else {
 									commandBox.setText(state.getInputBox());
 									commandBox.positionCaret(state.getInputBox().length() + 1);
 								}
-							}
-							else {
+							} else {
 								output.setText(feedback);
 								output.setFill(Color.web("#00811C"));
 
 								Stage helpStage;
-								switch(state.getHelpBox()) {
-								  case HELP_ADD : {
+								switch (state.getHelpBox()) {
+								case HELP_ADD: {
 									// Fallthrough
-								  }
-								  case HELP_DELETE : {
+								}
+								case HELP_DELETE: {
 									// Fallthrough
-								  }
-								  case HELP_FIND : {
+								}
+								case HELP_FIND: {
 									// Fallthrough
-								  }
-								  case HELP_FINISH : {
+								}
+								case HELP_FINISH: {
 									// Fallthrough
-								  }
-								  case HELP_GET : {
+								}
+								case HELP_GET: {
 									// Fallthrough
-								  }
-								  case HELP_PATH : {
+								}
+								case HELP_PATH: {
 									// Fallthrough
-								  }
-								  case HELP_RESTORE : {
+								}
+								case HELP_RESTORE: {
 									// Fallthrough
-								  }
-								  case HELP_UPDATE : {
+								}
+								case HELP_UPDATE: {
 									helpStage = createHelpCommandWindow(state.getHelpBox());
 									break;
-								  }
-								  default: {
+								}
+								default: {
 									helpStage = createHelpWindow();
 									break;
-								  }
+								}
 								}
 
 								helpStage.show();
 								helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 									@Override
 									public void handle(KeyEvent evt) {
-										if (evt.getCode().equals(KeyCode.ESCAPE)|| 
-												evt.getCode().equals(KeyCode.ENTER)) {
+										if (evt.getCode().equals(KeyCode.ESCAPE)
+												|| evt.getCode().equals(KeyCode.ENTER)) {
 											helpStage.close();
 										}
 									}
 								});
 								commandBox.clear();
 							}
-						}
-						catch (Exception e) {
-							feedback = e.getMessage();
+						} catch (Exception e) {
+							feedback = e.getMessage();							
 							UIState state = new UIState();
+
 							border.setCenter(addMainDisplay(0, state.getDisplayType()));
+							
 							output.setText(feedback);
 							output.setFill(Color.web("#F20505"));
 						}
+					} else {
+						feedback = MESSAGE_NO_INPUT;
+						output.setText(feedback);
+						output.setFill(Color.web("#00811C"));
 					}
 				}
 
@@ -257,17 +300,20 @@ public class UI extends Application {
 					try {
 						UIState state = logic.getState();
 						feedback = logic.parseAndExecuteCommand(COMMAND_HOME);
-						output.setText(feedback);   
+
+						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
+						
 						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						border.setTop(addHeader(state.getDisplayType()));
-						if(state.getTitle() != null) {
+						if (state.getTitle() != null) {
 							title.setText(state.getTitle());
 						}
+						
 						commandBox.clear();
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						feedback = e.getMessage();
+						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
 					}
@@ -277,17 +323,20 @@ public class UI extends Application {
 					try {
 						UIState state = logic.getState();
 						feedback = logic.parseAndExecuteCommand(COMMAND_UNDO);
-						output.setText(feedback);   
+						
+						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
+						
 						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						border.setTop(addHeader(state.getDisplayType()));
-						if(state.getTitle() != null) {
+						if (state.getTitle() != null) {
 							title.setText(state.getTitle());
 						}
+						
 						commandBox.clear();
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						feedback = e.getMessage();
+						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
 					}
@@ -297,17 +346,20 @@ public class UI extends Application {
 					try {
 						UIState state = logic.getState();
 						feedback = logic.parseAndExecuteCommand(COMMAND_REDO);
-						output.setText(feedback);   
+						
+						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
+						
 						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						border.setTop(addHeader(state.getDisplayType()));
-						if(state.getTitle() != null) {
+						if (state.getTitle() != null) {
 							title.setText(state.getTitle());
 						}
+						
 						commandBox.clear();
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						feedback = e.getMessage();
+						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
 					}
@@ -317,17 +369,20 @@ public class UI extends Application {
 					try {
 						UIState state = logic.getState();
 						feedback = logic.parseAndExecuteCommand(COMMAND_DISPLAY_DELETE);
-						output.setText(feedback);   
+						
+						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
+						
 						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						border.setTop(addHeader(state.getDisplayType()));
-						if(state.getTitle() != null) {
+						if (state.getTitle() != null) {
 							title.setText(state.getTitle());
 						}
+						
 						commandBox.clear();
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						feedback = e.getMessage();
+						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
 					}
@@ -337,17 +392,20 @@ public class UI extends Application {
 					try {
 						UIState state = logic.getState();
 						feedback = logic.parseAndExecuteCommand(COMMAND_DISPLAY_FINISH);
-						output.setText(feedback);   
+						
+						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
+						
 						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						border.setTop(addHeader(state.getDisplayType()));
-						if(state.getTitle() != null) {
+						if (state.getTitle() != null) {
 							title.setText(state.getTitle());
 						}
+						
 						commandBox.clear();
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						feedback = e.getMessage();
+						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
 					}
@@ -356,23 +414,26 @@ public class UI extends Application {
 				if (ke.getCode().equals(KeyCode.H) && ke.isControlDown()) {
 					try {
 						feedback = logic.parseAndExecuteCommand(HELP);
-						output.setText(feedback);   
+						
+						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
+						
 						Stage helpStage = createHelpWindow();
 						helpStage.show();
 						helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 							@Override
 							public void handle(KeyEvent evt) {
-								if (evt.getCode().equals(KeyCode.ESCAPE)|| evt.getCode().equals(KeyCode.ENTER)) {
+								if (evt.getCode().equals(KeyCode.ESCAPE) || evt.getCode().equals(KeyCode.ENTER)) {
 									helpStage.close();
 								}
 							}
 						});
 
+						
 						commandBox.clear();
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						feedback = e.getMessage();
+						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
 					}
@@ -381,26 +442,36 @@ public class UI extends Application {
 			}
 		});
 	}
-
-	protected Stage createHelpWindow() {
+    
+	/**
+	 * Returns the Stage for the Help window 
+	 * box with all useful info for the user.
+	 *  
+	 * @return            Help window Stage
+	 */
+	protected static Stage createHelpWindow() {
+		
 		Stage stage = new Stage();
 
 		HBox hBox = new HBox();
 		hBox.setSpacing(15);
-		hBox.setAlignment(CENTER);
+		hBox.setAlignment(Pos.CENTER);
+		
 		Image image1 = new Image("question_mark.png");
 		ImageView imv1 = new ImageView(image1);
 		imv1.setFitWidth(30);
 		imv1.setPreserveRatio(true);
 		imv1.setSmooth(true);
 		imv1.setCache(true);
+		
 		Text helpHeader = new Text(MESSAGE_HELP);
-		helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
-		helpHeader.setFill(Color.web("#00143E")); //#00143E
+		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
+		helpHeader.setFill(Color.web("#00143E")); // #00143E
+		
 		hBox.getChildren().addAll(helpHeader, imv1);
 
 		Text tableHeader = new Text(MESSAGE_TABLE);
-		tableHeader.setFont(Font.font("Calibri", FontWeight.NORMAL, 17));
+		tableHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 17));
 		tableHeader.setFill(Color.web("#00143E"));
 
 		Image image2 = new Image("help_resize.jpg");
@@ -416,8 +487,9 @@ public class UI extends Application {
 		vBox.setPadding(new Insets(15, 30, 10, 30));
 		vBox.setSpacing(10);
 		vBox.getChildren().addAll(hBox, tableHeader, imv2, button);
-		vBox.setAlignment(TOP_CENTER);
+		vBox.setAlignment(Pos.TOP_CENTER);
 		vBox.setStyle("-fx-background-color: #eff4ff;");
+		
 		Scene sc = new Scene(vBox);
 
 		stage.setTitle(TITLE_HELP);
@@ -425,71 +497,49 @@ public class UI extends Application {
 		stage.setScene(sc);
 
 		button.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				stage.close();      
+			@Override
+			public void handle(ActionEvent e) {
+				stage.close();
 			}
 		});
 
 		return stage;
-
 	}
-
-	protected Stage createHelpCommandWindow(String commandType) {
+    
+	/**
+	 * Returns the Stage for the Help window 
+	 * box for a particular command type
+	 * with all useful info about that command 
+	 * type for the user.
+	 *  
+	 * @param commandType String for the type of command for which 
+	 *                    help is to be displayed            
+	 * @return            Help window Stage for specific command type
+	 */
+	protected static Stage createHelpCommandWindow(String commandType) {
+		
 		Stage stage = new Stage();
+		
 		HBox hBox = new HBox();
 		hBox.setSpacing(15);
-		hBox.setAlignment(CENTER);
+		hBox.setAlignment(Pos.CENTER);
+		
 		Image image1 = new Image("question_mark.png");
 		ImageView imv1 = new ImageView(image1);
 		imv1.setFitWidth(30);
 		imv1.setPreserveRatio(true);
 		imv1.setSmooth(true);
 		imv1.setCache(true);
+
+		Text helpHeader = new Text(
+				"Hello! Here is a table of the commands you can use for " + commandType.toUpperCase() + ":");
+		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
+		helpHeader.setFill(Color.web("#00143E")); // #00143E
 		
-		Text helpHeader = new Text("Hello! Here is a table of the commands you can use for " + 
-		                           commandType.toUpperCase() + ":");
-		helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
-		helpHeader.setFill(Color.web("#00143E")); //#00143E
 		hBox.getChildren().addAll(helpHeader, imv1);
-		
-		Image image2;
-        switch(commandType) {
-          case HELP_ADD : {
-        	image2 = new Image("helpadd.jpg");
-        	break;
-          }
-          case HELP_DELETE : {
-        	image2 = new Image("helpdelete.jpg");
-        	break;
-          }
-          case HELP_FIND : {
-        	image2 = new Image("helpfind.jpg");
-        	break;
-          }
-          case HELP_FINISH : {
-        	image2 = new Image("helpfinish.jpg");
-        	break;
-          }
-          case HELP_GET : {
-        	image2 = new Image("helpget.jpg");
-        	break;
-          }
-          case HELP_PATH : {
-        	image2 = new Image("helppath.jpg");
-        	break;
-          }
-          case HELP_RESTORE : {
-        	image2 = new Image("helprestore.jpg");
-        	break;
-          }
-          case HELP_UPDATE : {
-        	image2 = new Image("helpupdate.jpg");
-          }
-          default : {
-        	  image2 = new Image("help_resize.jpg");
-          }
-        }
-		
+
+		Image image2 = getTableImage(commandType);
+
 		ImageView imv2 = new ImageView(image2);
 		imv2.setFitWidth(700);
 		imv2.setPreserveRatio(true);
@@ -502,8 +552,9 @@ public class UI extends Application {
 		vBox.setPadding(new Insets(15, 30, 10, 30));
 		vBox.setSpacing(10);
 		vBox.getChildren().addAll(hBox, imv2, button);
-		vBox.setAlignment(TOP_CENTER);
+		vBox.setAlignment(Pos.TOP_CENTER);
 		vBox.setStyle("-fx-background-color: #eff4ff;");
+		
 		Scene sc = new Scene(vBox);
 
 		stage.setTitle(TITLE_HELP);
@@ -511,374 +562,423 @@ public class UI extends Application {
 		stage.setScene(sc);
 
 		button.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				stage.close();      
+			@Override
+			public void handle(ActionEvent e) {
+				stage.close();
 			}
 		});
 
 		return stage;
-
 	}
-
-	protected HBox addMainDisplay(int n, doordonote.logic.UIState.ListType listType) {
+	
+	protected static Image getTableImage(String commandType) {
+		
+		Image image;
+		
+		switch (commandType) {
+		case HELP_ADD: {
+			image = new Image("helpadd.jpg");
+			break;
+		}
+		case HELP_DELETE: {
+			image = new Image("helpdelete.jpg");
+			break;
+		}
+		case HELP_FIND: {
+			image = new Image("helpfind.jpg");
+			break;
+		}
+		case HELP_FINISH: {
+			image = new Image("helpfinish.jpg");
+			break;
+		}
+		case HELP_GET: {
+			image = new Image("helpget.jpg");
+			break;
+		}
+		case HELP_PATH: {
+			image = new Image("helppath.jpg");
+			break;
+		}
+		case HELP_RESTORE: {
+			image = new Image("helprestore.jpg");
+			break;
+		}
+		case HELP_UPDATE: {
+			image = new Image("helpupdate.jpg");
+		}
+		default: {
+			image = new Image("help_resize.jpg");
+		}
+		}
+		
+		return image;
+	}
+	
+	/**
+	 * Returns the horizontal box for the main window 
+	 * displaying all the tasks inside their boxes
+	 *  
+	 * @param taskId      id of the task to be highlighted after update or add command
+	 * @param listType    type of task lists to be displayed (home, deleted, finished)
+	 * @return            horizontal box HBox for main display
+	 */
+	protected static HBox addMainDisplay(int taskId, doordonote.logic.UIState.ListType listType) {
 
 		HBox main = new HBox();
 
 		main.setPadding(new Insets(40, 25, 30, 25));
 		main.setSpacing(40);
-		//main.setStyle("-fx-background-color: #FFFFFF;");
-		main.setStyle("-fx-background-image: url('whitee.png');" +
-		           "-fx-background-size: 100% 100%; " +
-		           "-fx-background-repeat: no-repeat;");
+		main.setStyle("-fx-background-image: url('whitee.png');" + "-fx-background-size: 100% 100%; "
+				+ "-fx-background-repeat: no-repeat;");
 
-		
-		return displayTasks(main, n, listType);
+		return displayTasks(main, taskId, listType);
 	}
-
-	protected HBox displayTasks(HBox main, int n, doordonote.logic.UIState.ListType listType) {
+    
+	/**
+	 * Returns the horizontal box for the main window 
+	 * displaying all the tasks inside their boxes
+	 *  
+	 * @param main        horizontal box HBox for the main display 
+	 * @param taskId      id of the task to be highlighted after update or add command
+	 * @param listType    type of task lists to be displayed (home, deleted, finished)
+	 * @return            horizontal box HBox containing boxes for different types of tasks
+	 */
+	protected static HBox displayTasks(HBox main, int taskId, doordonote.logic.UIState.ListType listType) {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 		List<Task> taskList = logic.getTasks();
+
 		boolean haveEventsSpanningDays = checkForEventsSpanningDays(taskList, formatter);
-		boolean isHome = listType.equals(doordonote.logic.UIState.ListType.NORMAL); 
-		System.out.println(isHome);
+		boolean isHome = listType.equals(doordonote.logic.UIState.ListType.NORMAL);
+
 		count = 1;
 
-		VBox v1 = new VBox();
-		v1.setPrefWidth(500);
-		v1.setStyle("-fx-background-color: #E1F5EF;");
+		VBox singleDayBox = new VBox();
+		singleDayBox.setPrefWidth(500);
+		singleDayBox.setStyle("-fx-background-color: #E1F5EF;");
 
-		ScrollPane sp1 = new ScrollPane();
-		VBox.setVgrow(sp1, Priority.ALWAYS);
-		sp1.setFitToHeight(true);
-		sp1.setFitToWidth(true);
-		sp1.setPrefSize(115, 150);
-		sp1.setHbarPolicy(ScrollBarPolicy.NEVER);
-		sp1.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		VBox singleDayTasks = displaySingleDayTasks(taskId, isHome, taskList, formatter);
+		ScrollPane scroll1 = createScroll();
+		scroll1.setContent(singleDayTasks);
+		singleDayBox.getChildren().addAll(scroll1);
 
-		double scrollPaneIncrement = 0.2;
+		VBox multipleDayBox = new VBox();
+		multipleDayBox.setPrefWidth(500);
+		multipleDayBox.setStyle("-fx-background-color: #FFF3F3;");
 
-		scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent evt) {
-				if (evt.getCode().equals(KeyCode.UP)) {
-					if (sp1.getVvalue() > sp1.getVmin()) {
-						sp1.setVvalue(sp1.getVvalue() - scrollPaneIncrement);
-					}
-				}
-				if (evt.getCode().equals(KeyCode.DOWN)) {
-					if (sp1.getVvalue() < sp1.getVmax()) {
-						sp1.setVvalue(sp1.getVvalue() + scrollPaneIncrement);
-					}
-				}
-			}
-		}); 
+		if (haveEventsSpanningDays == true) {
 
-		VBox v2_1 = new VBox();
-		v2_1.setPrefWidth(500);
-		v2_1.setStyle("-fx-background-color: #FFF3F3;");
+			ScrollPane scroll3 = createScroll();
+			VBox eventsSpanningDays = displayEventsSpanningDays(taskId, isHome, taskList, formatter);
 
-		VBox v2_2 = new VBox();
-		v2_2.setPrefWidth(500);
-		v2_2.setStyle("-fx-background-color: #F9FFC6;");
+			scroll3.setContent(eventsSpanningDays);
+			multipleDayBox.getChildren().addAll(scroll3);
+		}
+        
+		VBox floatingBox = new VBox();
+		floatingBox.setPrefWidth(500);
+		floatingBox.setStyle("-fx-background-color: #F9FFC6;");
 
-		ScrollPane sp2 = new ScrollPane();
-		VBox.setVgrow(sp2, Priority.ALWAYS);
-		//sp2.setVmax(440);
-		sp2.setFitToHeight(true);
-		sp2.setFitToWidth(true);
-		sp2.setPrefSize(115, 150);
-		sp2.setHbarPolicy(ScrollBarPolicy.NEVER);
-		sp2.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		ScrollPane scroll2 = createScroll();
+		VBox floatingTasks = displayFloatingTasks(taskId, isHome, taskList);
+		scroll2.setContent(floatingTasks);
+		floatingBox.getChildren().addAll(scroll2);
 
-		scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent evt) {
-				if (evt.getCode().equals(KeyCode.UP)) {
-					if (sp2.getVvalue() > sp2.getVmin()) {
-						sp2.setVvalue(sp2.getVvalue() - scrollPaneIncrement);
-					}
-				}
-				if (evt.getCode().equals(KeyCode.DOWN)) {
-					if (sp2.getVvalue() < sp2.getVmax()) {
-						sp2.setVvalue(sp2.getVvalue() + scrollPaneIncrement);
-					}
-				}
-			}
-		});
-		
-		VBox singleDayTasks = displaySingleDayTasks(n, isHome, taskList, formatter);
-
-		sp1.setContent(singleDayTasks);
-		v1.getChildren().addAll(sp1);
-
-		if(haveEventsSpanningDays == true) {
-
-			ScrollPane sp3 = new ScrollPane();
-			VBox.setVgrow(sp3, Priority.ALWAYS);
-			//sp2.setVmax(440);
-			sp3.setFitToHeight(true);
-			sp3.setFitToWidth(true);
-			sp3.setPrefSize(115, 150);
-			sp3.setHbarPolicy(ScrollBarPolicy.NEVER);
-			sp3.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-
-			scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-				@Override
-				public void handle(KeyEvent evt) {
-					if (evt.getCode().equals(KeyCode.UP)) {
-						if (sp3.getVvalue() > sp3.getVmin()) {
-							sp3.setVvalue(sp3.getVvalue() - scrollPaneIncrement);
-						}
-					}
-					if (evt.getCode().equals(KeyCode.DOWN)) {
-						if (sp3.getVvalue() < sp3.getVmax()) {
-							sp3.setVvalue(sp3.getVvalue() + scrollPaneIncrement);
-						}
-					}
-				}
-			});
-			
-			VBox eventsSpanningDays = displayEventsSpanningDays(n, isHome, taskList, formatter);
-
-			sp3.setContent(eventsSpanningDays);
-			v2_1.getChildren().addAll(sp3);
+		if (haveEventsSpanningDays == true) {
+			VBox leftSideBoxes = new VBox();
+			leftSideBoxes.setSpacing(10);
+			multipleDayBox.setPrefHeight(235);
+			floatingBox.setPrefHeight(235);
+			leftSideBoxes.getChildren().addAll(multipleDayBox, floatingBox);
+			main.getChildren().addAll(singleDayBox, leftSideBoxes);
+		} else {
+			main.getChildren().addAll(singleDayBox, floatingBox);
 		}
 
-        VBox floatingTasks = displayFloatingTasks(n, isHome, taskList);
-		sp2.setContent(floatingTasks);
-		v2_2.getChildren().addAll(sp2);
-
-		if(haveEventsSpanningDays == true) {
-			VBox v2 = new VBox();
-			v2.setSpacing(10);
-			v2_1.setPrefHeight(235);
-			v2_2.setPrefHeight(235);
-			v2.getChildren().addAll(v2_1, v2_2);
-			main.getChildren().addAll(v1, v2);
-		}
-		else {
-			main.getChildren().addAll(v1, v2_2);
-		}
-
-		main.setAlignment(TOP_CENTER);
-
+		main.setAlignment(Pos.TOP_CENTER);
 
 		return main;
 
 	}
 	
-	protected boolean checkForEventsSpanningDays(List<Task> taskList, SimpleDateFormat formatter) {
-		boolean haveEventsSpanningDays = false;
+	protected static ScrollPane createScroll() {
 		
-		for(int i = 0; i < taskList.size(); i++) {
-			if(taskList.get(i).getType().equals("EVENT_TASK")) {
-				
-					String startDate = formatter.format(taskList.get(i).getStartDate());
-					String endDate = formatter.format(taskList.get(i).getEndDate());
+		ScrollPane scroll = new ScrollPane();
+		VBox.setVgrow(scroll, Priority.ALWAYS);
+		scroll.setFitToHeight(true);
+		scroll.setFitToWidth(true);
+		scroll.setPrefSize(115, 150);
+		scroll.setHbarPolicy(ScrollBarPolicy.NEVER);
+		scroll.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
-
-					if(!(startDate.equals(endDate))) {
-						haveEventsSpanningDays = true;
-						break;
+		double scrollPaneIncrement = 0.2;
+		  
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent evt) {
+				if (evt.getCode().equals(KeyCode.UP)) {
+					if (scroll.getVvalue() > scroll.getVmin()) {
+						scroll.setVvalue(scroll.getVvalue() - scrollPaneIncrement);
 					}
+				}
+				if (evt.getCode().equals(KeyCode.DOWN)) {
+					if (scroll.getVvalue() < scroll.getVmax()) {
+						scroll.setVvalue(scroll.getVvalue() + scrollPaneIncrement);
+					}
+				}
+			}
+		});
+		
+		return scroll;
+		
+	}
+    
+	/**
+	 * Returns the boolean value corresponding to the check for events spanning days
+	 * in the task list
+	 *  
+	 * @param taskList    the list of all tasks to be displayed
+	 * @param formatter   SimpleDateFormat formatter for formatting dates
+	 * @return            boolean value to check for events spanning days
+	 */
+	protected static boolean checkForEventsSpanningDays(List<Task> taskList, SimpleDateFormat formatter) {
+		boolean haveEventsSpanningDays = false;
+
+		for (int i = 0; i < taskList.size(); i++) {
+			if (taskList.get(i).getType().equals(TYPE_EVENT)) {
+
+				String startDate = formatter.format(taskList.get(i).getStartDate());
+				String endDate = formatter.format(taskList.get(i).getEndDate());
+
+				if (!(startDate.equals(endDate))) {
+					haveEventsSpanningDays = true;
+					break;
+				}
 			}
 		}
-		
-		return haveEventsSpanningDays;		
+
+		return haveEventsSpanningDays;
 	}
-	
-	protected VBox displaySingleDayTasks(int n, boolean isHome, List<Task> taskList,
-			                             SimpleDateFormat formatter) {
+
+	/**
+	 * Returns the horizontal box for the main window 
+	 * displaying all the tasks inside their boxes
+	 *  
+	 * @param taskId      id of the task to be highlighted after update or add command
+	 * @param listType    type of task lists to be displayed (home, deleted, finished)
+	 * @return            horizontal box HBox for main display
+	 */
+	protected static VBox displaySingleDayTasks(int taskId, boolean isHome, List<Task> taskList,
+			SimpleDateFormat formatter) {
+		
 		VBox vBox = new VBox();
 		vBox.setAlignment(Pos.TOP_LEFT);
 		vBox.setPadding(new Insets(18, 18, 18, 18));
 		vBox.setSpacing(15);
 		vBox.setPrefWidth(500);
 		vBox.setStyle("-fx-background-color: #E1F5EF;");
-		
+
 		boolean haveEventsOrDeadlines = true;
 		boolean haveSameDate = true;
 
-		for(int i = 0; i < taskList.size(); i++) {
-			if(!(taskList.get(i).getType().equals("FLOATING_TASK"))) {
-				if(taskList.get(i).getType().equals("EVENT_TASK")) {
-					String startDate = formatter.format(taskList.get(i).getStartDate());
-					String endDate = formatter.format(taskList.get(i).getEndDate());
-
-
-					if(!(startDate.equals(endDate))) {
+		for (int i = 0; i < taskList.size(); i++) {
+			if (!(taskList.get(i).getType().equals(TYPE_FLOATING))) {
+				if (taskList.get(i).getType().equals(TYPE_EVENT)) {
+					if (checkIfMultipleDayEvent(taskList.get(i), formatter)) {
 						continue;
 					}
 				}
 
-				Calendar calEnd = DateToCalendar(taskList.get(i).getEndDate());
-				String day = getDay(calEnd); 
-				String month = getMonth(calEnd);
-				int date = calEnd.get(calEnd.DAY_OF_MONTH);
-				String timeEnd = getTime(calEnd);
-				Text taskDate;
-				if(checkForToday(taskList.get(i).getEndDate())) {
-					taskDate = new Text("Today, " + day + ", " + date + " " + month);
-				}
-				else {
-					taskDate = new Text(day + ", " + date + " " + month);
-				}
-				taskDate.setFont(Font.font("Tahoma", FontWeight.BOLD, 18));
+				String dateString = getDateToBeDisplayedString(taskList.get(i));
+				Text taskDate = new Text(dateString);
+				taskDate.setFont(Font.font(FONT_TAHOMA, FontWeight.BOLD, 18));
 				taskDate.setTextAlignment(TextAlignment.CENTER);
 				taskDate.setFill(Color.web("#0C1847"));
 
 				HBox dates = new HBox();
-				dates.setAlignment(TOP_CENTER);
+				dates.setAlignment(Pos.TOP_CENTER);
 				dates.getChildren().add(taskDate);
 
 				Text taskDesc;
-				String task ;
-				if(taskList.get(i).getType().equals("DEADLINE_TASK")) {
-					task = count++ + ". " + "[by " + timeEnd + "] " + taskList.get(i).getDescription();
+				String task;
+				if (taskList.get(i).getType().equals(TYPE_DEADLINE)) {
+					task = getDeadlineString(taskList.get(i));
 					taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
 					FillTransition colour;
-					if(checkForOverdue(taskList.get(i).getEndDate()) && isHome) {
+					if (DateUtil.checkForOverdue(taskList.get(i).getEndDate()) && isHome) {
 						taskDesc.setFill(Color.RED);
 						colour = changeColour(taskDesc, Color.RED);
-					}
-					else {
+					} else {
 						colour = changeColour(taskDesc, Color.BLACK);
 					}
-					if(count == n+1) {
+					if (count == taskId + 1) {
 						Timeline blinker = createBlinker(taskDesc);
-						SequentialTransition blink = new SequentialTransition(
-								taskDesc,
-								blinker
-								);
+						SequentialTransition blink = new SequentialTransition(taskDesc, blinker, colour);
 
 						blink.play();
-						colour.play();
 					}
-				}
-				else {
-					Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
-					String timeStart = getTime(calStart);
-					task = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + 
-					       taskList.get(i).getDescription();
+				} else {
+					task = getSingleDayEventString(taskList.get(i));
 					taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
 					FillTransition colour;
-					if(checkForOngoing(taskList.get(i).getStartDate(), taskList.get(i).getEndDate()) 
+					if (DateUtil.checkForOngoing(taskList.get(i).getStartDate(), taskList.get(i).getEndDate())
 							&& isHome) {
 						taskDesc.setFill(Color.web("#0F6F00"));
 						colour = changeColour(taskDesc, Color.web("#0F6F00"));
-					}
-					else if(checkForOverdue(taskList.get(i).getEndDate()) && isHome) {
+					} else if (DateUtil.checkForOverdue(taskList.get(i).getEndDate()) && isHome) {
 						taskDesc.setFill(Color.RED);
 						colour = changeColour(taskDesc, Color.RED);
-					}
-					else {
+					} else {
 						colour = changeColour(taskDesc, Color.BLACK);
 					}
-					if(count == n+1) {
+					if (count == taskId + 1) {
 						Timeline blinker = createBlinker(taskDesc);
-						SequentialTransition blink = new SequentialTransition(
-								taskDesc,
-								blinker
-								);
+						SequentialTransition blink = new SequentialTransition(taskDesc, blinker, colour);
 
 						blink.play();
-						colour.play();
 					}
 				}
 
-				taskDesc.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+				taskDesc.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
 				vBox.getChildren().addAll(dates, taskDesc);
-				for(int j = i+1; j < taskList.size(); j++) {
+				for (int j = i + 1; j < taskList.size(); j++) {
 					haveSameDate = true;
-					if(!(taskList.get(j).getType().equals("FLOATING_TASK"))) {
-						if(taskList.get(j).getType().equals("EVENT_TASK")) {
-							String startDate = formatter.format(taskList.get(j).getStartDate());
-							String endDate = formatter.format(taskList.get(j).getEndDate());
-
-
-							if(!(startDate.equals(endDate))) {
+					if (!(taskList.get(j).getType().equals(TYPE_FLOATING))) {
+						if (taskList.get(j).getType().equals(TYPE_EVENT)) {
+							if (checkIfMultipleDayEvent(taskList.get(j), formatter)) {
 								continue;
 							}
 						}
-						Calendar calEnd2 = DateToCalendar(taskList.get(j).getEndDate());
-						String month2 = getMonth(calEnd2);
-						int date2 = calEnd2.get(calEnd2.DAY_OF_MONTH);
-						String timeEnd2 = getTime(calEnd2);
-						if((date != date2)||!(month.equals(month2)))
+
+						if (checkForSameDay(taskList.get(i), taskList.get(j)))
 							haveSameDate = false;
 						else {
 							Text taskDesc2;
 							FillTransition colour;
-							if(taskList.get(j).getType().equals("DEADLINE_TASK")) {
-								task = count++ + ". " + "[by " + timeEnd2 + "] " + taskList.get(j).getDescription();
+							if (taskList.get(j).getType().equals(TYPE_DEADLINE)) {
+								task = getDeadlineString(taskList.get(j));
 								taskDesc2 = new Text(WordUtils.wrap(task, 62, "\n", true));
 
-								if(checkForOverdue(taskList.get(j).getEndDate()) && isHome) {
+								if (DateUtil.checkForOverdue(taskList.get(j).getEndDate()) && isHome) {
 									taskDesc2.setFill(Color.RED);
 									colour = changeColour(taskDesc2, Color.RED);
-								}
-								else {
+								} else {
 									colour = changeColour(taskDesc2, Color.BLACK);
 								}
-							}
-							else {
-								Calendar calStart2 = DateToCalendar(taskList.get(j).getStartDate());
-								String timeStart2 = getTime(calStart2);
-								task = count++ + ". " + "[" + timeStart2 + "-" + timeEnd2 + "] " + 
-								       taskList.get(j).getDescription();
+							} else {
+								task = getSingleDayEventString(taskList.get(j));
 								taskDesc2 = new Text(WordUtils.wrap(task, 62, "\n", true));
-								if(checkForOngoing(taskList.get(j).getStartDate(), taskList.get(j).getEndDate()) 
-										&& isHome) {
+								if (DateUtil.checkForOngoing(taskList.get(j).getStartDate(),
+										taskList.get(j).getEndDate()) && isHome) {
 									taskDesc2.setFill(Color.web("#0F6F00"));
 									colour = changeColour(taskDesc2, Color.web("#0F6F00"));
-								}
-								else if(checkForOverdue(taskList.get(j).getEndDate())&& isHome) {
+								} else if (DateUtil.checkForOverdue(taskList.get(j).getEndDate()) && isHome) {
 									taskDesc2.setFill(Color.RED);
 									colour = changeColour(taskDesc2, Color.RED);
-								}
-								else {
+								} else {
 									colour = changeColour(taskDesc2, Color.BLACK);
 								}
 							}
-							taskDesc2.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-							if(count == n+1) {
-								Timeline blinker = createBlinker(taskDesc2);                       
-								SequentialTransition blink = new SequentialTransition(
-										taskDesc2,
-										blinker
-										);
+							taskDesc2.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
+							if (count == taskId + 1) {
+								Timeline blinker = createBlinker(taskDesc2);
+								SequentialTransition blink = new SequentialTransition(taskDesc2, blinker, colour);
 
 								blink.play();
-								colour.play();
 							}
 							vBox.getChildren().addAll(taskDesc2);
 							i++;
 						}
-					}
-					else {
+					} else {
 						haveEventsOrDeadlines = false;
 					}
-					if(haveEventsOrDeadlines == false || haveSameDate == false) {
+					if (haveEventsOrDeadlines == false || haveSameDate == false) {
 						break;
 					}
 				}
-			}
-			else {
+			} else {
 				haveEventsOrDeadlines = false;
 			}
 
-			if(haveEventsOrDeadlines == false) {
+			if (haveEventsOrDeadlines == false) {
 				break;
 			}
 
 		}
-		
+
 		return vBox;
 	}
 	
-	protected VBox displayEventsSpanningDays(int n, boolean isHome, List<Task> taskList,
-			                                 SimpleDateFormat formatter) {
+	protected static String getDateToBeDisplayedString(Task task) {
+
+		Calendar calEnd = DateUtil.DateToCalendar(task.getEndDate());
+		String day = DateUtil.getDay(calEnd);
+		String month = DateUtil.getMonth(calEnd);
+		int date = calEnd.get(Calendar.DAY_OF_MONTH);
+		
+		String dateString;
+		if (DateUtil.checkForToday(task.getEndDate())) {
+			dateString = "Today, " + day + ", " + date + " " + month;
+		} else {
+			dateString = day + ", " + date + " " + month;
+		}
+		
+		return dateString;
+	}
+	
+	protected static String getDeadlineString(Task task) {
+		
+		Calendar calEnd = DateUtil.DateToCalendar(task.getEndDate());
+		String timeEnd = DateUtil.getTime(calEnd);
+		
+		String taskString = count++ + ". " + "[by " + timeEnd + "] " + task.getDescription();
+		
+		return taskString;
+		
+	}
+	
+	protected static String getSingleDayEventString(Task task) {
+		
+		Calendar calStart = DateUtil.DateToCalendar(task.getStartDate());
+		String timeStart = DateUtil.getTime(calStart);
+		
+		Calendar calEnd = DateUtil.DateToCalendar(task.getEndDate());
+		String timeEnd = DateUtil.getTime(calEnd);
+		
+		String taskString = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + task.getDescription();
+		
+		return taskString;
+	}
+	
+	protected static boolean checkForSameDay(Task task1, Task task2) {
+		
+		Calendar calEnd1 = DateUtil.DateToCalendar(task1.getEndDate());
+		String month1 = DateUtil.getMonth(calEnd1);
+		int date1 = calEnd1.get(Calendar.DAY_OF_MONTH);
+		
+		Calendar calEnd2 = DateUtil.DateToCalendar(task2.getEndDate());
+		String month2 = DateUtil.getMonth(calEnd2);
+		int date2 = calEnd2.get(Calendar.DAY_OF_MONTH);
+		
+		boolean isNotSameDate = date1 != date2 || !(month1.equals(month2));
+		
+		return isNotSameDate;
+		
+	}
+	
+	protected static boolean checkIfMultipleDayEvent(Task task, SimpleDateFormat formatter) {
+		
+		String startDate = formatter.format(task.getStartDate());
+		String endDate = formatter.format(task.getEndDate());
+
+		boolean isMultipleDayEvent = !(startDate.equals(endDate));
+		
+		return isMultipleDayEvent;
+	}
+
+	protected static VBox displayEventsSpanningDays(int taskId, boolean isHome, List<Task> taskList,
+			SimpleDateFormat formatter) {
 
 		VBox vBox = new VBox();
 		vBox.setAlignment(Pos.TOP_LEFT);
@@ -889,351 +989,194 @@ public class UI extends Application {
 
 		HBox events = new HBox();
 		events.setAlignment(Pos.TOP_CENTER);
-		Text eventsHeader = new Text("Events Spanning Days");
-		eventsHeader.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
+		Text eventsHeader = new Text(TITLE_EVENTS);
+		eventsHeader.setFont(Font.font(FONT_TAHOMA, FontWeight.BOLD, 20));
 		eventsHeader.setTextAlignment(TextAlignment.CENTER);
 		eventsHeader.setFill(Color.web("#560000"));
 		events.getChildren().add(eventsHeader);
 		vBox.getChildren().add(events);
 
-		for(int i=0; i<taskList.size(); i++) {
-			if(taskList.get(i).getType().equals("EVENT_TASK")) {
-				if(taskList.get(i).getType().equals("EVENT_TASK")) {
-					String start = formatter.format(taskList.get(i).getStartDate());
-					String end = formatter.format(taskList.get(i).getEndDate());
+		for (int i = 0; i < taskList.size(); i++) {
 
+			if (taskList.get(i).getType().equals(TYPE_EVENT)) {
+				String start = formatter.format(taskList.get(i).getStartDate());
+				String end = formatter.format(taskList.get(i).getEndDate());
 
-					if(!(start.equals(end))) {
-						Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
-						String startDay = getDay(calStart); 
-						String startMonth = getMonth(calStart);
-						String startTime = getTime(calStart);
-						int startDate = calStart.get(calStart.DAY_OF_MONTH);
-
-						Calendar calEnd = DateToCalendar(taskList.get(i).getEndDate());
-						String endDay = getDay(calEnd); 
-						String endMonth = getMonth(calEnd);
-						String endTime = getTime(calEnd);
-						int endDate = calEnd.get(calEnd.DAY_OF_MONTH);
-
-						String eventTask = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", " + startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] " + taskList.get(i).getDescription());
-						Text eventDisplay = new Text(WordUtils.wrap(eventTask, 62, "\n", true));
-						eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-						FillTransition colour;
-						if(checkForOverdue(taskList.get(i).getEndDate()) && isHome) {
-							eventDisplay.setFill(Color.RED);
-							colour = changeColour(eventDisplay, Color.RED);
-						}
-						else if(checkForOngoing(taskList.get(i).getStartDate(), taskList.get(i).getEndDate()) 
-								&& isHome) {
-							eventDisplay.setFill(Color.web("#0F6F00"));
-							colour = changeColour(eventDisplay, Color.web("#0F6F00"));
-						}
-						else {
-							colour = changeColour(eventDisplay, Color.BLACK);
-						}
-						if(count == n+1) {
-							Timeline blinker = createBlinker(eventDisplay);
-
-							SequentialTransition blink = new SequentialTransition(
-									eventDisplay,
-									blinker
-									);
-
-							blink.play();
-							colour.play();
-						}
-						vBox.getChildren().add(eventDisplay);
+				if (!(start.equals(end))) {
+					String eventTask = getMultipleDayEventString(taskList.get(i));
+					Text eventDisplay = new Text(WordUtils.wrap(eventTask, 62, "\n", true));
+					eventDisplay.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
+					
+					FillTransition colour;
+					
+					if (DateUtil.checkForOverdue(taskList.get(i).getEndDate()) && isHome) {
+						eventDisplay.setFill(Color.RED);
+						colour = changeColour(eventDisplay, Color.RED);
+					} else if (DateUtil.checkForOngoing(taskList.get(i).getStartDate(), taskList.get(i).getEndDate())
+							&& isHome) {
+						eventDisplay.setFill(Color.web("#0F6F00"));
+						colour = changeColour(eventDisplay, Color.web("#0F6F00"));
+					} else {
+						colour = changeColour(eventDisplay, Color.BLACK);
 					}
+					
+					if (count == taskId + 1) {
+						Timeline blinker = createBlinker(eventDisplay);
+
+						SequentialTransition blink = new SequentialTransition(eventDisplay, blinker, colour);
+
+						blink.play();
+					}
+					
+					vBox.getChildren().add(eventDisplay);
 				}
 			}
-
 		}
-		
+
 		return vBox;
 	}
 	
-	protected VBox displayFloatingTasks(int n, boolean isHome, List<Task> taskList) {
+	protected static String getMultipleDayEventString(Task task) {
+		
+		Calendar calStart = DateUtil.DateToCalendar(task.getStartDate());
+		String startDay = DateUtil.getDay(calStart);
+		String startMonth = DateUtil.getMonth(calStart);
+		String startTime = DateUtil.getTime(calStart);
+		int startDate = calStart.get(Calendar.DAY_OF_MONTH);
+
+		Calendar calEnd = DateUtil.DateToCalendar(task.getEndDate());
+		String endDay = DateUtil.getDay(calEnd);
+		String endMonth = DateUtil.getMonth(calEnd);
+		String endTime = DateUtil.getTime(calEnd);
+		int endDate = calEnd.get(Calendar.DAY_OF_MONTH);
+
+		String taskString = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", "
+				+ startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] "
+				+ task.getDescription());
+		
+		return taskString;
+	}
+
+	protected static VBox displayFloatingTasks(int taskId, boolean isHome, List<Task> taskList) {
 		VBox vBox = new VBox();
 		vBox.setAlignment(Pos.TOP_LEFT);
 		vBox.setPadding(new Insets(18, 18, 18, 18));
 		vBox.setSpacing(15);
 		vBox.setPrefWidth(500);
 		vBox.setStyle("-fx-background-color: #F9FFC6;");
-		
+
 		boolean haveFloatingTasks = false;
-		
+
 		HBox floating = new HBox();
-		floating.setAlignment(TOP_CENTER);
-		Text floatingHeader = new Text("Floating Tasks");
-		floatingHeader.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
+		floating.setAlignment(Pos.TOP_CENTER);
+		Text floatingHeader = new Text(TITLE_FLOATING);
+		floatingHeader.setFont(Font.font(FONT_TAHOMA, FontWeight.BOLD, 20));
 		floatingHeader.setTextAlignment(TextAlignment.CENTER);
 		floatingHeader.setFill(Color.web("#3C220A"));
 		floating.getChildren().add(floatingHeader);
 		vBox.getChildren().add(floating);
 
-		for(int i=0; i<taskList.size(); i++) {
-			if(taskList.get(i).getType().equals("FLOATING_TASK")) {
+		for (int i = 0; i < taskList.size(); i++) {
+			if (taskList.get(i).getType().equals(TYPE_FLOATING)) {
 				haveFloatingTasks = true;
 				String floatingTask = (count++ + ". " + taskList.get(i).getDescription());
 
 				Text floatingDisplay = new Text(WordUtils.wrap(floatingTask, 62, "\n", true));
-				floatingDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
-				if(count == n+1) {
+				floatingDisplay.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
+				if (count == taskId + 1) {
 					Timeline blinker = createBlinker(floatingDisplay);
 					FillTransition colour = changeColour(floatingDisplay, Color.BLACK);
-					SequentialTransition blink = new SequentialTransition(
-							floatingDisplay,
-							blinker
-							);
+					SequentialTransition blink = new SequentialTransition(floatingDisplay, blinker, colour);
 
 					blink.play();
-					colour.play();
 				}
 				vBox.getChildren().add(floatingDisplay);
 			}
 		}
 
-		if(haveFloatingTasks == false) {
+		if (haveFloatingTasks == false) {
 			Text noFloatingTasks = new Text("*none*");
-			noFloatingTasks.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+			noFloatingTasks.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
 			vBox.getChildren().add(noFloatingTasks);
 		}
 
-		
 		return vBox;
 	}
 
+	protected static HBox addHeader(doordonote.logic.UIState.ListType listType) {
+		
+		HBox hBox = new HBox();
+		hBox.setPadding(new Insets(20, 25, 20, 25));
+		if (listType.equals(doordonote.logic.UIState.ListType.NORMAL)) {
+			hBox.setStyle("-fx-background-color: #0D0D0D;");
+		} else if (listType.equals(doordonote.logic.UIState.ListType.FINISHED)) {
+			hBox.setStyle("-fx-background-color: #000E54;");
+		} else {
+			hBox.setStyle("-fx-background-color: #560202;");
+		}
+
+		setTitleEffects();
+
+		hBox.getChildren().add(title);
+		hBox.setAlignment(Pos.CENTER);
+
+		return hBox;
+	}
 	
-
-	protected HBox addHeader(doordonote.logic.UIState.ListType listType) {
-		HBox hbox = new HBox();
-		hbox.setPadding(new Insets(20, 25, 20, 25));
-		if(listType.equals(doordonote.logic.UIState.ListType.NORMAL)) {
-			hbox.setStyle("-fx-background-color: #0D0D0D;");
-		}
-		else if(listType.equals(doordonote.logic.UIState.ListType.FINISHED)){
-			hbox.setStyle("-fx-background-color: #000E54;");
-		}
-		else {
-			hbox.setStyle("-fx-background-color: #560202;");
-		}
-
+	protected static void setTitleEffects() {
+		
 		DropShadow shadow = new DropShadow();
 		shadow.setOffsetY(4.0f);
 		shadow.setColor(Color.color(0.4f, 0.4f, 0.4f));
 
-
-		title.setFont(Font.font("Aharoni", FontWeight.BOLD, 30));
+		title.setFont(Font.font(FONT_AHARONI, FontWeight.BOLD, 30));
 		title.setFill(Color.WHITE);
 		title.setEffect(shadow);
 		title.setCache(true);
 		title.setX(10.0f);
-		title.setY(270.0f);	
-
-		hbox.getChildren().add(title);
-		hbox.setAlignment(CENTER);
-
-		return hbox;
+		title.setY(270.0f);
 	}
 
-	protected Calendar DateToCalendar(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		return cal;
-	}
-
-	protected String getDay(Calendar cal) {
-		String day = null;
-		switch(cal.get(cal.DAY_OF_WEEK)) {
-		case 1 : day = "Sunday";
-		break;
-		case 2 : day = "Monday";
-		break;
-		case 3 : day = "Tuesday";
-		break;
-		case 4 : day = "Wednesday";
-		break;
-		case 5 : day = "Thursday";
-		break;
-		case 6 : day = "Friday";
-		break;
-		case 7 : day = "Saturday";
-
-		}
-
-		return day;
-	}
-
-	protected String getMonth(Calendar cal) {
-		String month = null;
-		switch(cal.get(cal.MONTH)) {
-		case 0: month = "Jan";
-		break;
-		case 1: month = "Feb";
-		break;
-		case 2: month = "Mar";
-		break;
-		case 3: month = "Apr";
-		break;
-		case 4: month = "May";
-		break;
-		case 5: month = "Jun";
-		break;
-		case 6: month = "Jul";
-		break;
-		case 7: month = "Aug";
-		break;
-		case 8: month = "Sept";
-		break;
-		case 9: month = "Oct";
-		break;
-		case 10: month = "Nov";
-		break;
-		case 11: month = "Dec";
-		}
-
-		return month;
-	}
-
-	protected static String getMinutes(Calendar cal) {
-		String minutes;
-
-		if(cal.get(cal.MINUTE) < 10) {
-			if(cal.get(cal.MINUTE) == 0) {
-				minutes = null;
-			}
-			else {
-				minutes = "0" + cal.get(cal.MINUTE);
-			}
-		}
-		else {
-			minutes = "" + cal.get(cal.MINUTE);
-		}
-
-		return minutes;        
-	}
-
-	protected static String getTime(Calendar cal) {
-		String time;
-		String minutes = getMinutes(cal);
-		int hour = cal.get(cal.HOUR_OF_DAY);
-
-		if(hour > 12) {
-			if(minutes != null) {
-				time = (hour - 12) + ":" + minutes + "pm";
-			}
-			else {
-				time = (hour - 12) + "pm";
-			}
-		}
-		else if (hour < 12){
-			if(minutes != null) {
-				if(hour == 0) {
-
-					time = hour+12 + ":" + minutes + "am";
-				}
-				else{
-					time = hour + ":" + minutes + "am";
-				}
-			}
-			else {
-				if(hour == 0) {
-					time = hour+12 + "am";
-				}
-				else {
-					time = hour + "am";
-				}
-			}
-		}
-		else {
-			if(minutes != null) {
-				time = hour + ":" + minutes + "pm";
-			}
-			else {
-				time = hour + "pm";
-			}
-		}
-
-		return time;  
-
-	}
-
-	protected static String getFirstWord(String input) {
-		String commandTypeString = input.trim().split("\\s+")[0];
-		return commandTypeString.toLowerCase();
-	}
-
-	protected static boolean checkForToday(Date date) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-		Date today = new Date();
-		boolean isToday = dateFormat.format(date).equals(dateFormat.format(today));
-		return isToday;
-	}
-
-	protected static boolean checkForOverdue(Date date) {
-		Date today = new Date();
-		boolean isOverdue = date.before(today);
-		return isOverdue;
-
-	}
-
-	protected static boolean checkForOngoing(Date start, Date end) {
-		Date today = new Date();
-
-		boolean isOngoing = (!today.before(start)) && (!today.after(end));
-		return isOngoing;
-	}
-
-	protected Timeline createBlinker(Node node) {
+	protected static Timeline createBlinker(Node node) {
+		
 		Timeline blink = new Timeline(
-				new KeyFrame(
-						Duration.seconds(0),
-						new KeyValue(
-								node.opacityProperty(), 
-								1, 
-								Interpolator.DISCRETE
-								)
-						),
-				new KeyFrame(
-						Duration.seconds(0.25),
-						new KeyValue(
-								node.opacityProperty(), 
-								0, 
-								Interpolator.DISCRETE
-								)
-						),
-				new KeyFrame(
-						Duration.seconds(0.5),
-						new KeyValue(
-								node.opacityProperty(), 
-								1, 
-								Interpolator.DISCRETE
-								)
-						)
-				);
+				new KeyFrame(Duration.seconds(0), new KeyValue(node.opacityProperty(), 1, Interpolator.DISCRETE)),
+				new KeyFrame(Duration.seconds(0.25), new KeyValue(node.opacityProperty(), 0, Interpolator.DISCRETE)),
+				new KeyFrame(Duration.seconds(0.5), new KeyValue(node.opacityProperty(), 1, Interpolator.DISCRETE)));
 		blink.setCycleCount(3);
 
 		return blink;
 	}
 
-	protected FillTransition changeColour(Shape shape, Color color) {
+	protected static FillTransition changeColour(Shape shape, Color color) {
+		
 		FillTransition fill = new FillTransition(Duration.seconds(5), shape, Color.web("#DFCA00"), color);
+		
 		return fill;
 	}
-	
+
 	/**
-	 * @param args the command line arguments
+	 * @param args
+	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
+		
 		launch(args);
+	}
+
+	protected static String getFirstWord(String input) {
+		
+		String commandTypeString = input.trim().split("\\s+")[0];
+		return commandTypeString.toLowerCase();
 	}
 	
 	public Stage createHelpDeleteWindow() {
+		
 		Stage stage = new Stage();
+		
 		HBox hb = new HBox();
 		hb.setSpacing(15);
-		hb.setAlignment(CENTER);
+		hb.setAlignment(Pos.CENTER);
 		Image image1 = new Image("question_mark.png");
 		ImageView imv1 = new ImageView(image1);
 		imv1.setFitWidth(30);
@@ -1241,8 +1184,8 @@ public class UI extends Application {
 		imv1.setSmooth(true);
 		imv1.setCache(true);
 		Text helpHeader = new Text("Hello! Here is the command you can use for DELETE:");
-		helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
-		helpHeader.setFill(Color.web("#00143E")); //#00143E
+		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
+		helpHeader.setFill(Color.web("#00143E"));
 		hb.getChildren().addAll(helpHeader, imv1);
 
 		Image image2 = new Image("helpdelete.jpg");
@@ -1258,7 +1201,7 @@ public class UI extends Application {
 		vb.setPadding(new Insets(15, 30, 10, 30));
 		vb.setSpacing(10);
 		vb.getChildren().addAll(hb, imv2, bt);
-		vb.setAlignment(TOP_CENTER);
+		vb.setAlignment(Pos.TOP_CENTER);
 		vb.setStyle("-fx-background-color: #eff4ff;");
 		Scene sc = new Scene(vb);
 
@@ -1267,8 +1210,9 @@ public class UI extends Application {
 		stage.setScene(sc);
 
 		bt.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				stage.close();      
+			@Override
+			public void handle(ActionEvent e) {
+				stage.close();
 			}
 		});
 
@@ -1280,7 +1224,7 @@ public class UI extends Application {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
-		hb.setAlignment(CENTER);
+		hb.setAlignment(Pos.CENTER);
 		Image image1 = new Image("question_mark.png");
 		ImageView imv1 = new ImageView(image1);
 		imv1.setFitWidth(30);
@@ -1288,8 +1232,8 @@ public class UI extends Application {
 		imv1.setSmooth(true);
 		imv1.setCache(true);
 		Text helpHeader = new Text("Hello! Here is the command you can use for UPDATE:");
-		helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
-		helpHeader.setFill(Color.web("#00143E")); //#00143E
+		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
+		helpHeader.setFill(Color.web("#00143E"));
 		hb.getChildren().addAll(helpHeader, imv1);
 
 		Image image2 = new Image("helpupdate.jpg");
@@ -1305,7 +1249,7 @@ public class UI extends Application {
 		vb.setPadding(new Insets(15, 30, 10, 30));
 		vb.setSpacing(10);
 		vb.getChildren().addAll(hb, imv2, bt);
-		vb.setAlignment(TOP_CENTER);
+		vb.setAlignment(Pos.TOP_CENTER);
 		vb.setStyle("-fx-background-color: #eff4ff;");
 		Scene sc = new Scene(vb);
 
@@ -1314,8 +1258,9 @@ public class UI extends Application {
 		stage.setScene(sc);
 
 		bt.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				stage.close();      
+			@Override
+			public void handle(ActionEvent e) {
+				stage.close();
 			}
 		});
 
@@ -1327,7 +1272,7 @@ public class UI extends Application {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
-		hb.setAlignment(CENTER);
+		hb.setAlignment(Pos.CENTER);
 		Image image1 = new Image("question_mark.png");
 		ImageView imv1 = new ImageView(image1);
 		imv1.setFitWidth(30);
@@ -1335,8 +1280,8 @@ public class UI extends Application {
 		imv1.setSmooth(true);
 		imv1.setCache(true);
 		Text helpHeader = new Text("Hello! Here is a table of the commands you can use for FIND:");
-		helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
-		helpHeader.setFill(Color.web("#00143E")); //#00143E
+		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
+		helpHeader.setFill(Color.web("#00143E"));
 		hb.getChildren().addAll(helpHeader, imv1);
 
 		Image image2 = new Image("helpfind.jpg");
@@ -1352,7 +1297,7 @@ public class UI extends Application {
 		vb.setPadding(new Insets(15, 30, 10, 30));
 		vb.setSpacing(10);
 		vb.getChildren().addAll(hb, imv2, bt);
-		vb.setAlignment(TOP_CENTER);
+		vb.setAlignment(Pos.TOP_CENTER);
 		vb.setStyle("-fx-background-color: #eff4ff;");
 		Scene sc = new Scene(vb);
 
@@ -1361,8 +1306,9 @@ public class UI extends Application {
 		stage.setScene(sc);
 
 		bt.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				stage.close();      
+			@Override
+			public void handle(ActionEvent e) {
+				stage.close();
 			}
 		});
 
@@ -1374,7 +1320,7 @@ public class UI extends Application {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
-		hb.setAlignment(CENTER);
+		hb.setAlignment(Pos.CENTER);
 		Image image1 = new Image("question_mark.png");
 		ImageView imv1 = new ImageView(image1);
 		imv1.setFitWidth(30);
@@ -1382,8 +1328,8 @@ public class UI extends Application {
 		imv1.setSmooth(true);
 		imv1.setCache(true);
 		Text helpHeader = new Text("Hello! Here is the command you can use for FINISH:");
-		helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
-		helpHeader.setFill(Color.web("#00143E")); //#00143E
+		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
+		helpHeader.setFill(Color.web("#00143E"));
 		hb.getChildren().addAll(helpHeader, imv1);
 
 		Image image2 = new Image("helpfinish.jpg");
@@ -1399,7 +1345,7 @@ public class UI extends Application {
 		vb.setPadding(new Insets(15, 30, 10, 30));
 		vb.setSpacing(10);
 		vb.getChildren().addAll(hb, imv2, bt);
-		vb.setAlignment(TOP_CENTER);
+		vb.setAlignment(Pos.TOP_CENTER);
 		vb.setStyle("-fx-background-color: #eff4ff;");
 		Scene sc = new Scene(vb);
 
@@ -1408,8 +1354,9 @@ public class UI extends Application {
 		stage.setScene(sc);
 
 		bt.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				stage.close();      
+			@Override
+			public void handle(ActionEvent e) {
+				stage.close();
 			}
 		});
 
@@ -1421,7 +1368,7 @@ public class UI extends Application {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
-		hb.setAlignment(CENTER);
+		hb.setAlignment(Pos.CENTER);
 		Image image1 = new Image("question_mark.png");
 		ImageView imv1 = new ImageView(image1);
 		imv1.setFitWidth(30);
@@ -1429,8 +1376,8 @@ public class UI extends Application {
 		imv1.setSmooth(true);
 		imv1.setCache(true);
 		Text helpHeader = new Text("Hello! Here the command you can use for PATH:");
-		helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
-		helpHeader.setFill(Color.web("#00143E")); //#00143E
+		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
+		helpHeader.setFill(Color.web("#00143E"));
 		hb.getChildren().addAll(helpHeader, imv1);
 
 		Image image2 = new Image("helppath.jpg");
@@ -1446,7 +1393,7 @@ public class UI extends Application {
 		vb.setPadding(new Insets(15, 30, 10, 30));
 		vb.setSpacing(10);
 		vb.getChildren().addAll(hb, imv2, bt);
-		vb.setAlignment(TOP_CENTER);
+		vb.setAlignment(Pos.TOP_CENTER);
 		vb.setStyle("-fx-background-color: #eff4ff;");
 		Scene sc = new Scene(vb);
 
@@ -1455,8 +1402,9 @@ public class UI extends Application {
 		stage.setScene(sc);
 
 		bt.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				stage.close();      
+			@Override
+			public void handle(ActionEvent e) {
+				stage.close();
 			}
 		});
 
@@ -1468,7 +1416,7 @@ public class UI extends Application {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
-		hb.setAlignment(CENTER);
+		hb.setAlignment(Pos.CENTER);
 		Image image1 = new Image("question_mark.png");
 		ImageView imv1 = new ImageView(image1);
 		imv1.setFitWidth(30);
@@ -1476,8 +1424,8 @@ public class UI extends Application {
 		imv1.setSmooth(true);
 		imv1.setCache(true);
 		Text helpHeader = new Text("Hello! Here is the command you can use for RESTORE:");
-		helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
-		helpHeader.setFill(Color.web("#00143E")); //#00143E
+		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
+		helpHeader.setFill(Color.web("#00143E"));
 		hb.getChildren().addAll(helpHeader, imv1);
 
 		Image image2 = new Image("helprestore.jpg");
@@ -1493,7 +1441,7 @@ public class UI extends Application {
 		vb.setPadding(new Insets(15, 30, 10, 30));
 		vb.setSpacing(10);
 		vb.getChildren().addAll(hb, imv2, bt);
-		vb.setAlignment(TOP_CENTER);
+		vb.setAlignment(Pos.TOP_CENTER);
 		vb.setStyle("-fx-background-color: #eff4ff;");
 		Scene sc = new Scene(vb);
 
@@ -1502,8 +1450,9 @@ public class UI extends Application {
 		stage.setScene(sc);
 
 		bt.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				stage.close();      
+			@Override
+			public void handle(ActionEvent e) {
+				stage.close();
 			}
 		});
 
@@ -1515,7 +1464,7 @@ public class UI extends Application {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
-		hb.setAlignment(CENTER);
+		hb.setAlignment(Pos.CENTER);
 		Image image1 = new Image("question_mark.png");
 		ImageView imv1 = new ImageView(image1);
 		imv1.setFitWidth(30);
@@ -1523,8 +1472,8 @@ public class UI extends Application {
 		imv1.setSmooth(true);
 		imv1.setCache(true);
 		Text helpHeader = new Text("Hello! Here is the command you can use for GET:");
-		helpHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 18));
-		helpHeader.setFill(Color.web("#00143E")); //#00143E
+		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
+		helpHeader.setFill(Color.web("#00143E"));
 		hb.getChildren().addAll(helpHeader, imv1);
 
 		Image image2 = new Image("helpget.jpg");
@@ -1540,7 +1489,7 @@ public class UI extends Application {
 		vb.setPadding(new Insets(15, 30, 10, 30));
 		vb.setSpacing(10);
 		vb.getChildren().addAll(hb, imv2, bt);
-		vb.setAlignment(TOP_CENTER);
+		vb.setAlignment(Pos.TOP_CENTER);
 		vb.setStyle("-fx-background-color: #eff4ff;");
 		Scene sc = new Scene(vb);
 
@@ -1549,15 +1498,16 @@ public class UI extends Application {
 		stage.setScene(sc);
 
 		bt.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				stage.close();      
+			@Override
+			public void handle(ActionEvent e) {
+				stage.close();
 			}
 		});
 
 		return stage;
 
 	}
-	
+
 	protected HBox displayDeletedOrFinishedTasks(HBox main) {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
@@ -1574,20 +1524,20 @@ public class UI extends Application {
 		v1.setStyle("-fx-background-color: #E1F5EF;");
 
 		VBox vbox1 = new VBox();
-		vbox1.setAlignment(TOP_CENTER);
+		vbox1.setAlignment(Pos.TOP_CENTER);
 		vbox1.setPadding(new Insets(18, 18, 18, 18));
 		vbox1.setSpacing(15);
 		vbox1.setPrefWidth(500);
 		vbox1.setStyle("-fx-background-color: #E1F5EF;");
 
-		ScrollPane sp1 = new ScrollPane();
-		VBox.setVgrow(sp1, Priority.ALWAYS);
-		//sp1.setVmax(440);
-		sp1.setFitToHeight(true);
-		sp1.setFitToWidth(true);
-		sp1.setPrefSize(115, 150);
-		sp1.setHbarPolicy(ScrollBarPolicy.NEVER);
-		sp1.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		ScrollPane scroll1 = new ScrollPane();
+		VBox.setVgrow(scroll1, Priority.ALWAYS);
+		// scroll1.setVmax(440);
+		scroll1.setFitToHeight(true);
+		scroll1.setFitToWidth(true);
+		scroll1.setPrefSize(115, 150);
+		scroll1.setHbarPolicy(ScrollBarPolicy.NEVER);
+		scroll1.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
 		double scrollPaneIncrement = 0.2;
 
@@ -1595,221 +1545,216 @@ public class UI extends Application {
 			@Override
 			public void handle(KeyEvent evt) {
 				if (evt.getCode().equals(KeyCode.UP)) {
-					if (sp1.getVvalue() > sp1.getVmin()) {
-						sp1.setVvalue(sp1.getVvalue() - scrollPaneIncrement);
+					if (scroll1.getVvalue() > scroll1.getVmin()) {
+						scroll1.setVvalue(scroll1.getVvalue() - scrollPaneIncrement);
 					}
 				}
 				if (evt.getCode().equals(KeyCode.DOWN)) {
-					if (sp1.getVvalue() < sp1.getVmax()) {
-						sp1.setVvalue(sp1.getVvalue() + scrollPaneIncrement);
-					}
-				}
-			}
-		}); 
-
-		VBox v2_1 = new VBox();
-		v2_1.setPrefWidth(500);
-		v2_1.setStyle("-fx-background-color: #FFF3F3;");
-
-		VBox v2_2 = new VBox();
-		v2_2.setPrefWidth(500);
-		v2_2.setStyle("-fx-background-color: #F9FFC6;");
-
-		VBox vbox2 = new VBox();
-		vbox2.setAlignment(TOP_CENTER);
-		vbox2.setPadding(new Insets(18, 18, 18, 18));
-		vbox2.setSpacing(15);
-		vbox2.setPrefWidth(500);
-		vbox2.setStyle("-fx-background-color: #F9FFC6;");
-
-		ScrollPane sp2 = new ScrollPane();
-		VBox.setVgrow(sp2, Priority.ALWAYS);
-		//sp2.setVmax(440);
-		sp2.setFitToHeight(true);
-		sp2.setFitToWidth(true);
-		sp2.setPrefSize(115, 150);
-		sp2.setHbarPolicy(ScrollBarPolicy.NEVER);
-		sp2.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-
-		scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent evt) {
-				if (evt.getCode().equals(KeyCode.UP)) {
-					if (sp2.getVvalue() > sp2.getVmin()) {
-						sp2.setVvalue(sp2.getVvalue() - scrollPaneIncrement);
-					}
-				}
-				if (evt.getCode().equals(KeyCode.DOWN)) {
-					if (sp2.getVvalue() < sp2.getVmax()) {
-						sp2.setVvalue(sp2.getVvalue() + scrollPaneIncrement);
+					if (scroll1.getVvalue() < scroll1.getVmax()) {
+						scroll1.setVvalue(scroll1.getVvalue() + scrollPaneIncrement);
 					}
 				}
 			}
 		});
 
-		for(i = 0; i < taskList.size(); i++) {
-			if(!(taskList.get(i).getType().equals("FLOATING_TASK"))) {
-				if(taskList.get(i).getType().equals("EVENT_TASK")) {
+		VBox multipleDayBox = new VBox();
+		multipleDayBox.setPrefWidth(500);
+		multipleDayBox.setStyle("-fx-background-color: #FFF3F3;");
+
+		VBox floatingBox = new VBox();
+		floatingBox.setPrefWidth(500);
+		floatingBox.setStyle("-fx-background-color: #F9FFC6;");
+
+		VBox vbox2 = new VBox();
+		vbox2.setAlignment(Pos.TOP_CENTER);
+		vbox2.setPadding(new Insets(18, 18, 18, 18));
+		vbox2.setSpacing(15);
+		vbox2.setPrefWidth(500);
+		vbox2.setStyle("-fx-background-color: #F9FFC6;");
+
+		ScrollPane scroll2 = new ScrollPane();
+		VBox.setVgrow(scroll2, Priority.ALWAYS);
+		// scroll2.setVmax(440);
+		scroll2.setFitToHeight(true);
+		scroll2.setFitToWidth(true);
+		scroll2.setPrefSize(115, 150);
+		scroll2.setHbarPolicy(ScrollBarPolicy.NEVER);
+		scroll2.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent evt) {
+				if (evt.getCode().equals(KeyCode.UP)) {
+					if (scroll2.getVvalue() > scroll2.getVmin()) {
+						scroll2.setVvalue(scroll2.getVvalue() - scrollPaneIncrement);
+					}
+				}
+				if (evt.getCode().equals(KeyCode.DOWN)) {
+					if (scroll2.getVvalue() < scroll2.getVmax()) {
+						scroll2.setVvalue(scroll2.getVvalue() + scrollPaneIncrement);
+					}
+				}
+			}
+		});
+
+		for (i = 0; i < taskList.size(); i++) {
+			if (!(taskList.get(i).getType().equals("FLOATING_TASK"))) {
+				if (taskList.get(i).getType().equals(TYPE_EVENT)) {
 					String startDate = formatter.format(taskList.get(i).getStartDate());
 					String endDate = formatter.format(taskList.get(i).getEndDate());
 
-
-					if(!(startDate.equals(endDate))) {
+					if (!(startDate.equals(endDate))) {
 						haveEventsSpanningDays = true;
 						continue;
 					}
 				}
 
-				Calendar calEnd = DateToCalendar(taskList.get(i).getEndDate());
-				String day = getDay(calEnd); 
-				String month = getMonth(calEnd);
-				int date = calEnd.get(calEnd.DAY_OF_MONTH);
-				String timeEnd = getTime(calEnd);
+				Calendar calEnd = DateUtil.DateToCalendar(taskList.get(i).getEndDate());
+				String day = DateUtil.getDay(calEnd);
+				String month = DateUtil.getMonth(calEnd);
+				int date = calEnd.get(Calendar.DAY_OF_MONTH);
+				String timeEnd = DateUtil.getTime(calEnd);
 				Text taskDate;
-				if(checkForToday(taskList.get(i).getEndDate())) {
+				if (DateUtil.checkForToday(taskList.get(i).getEndDate())) {
 					taskDate = new Text("Today, " + day + ", " + date + " " + month);
-				}
-				else {
+				} else {
 					taskDate = new Text(day + ", " + date + " " + month);
 				}
-				taskDate.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
+				taskDate.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 22));
 				taskDate.setTextAlignment(TextAlignment.CENTER);
 				taskDate.setFill(Color.web("#0C1847"));
 				Text taskDesc;
-				String task ;
-				if(taskList.get(i).getType().equals("DEADLINE_TASK")) {
+				String task;
+				if (taskList.get(i).getType().equals("DEADLINE_TASK")) {
 					task = count++ + ". " + "[by " + timeEnd + "] " + taskList.get(i).getDescription();
 					taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
-				}
-				else {
-					Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
-					String timeStart = getTime(calStart);
+				} else {
+					Calendar calStart = DateUtil.DateToCalendar(taskList.get(i).getStartDate());
+					String timeStart = DateUtil.getTime(calStart);
 					task = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + taskList.get(i).getDescription();
 					taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
 				}
 
-				taskDesc.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+				taskDesc.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
 				vbox1.getChildren().addAll(taskDate, taskDesc);
-				for(j = i+1; j < taskList.size(); j++) {
+				for (j = i + 1; j < taskList.size(); j++) {
 					haveSameDate = true;
-					if(!(taskList.get(j).getType().equals("FLOATING_TASK"))) {
-						if(taskList.get(j).getType().equals("EVENT_TASK")) {
+					if (!(taskList.get(j).getType().equals("FLOATING_TASK"))) {
+						if (taskList.get(j).getType().equals("EVENT_TASK")) {
 							String startDate = formatter.format(taskList.get(j).getStartDate());
 							String endDate = formatter.format(taskList.get(j).getEndDate());
 
-
-							if(!(startDate.equals(endDate))) {
+							if (!(startDate.equals(endDate))) {
 								haveEventsSpanningDays = true;
 								continue;
 							}
 						}
-						Calendar calEnd2 = DateToCalendar(taskList.get(j).getEndDate());
-						String month2 = getMonth(calEnd2);
-						int date2 = calEnd2.get(calEnd2.DAY_OF_MONTH);
-						String timeEnd2 = getTime(calEnd2);
-						if((date != date2)||!(month.equals(month2)))
+						Calendar calEnd2 = DateUtil.DateToCalendar(taskList.get(j).getEndDate());
+						String month2 = DateUtil.getMonth(calEnd2);
+						int date2 = calEnd2.get(Calendar.DAY_OF_MONTH);
+						String timeEnd2 = DateUtil.getTime(calEnd2);
+						if ((date != date2) || !(month.equals(month2)))
 							haveSameDate = false;
 						else {
 							Text taskDesc2;
-							if(taskList.get(j).getType().equals("DEADLINE_TASK")) {
+							if (taskList.get(j).getType().equals("DEADLINE_TASK")) {
 								task = count++ + ". " + "[by " + timeEnd2 + "] " + taskList.get(j).getDescription();
 								taskDesc2 = new Text(WordUtils.wrap(task, 62, "\n", true));
-							}
-							else {
-								Calendar calStart2 = DateToCalendar(taskList.get(j).getStartDate());
-								String timeStart2 = getTime(calStart2);
-								task = count++ + ". " + "[" + timeStart2 + "-" + timeEnd2 + "] " + taskList.get(j).getDescription();
+							} else {
+								Calendar calStart2 = DateUtil.DateToCalendar(taskList.get(j).getStartDate());
+								String timeStart2 = DateUtil.getTime(calStart2);
+								task = count++ + ". " + "[" + timeStart2 + "-" + timeEnd2 + "] "
+										+ taskList.get(j).getDescription();
 								taskDesc2 = new Text(WordUtils.wrap(task, 62, "\n", true));
 							}
-							taskDesc2.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+							taskDesc2.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
 							vbox1.getChildren().addAll(taskDesc2);
 							i++;
 						}
-					}
-					else {
+					} else {
 						haveEventsOrDeadlines = false;
 					}
-					if(haveEventsOrDeadlines == false || haveSameDate == false) {
+					if (haveEventsOrDeadlines == false || haveSameDate == false) {
 						break;
 					}
 				}
-			}
-			else {
+			} else {
 				haveEventsOrDeadlines = false;
 			}
 
-			if(haveEventsOrDeadlines == false) {
+			if (haveEventsOrDeadlines == false) {
 				break;
 			}
 
 		}
 
-		sp1.setContent(vbox1);
-		v1.getChildren().addAll(sp1);
+		scroll1.setContent(vbox1);
+		v1.getChildren().addAll(scroll1);
 
-		if(haveEventsSpanningDays == true) {
+		if (haveEventsSpanningDays == true) {
 
 			VBox vbox3 = new VBox();
-			vbox3.setAlignment(TOP_CENTER);
+			vbox3.setAlignment(Pos.TOP_CENTER);
 			vbox3.setPadding(new Insets(18, 18, 18, 18));
 			vbox3.setSpacing(15);
 			vbox3.setPrefWidth(500);
 			vbox3.setStyle("-fx-background-color: #FFF3F3;");
 
-			ScrollPane sp3 = new ScrollPane();
-			VBox.setVgrow(sp3, Priority.ALWAYS);
-			//sp2.setVmax(440);
-			sp3.setFitToHeight(true);
-			sp3.setFitToWidth(true);
-			sp3.setPrefSize(115, 150);
-			sp3.setHbarPolicy(ScrollBarPolicy.NEVER);
-			sp3.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+			ScrollPane scroll3 = new ScrollPane();
+			VBox.setVgrow(scroll3, Priority.ALWAYS);
+			// scroll2.setVmax(440);
+			scroll3.setFitToHeight(true);
+			scroll3.setFitToWidth(true);
+			scroll3.setPrefSize(115, 150);
+			scroll3.setHbarPolicy(ScrollBarPolicy.NEVER);
+			scroll3.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
 			scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent evt) {
 					if (evt.getCode().equals(KeyCode.UP)) {
-						if (sp3.getVvalue() > sp3.getVmin()) {
-							sp3.setVvalue(sp3.getVvalue() - scrollPaneIncrement);
+						if (scroll3.getVvalue() > scroll3.getVmin()) {
+							scroll3.setVvalue(scroll3.getVvalue() - scrollPaneIncrement);
 						}
 					}
 					if (evt.getCode().equals(KeyCode.DOWN)) {
-						if (sp3.getVvalue() < sp3.getVmax()) {
-							sp3.setVvalue(sp3.getVvalue() + scrollPaneIncrement);
+						if (scroll3.getVvalue() < scroll3.getVmax()) {
+							scroll3.setVvalue(scroll3.getVvalue() + scrollPaneIncrement);
 						}
 					}
 				}
 			});
 
 			Text eventsHeader = new Text("Events Spanning Days");
-			eventsHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
+			eventsHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 22));
 			eventsHeader.setTextAlignment(TextAlignment.CENTER);
 			eventsHeader.setFill(Color.web("#560000"));
 			vbox3.getChildren().add(eventsHeader);
 
-			for(i=0; i<taskList.size(); i++) {
-				if(taskList.get(i).getType().equals("EVENT_TASK")) {
-					if(taskList.get(i).getType().equals("EVENT_TASK")) {
+			for (i = 0; i < taskList.size(); i++) {
+				if (taskList.get(i).getType().equals("EVENT_TASK")) {
+					if (taskList.get(i).getType().equals("EVENT_TASK")) {
 						String start = formatter.format(taskList.get(i).getStartDate());
 						String end = formatter.format(taskList.get(i).getEndDate());
 
+						if (!(start.equals(end))) {
+							Calendar calStart = DateUtil.DateToCalendar(taskList.get(i).getStartDate());
+							String startDay = DateUtil.getDay(calStart);
+							String startMonth = DateUtil.getMonth(calStart);
+							String startTime = DateUtil.getTime(calStart);
+							int startDate = calStart.get(Calendar.DAY_OF_MONTH);
 
-						if(!(start.equals(end))) {
-							Calendar calStart = DateToCalendar(taskList.get(i).getStartDate());
-							String startDay = getDay(calStart); 
-							String startMonth = getMonth(calStart);
-							String startTime = getTime(calStart);
-							int startDate = calStart.get(calStart.DAY_OF_MONTH);
+							Calendar calEnd = DateUtil.DateToCalendar(taskList.get(i).getEndDate());
+							String endDay = DateUtil.getDay(calEnd);
+							String endMonth = DateUtil.getMonth(calEnd);
+							String endTime = DateUtil.getTime(calEnd);
+							int endDate = calEnd.get(Calendar.DAY_OF_MONTH);
 
-							Calendar calEnd = DateToCalendar(taskList.get(i).getEndDate());
-							String endDay = getDay(calEnd); 
-							String endMonth = getMonth(calEnd);
-							String endTime = getTime(calEnd);
-							int endDate = calEnd.get(calEnd.DAY_OF_MONTH);
-
-							String eventTask = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", " + startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] " + taskList.get(i).getDescription());
+							String eventTask = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth
+									+ ", " + startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", "
+									+ endTime + "] " + taskList.get(i).getDescription());
 							Text eventDisplay = new Text(WordUtils.wrap(eventTask, 62, "\n", true));
-							eventDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+							eventDisplay.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
 							vbox3.getChildren().add(eventDisplay);
 						}
 					}
@@ -1817,63 +1762,61 @@ public class UI extends Application {
 
 			}
 
-			sp3.setContent(vbox3);
-			v2_1.getChildren().addAll(sp3);
+			scroll3.setContent(vbox3);
+			multipleDayBox.getChildren().addAll(scroll3);
 		}
 
 		Text floatingHeader = new Text("Floating Tasks");
-		floatingHeader.setFont(Font.font("Calibri", FontWeight.BOLD, 22));
+		floatingHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 22));
 		floatingHeader.setTextAlignment(TextAlignment.CENTER);
 		floatingHeader.setFill(Color.web("#3C220A"));
 		vbox2.getChildren().add(floatingHeader);
 
-		for(i=0; i<taskList.size(); i++) {
-			if(taskList.get(i).getType().equals("FLOATING_TASK")) {
+		for (i = 0; i < taskList.size(); i++) {
+			if (taskList.get(i).getType().equals("FLOATING_TASK")) {
 				haveFloatingTasks = true;
 				String floatingTask = (count++ + ". " + taskList.get(i).getDescription());
 
 				Text floatingDisplay = new Text(WordUtils.wrap(floatingTask, 62, "\n", true));
-				floatingDisplay.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+				floatingDisplay.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
 				vbox2.getChildren().add(floatingDisplay);
 			}
 		}
 
-		if(haveFloatingTasks == false) {
+		if (haveFloatingTasks == false) {
 			Text noFloatingTasks = new Text("*none*");
-			noFloatingTasks.setFont(Font.font("Calibri", FontWeight.NORMAL, 16));
+			noFloatingTasks.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
 			vbox2.getChildren().add(noFloatingTasks);
 		}
 
-		sp2.setContent(vbox2);
-		v2_2.getChildren().addAll(sp2);
+		scroll2.setContent(vbox2);
+		floatingBox.getChildren().addAll(scroll2);
 
-		if(haveEventsSpanningDays == true) {
+		if (haveEventsSpanningDays == true) {
 			VBox v2 = new VBox();
 			v2.setSpacing(10);
-			v2_1.setPrefHeight(235);
-			v2_2.setPrefHeight(235);
-			v2.getChildren().addAll(v2_1, v2_2);
+			multipleDayBox.setPrefHeight(235);
+			floatingBox.setPrefHeight(235);
+			v2.getChildren().addAll(multipleDayBox, floatingBox);
 			main.getChildren().addAll(v1, v2);
-		}
-		else {
-			main.getChildren().addAll(v1, v2_2);
+		} else {
+			main.getChildren().addAll(v1, floatingBox);
 		}
 
-		main.setAlignment(TOP_CENTER);
-
+		main.setAlignment(Pos.TOP_CENTER);
 
 		return main;
 
 	}
 
 	protected static String wrapText(String text) {
-    	StringBuilder sb = new StringBuilder(text);
+		StringBuilder sb = new StringBuilder(text);
 
-    	int x = 0;
-    	while (x + 50 < sb.length() && (x = sb.lastIndexOf(" ", x + 50)) != -1) {
-    	    sb.replace(x, x + 1, "\n");
-    	}
-    	return sb.toString();
-    }	 
+		int x = 0;
+		while (x + 50 < sb.length() && (x = sb.lastIndexOf(" ", x + 50)) != -1) {
+			sb.replace(x, x + 1, "\n");
+		}
+		return sb.toString();
+	}
 
 }
