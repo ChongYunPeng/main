@@ -1,10 +1,11 @@
+//@@author A0131716M
 package doordonote.common;
 
 import java.util.Date;
 import org.joda.time.DateTimeComparator;
 
 /**
- * @@author A0131716M
+ * @author A0131716M
  *
  */
 

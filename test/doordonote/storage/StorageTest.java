@@ -26,7 +26,6 @@ import org.junit.After;
  * @author A0131716M
  *
  */
-
 public class StorageTest {
 	
 	private static final String NAME_DEFAULT = "test.json";
@@ -35,7 +34,7 @@ public class StorageTest {
 	
 	TaskWriter str = new TaskWriter();
 	TaskReader reader = new TaskReader();
-	String settingStr;
+	String settingsStr;
 	
 	
 	
@@ -50,7 +49,7 @@ public class StorageTest {
 	
 	@Before
 	public void setup() throws IOException{
-		settingStr = TaskReader.getFileString(NAME_SETTINGS).trim();
+		settingsStr = TaskReader.getFileString(NAME_SETTINGS).trim();
 		File testFile = new File(NAME_DEFAULT);
 		if(!testFile.exists()){
 			testFile.createNewFile();
@@ -64,7 +63,7 @@ public class StorageTest {
 	public void tearDown(){
 		File file = new File(NAME_DEFAULT);
 		File test = new File(NAME_TEST);
-		str.path(settingStr);
+		str.path(settingsStr);
 		file.delete();
 		test.delete();
 	}
@@ -75,7 +74,7 @@ public class StorageTest {
 	}
 	
 	@Test
-	public void testPathAndGet() throws IOException, EmptyTaskListException, DuplicateTaskException{
+	public void testPathAndGet() throws IOException, EmptyTaskListException, DuplicateTaskException, EventsClashException{
 		str.add(task0);
 		ArrayList<Task> arrlist = new ArrayList<Task>();
 		arrlist.add(task0);
@@ -90,14 +89,14 @@ public class StorageTest {
 	}
 	
 	@Test
-	public void testStorageClear() throws IOException, DuplicateTaskException{
+	public void testStorageClear() throws IOException, DuplicateTaskException, EventsClashException{
 		addTasksToStorage();
 		str.clear();
 		assertEquals("[]", reader.getFileString(NAME_DEFAULT));
 	}
 	
 	@Test
-	public void testCurrentFileStringWithVariousMethods() throws IOException, EmptyTaskListException, DuplicateTaskException{
+	public void testCurrentFileStringWithVariousMethods() throws IOException, EmptyTaskListException, DuplicateTaskException, EventsClashException{
 		str.add(task0);
 		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
 		str.add(task3);
@@ -112,7 +111,7 @@ public class StorageTest {
 	
 	
 	@Test
-	public void testStorageReadAndWrite() throws IOException, DuplicateTaskException{
+	public void testStorageReadAndWrite() throws IOException, DuplicateTaskException, EventsClashException{
 		ArrayList<Task> expected = addTasksToStorage();
 		assertFalse(expected.equals(reader.readTasks()));
 		Collections.sort(expected);
@@ -120,7 +119,7 @@ public class StorageTest {
 	}
 	
 	@Test
-	public void testStorageDelete() throws EmptyTaskListException, IOException, DuplicateTaskException{		
+	public void testStorageDelete() throws EmptyTaskListException, IOException, DuplicateTaskException, EventsClashException{		
 		addTasksToStorage();
 		ArrayList<Task> arrlist = new ArrayList<Task>();
 		ArrayList<Task> dellist = new ArrayList<Task>();
@@ -135,7 +134,7 @@ public class StorageTest {
 	}
 	
 	@Test
-	public void testStorageUndoAndRedo() throws IOException, EmptyTaskListException, DuplicateTaskException{
+	public void testStorageUndoAndRedo() throws IOException, EmptyTaskListException, DuplicateTaskException, EventsClashException{
 		ArrayList<Task> arrlist = new ArrayList<Task>();
 		str.add(task0);
 		str.add(task3);
@@ -155,7 +154,7 @@ public class StorageTest {
 	}
 	
 	@Test
-	public void testReadDeleteAndDone() throws IOException, EmptyTaskListException, DuplicateTaskException{
+	public void testReadDeleteAndDone() throws IOException, EmptyTaskListException, DuplicateTaskException, EventsClashException{
 		ArrayList<Task> arrlist = addTasksToStorage();
 		ArrayList<Task> dellist = new ArrayList<Task>();
 		ArrayList<Task> donelist = new ArrayList<Task>();
@@ -186,7 +185,7 @@ public class StorageTest {
 	}
 	
 	//Returns unsorted ArrayList of Tasks added to Storage
-	private ArrayList<Task> addTasksToStorage() throws DuplicateTaskException{
+	private ArrayList<Task> addTasksToStorage() throws DuplicateTaskException, EventsClashException{
 		ArrayList<Task> arrlist = new ArrayList<Task>();
 		try{
 		str.add(task0);
