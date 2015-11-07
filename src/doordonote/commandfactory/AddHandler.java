@@ -12,7 +12,7 @@ public class AddHandler extends AbstractAddCommandHandler {
 	private static final int MAX_TASK_DESCRIPTION_LENGTH = 500;
 	private static final String MSG_TASK_TOO_LONG = "Task description is too long! Maximum number of characters is 500";
 
-	public AddHandler(String commandBody, DateParser dateParser) throws EmptyCommandBodyException {
+	public AddHandler(String commandBody, DateParser dateParser) throws Exception {
 		super(commandBody, dateParser);
 		if (Util.isEmptyOrNull(commandBody)) {
 			throw new EmptyCommandBodyException();

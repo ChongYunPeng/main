@@ -9,7 +9,7 @@ import doordonote.command.UpdateCommand;
 import doordonote.common.Util;
 
 public class UpdateHandler extends AbstractAddCommandHandler {
-	public UpdateHandler(String commandBody, DateParser dateParser) throws EmptyCommandBodyException {
+	public UpdateHandler(String commandBody, DateParser dateParser) throws Exception {
 		super(commandBody, dateParser);
 		if (commandBody.isEmpty()) {
 			throw new EmptyCommandBodyException();

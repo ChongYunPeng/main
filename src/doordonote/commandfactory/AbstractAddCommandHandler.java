@@ -16,7 +16,7 @@ public abstract class AbstractAddCommandHandler extends CommandHandler {
 	protected Date endDate = null;
 	protected String taskDescription = null;
 	
-	public AbstractAddCommandHandler(String commandBody, DateParser dateParser) throws EmptyCommandBodyException {
+	public AbstractAddCommandHandler(String commandBody, DateParser dateParser) throws Exception {
 		super(commandBody);
 		if (Util.isBlankString(commandBody)) {
 			throw new EmptyCommandBodyException();
@@ -25,23 +25,21 @@ public abstract class AbstractAddCommandHandler extends CommandHandler {
 		initialiseParameters(commandBody);
 	}
 
-	private void initialiseParameters(String commandBody) {
+	private void initialiseParameters(String commandBody) throws Exception {
 		if (isProbablyEvent()) {
-			try {
-				String dateString = commandBody.substring(getEventStartDateIndex());
-				List<Date> dateList = dateParser.parseAndGetDateList(dateString);
-//				Date startDate = dateParser.parse(startDateString);
-//				Date endDate = dateParser.parse(endDateString);
-				
-				if (dateList == null || dateList.size() < 2) {
-					taskDescription = commandBody;
-				} else {
-					taskDescription = getTaskDescription(getEventStartDateIndex());
-					this.startDate = dateList.get(0);
-					this.endDate = dateList.get(1);
-				}
-			} catch (Exception e) {
+			String dateString = commandBody.substring(getEventStartDateIndex());
+			List<Date> dateList = dateParser.parseAndGetDateList(dateString);
+			
+			if (dateList == null || dateList.size() < 2) {
 				taskDescription = commandBody;
+			} else {
+				taskDescription = getTaskDescription(getEventStartDateIndex());
+				this.startDate = dateList.get(0);
+				this.endDate = dateList.get(1);
+				
+				if (startDate.compareTo(endDate) >= 0) {
+					throw new Exception("Start date cannot be later than end date");
+				}
 			}
 		} else if (isProbablyDeadline()) {
 			try {
