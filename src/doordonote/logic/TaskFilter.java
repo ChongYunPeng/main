@@ -106,7 +106,7 @@ public class TaskFilter {
 
 	private List<Task> getDeletedTasks() {
 		List<Task> deletedTasks = new ArrayList<Task>();
-		for(Task task : deletedTasks) {
+		for(Task task : fullTaskList) {
 			if (task.isDeleted()) {
 				deletedTasks.add(task);
 			}

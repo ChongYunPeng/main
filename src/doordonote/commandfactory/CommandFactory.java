@@ -48,6 +48,8 @@ public class CommandFactory {
 			break;
 
 		case "finish" :
+			// fallthrough
+		case "fin" :
 			handler = new FinishHandler(commandBody);
 			break;
 

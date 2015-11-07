@@ -14,13 +14,14 @@ public class ViewHandler extends CommandHandler {
 		if (Util.isEmptyOrNull(commandBody)) {
 			throw new EmptyCommandBodyException();
 		}
+		this.commandBody = commandBody.trim().toLowerCase();
 	}
 
 	@Override
 	public Command generateCommand() throws Exception {
-		if (commandBody.trim().toLowerCase().equals("deleted")) {
+		if (commandBody.contains("del")) {
 			return new ViewDeletedTaskCommand();
-		} else if (commandBody.trim().toLowerCase().equals("finished")) {
+		} else if (commandBody.contains("fin")) {
 			return new ViewFinishedTaskCommand();
 		} else {
 			throw new Exception("Invalid display arguments");
