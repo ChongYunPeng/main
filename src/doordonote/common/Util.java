@@ -1,10 +1,10 @@
-//@@author A0131436N
-
 package doordonote.common;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+//@@author A0131436N
 
 public final class Util {
 
@@ -41,7 +41,7 @@ public final class Util {
 	
 	
 	/**
-	 * @@author A0131716M
+	 * @author A0131716M
 	 *
 	 */
 	public static Task createTask(String description, Date startDate, Date endDate){

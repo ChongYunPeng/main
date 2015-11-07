@@ -1,5 +1,3 @@
-//@@author A0131436N
-
 package doordonote.logic;
 
 import java.io.IOException;
@@ -7,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import doordonote.common.Task;
+
+//@@author A0131436N
 
 public interface CommandToController {
 	String add(String taskDescription, Date startDate, Date endDate) throws IOException;

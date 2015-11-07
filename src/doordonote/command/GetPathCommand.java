@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import doordonote.logic.CommandToController;
 
+//@@author A0131436N
+
 public class GetPathCommand implements Command {
 	protected String pathName = null;
 	

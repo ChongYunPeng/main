@@ -1,9 +1,9 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import doordonote.command.Command;
 import doordonote.common.Util;
+
+//@@author A0131436N
 
 public class CommandFactory {
 	DateParser dateParser;

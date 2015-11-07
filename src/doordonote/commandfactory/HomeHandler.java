@@ -1,14 +1,14 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import doordonote.command.Command;
 import doordonote.command.HomeCommand;
 import doordonote.common.Util;
 
+//@@author A0131436N
+
 public class HomeHandler extends CommandHandler {
 
-	public HomeHandler(String commmandBody) throws ExcessArgumentException {
+	protected HomeHandler(String commmandBody) throws ExcessArgumentException {
 		super(commmandBody);
 		if (!commandBody.isEmpty()) {
 			throw new ExcessArgumentException();

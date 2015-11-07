@@ -9,6 +9,8 @@ import doordonote.command.Command;
 import doordonote.commandfactory.CommandFactory;
 import doordonote.common.Task;
 
+//@@author A0131436N
+
 public class Logic implements UIToLogic {
 	protected CommandFactory cmdFactory = null;
 	protected CommandToController controller = null;

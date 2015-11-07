@@ -1,14 +1,14 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import doordonote.command.Command;
 import doordonote.command.DeleteCommand;
 import doordonote.common.Util;
 
+//@@author A0131436N
+
 public class DeleteHandler extends CommandHandler {
 	
-	public DeleteHandler(String commmandBody) throws EmptyCommandBodyException {
+	protected DeleteHandler(String commmandBody) throws EmptyCommandBodyException {
 		super(commmandBody);
 		if (Util.isEmptyOrNull(commandBody)) {
 			throw new EmptyCommandBodyException();

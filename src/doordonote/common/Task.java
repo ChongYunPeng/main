@@ -4,10 +4,7 @@ package doordonote.common;
 import java.util.Date;
 import org.joda.time.DateTimeComparator;
 
-/**
- * @author A0131716M
- *
- */
+
 
 public abstract class Task implements Comparable<Task>{
 

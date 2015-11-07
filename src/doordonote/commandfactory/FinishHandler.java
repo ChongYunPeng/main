@@ -1,14 +1,14 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import doordonote.command.Command;
 import doordonote.command.FinishCommand;
 import doordonote.common.Util;
 
+//@@author A0131436N
+
 public class FinishHandler extends CommandHandler {
 
-	public FinishHandler(String commmandBody) throws EmptyCommandBodyException {
+	protected FinishHandler(String commmandBody) throws EmptyCommandBodyException {
 		super(commmandBody);
 		if (Util.isEmptyOrNull(commandBody)) {
 			throw new EmptyCommandBodyException();

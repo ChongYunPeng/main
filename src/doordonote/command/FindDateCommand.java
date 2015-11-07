@@ -1,11 +1,11 @@
-//@@author A0131436N
-
 package doordonote.command;
 
 import java.io.IOException;
 import java.util.Date;
 
 import doordonote.logic.CommandToController;
+
+//@@author A0131436N
 
 public class FindDateCommand implements Command {
 	protected Date startDate = null;

@@ -1,11 +1,11 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import java.util.Date;
 import java.util.List;
 
 import doordonote.common.Util;
+
+//@@author A0131436N
 
 // TODO: Change name to make it more understandable
 // TODO: Make parser static

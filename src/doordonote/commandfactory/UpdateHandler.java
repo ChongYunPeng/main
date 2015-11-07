@@ -1,5 +1,3 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import java.util.Date;
@@ -8,8 +6,10 @@ import doordonote.command.Command;
 import doordonote.command.UpdateCommand;
 import doordonote.common.Util;
 
+//@@author A0131436N
+
 public class UpdateHandler extends AbstractAddCommandHandler {
-	public UpdateHandler(String commandBody, DateParser dateParser) throws Exception {
+	protected UpdateHandler(String commandBody, DateParser dateParser) throws Exception {
 		super(commandBody, dateParser);
 		if (commandBody.isEmpty()) {
 			throw new EmptyCommandBodyException();

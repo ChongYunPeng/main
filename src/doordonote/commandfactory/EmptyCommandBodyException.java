@@ -1,6 +1,6 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
+
+//@@author A0131436N
 
 public class EmptyCommandBodyException extends Exception {
 

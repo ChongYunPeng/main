@@ -1,5 +1,3 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import java.util.Arrays;
@@ -13,10 +11,12 @@ import doordonote.command.FindCommand;
 import doordonote.command.FindDateCommand;
 import doordonote.common.Util;
 
+//@@author A0131436N
+
 public class FindHandler extends CommandHandler {
 	protected DateParser dateParser = null; 
 	
-	public FindHandler(String commmandBody, DateParser parser) throws EmptyCommandBodyException {
+	protected FindHandler(String commmandBody, DateParser parser) throws EmptyCommandBodyException {
 		super(commmandBody);
 		if (Util.isEmptyOrNull(commandBody)) {
 			throw new EmptyCommandBodyException();

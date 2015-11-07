@@ -1,10 +1,10 @@
-//@@author A0131436N
-
 package doordonote.command;
 
 import java.util.Date;
 
 import doordonote.logic.CommandToController;
+
+//@@author A0131436N
 
 /**
  * @author yunpeng

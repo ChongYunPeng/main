@@ -4,9 +4,11 @@ import doordonote.command.Command;
 import doordonote.command.GetPathCommand;
 import doordonote.common.Util;
 
+//@@author A0131436N
+
 public class GetPathHandler extends CommandHandler {
 
-	public GetPathHandler(String commandBody) throws EmptyCommandBodyException {
+	protected GetPathHandler(String commandBody) throws EmptyCommandBodyException {
 		super(commandBody);
 		
 		if (Util.isEmptyOrNull(this.commandBody)) {

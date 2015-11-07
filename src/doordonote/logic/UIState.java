@@ -1,9 +1,9 @@
-//@@author A0131436N
-
 package doordonote.logic;
 
 import java.util.Date;
 import java.util.List;
+
+//@@author A0131436N
 
 public class UIState {
 	public enum ListType {

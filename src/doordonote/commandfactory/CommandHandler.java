@@ -1,13 +1,13 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import doordonote.command.Command;
 
+//@@author A0131436N
+
 public abstract class CommandHandler {
 	protected String commandBody = null;
 	
-	public CommandHandler(String commandBody) {
+	protected CommandHandler(String commandBody) {
 		this.commandBody = commandBody;
 	}
 

@@ -1,5 +1,3 @@
-//@@author A0131436N
-
 package doordonote.logic;
 
 import java.io.IOException;
@@ -9,6 +7,8 @@ import java.util.List;
 
 import doordonote.common.Task;
 import doordonote.storage.Storage;
+
+//@@author A0131436N
 
 public class TaskFilter {
 	

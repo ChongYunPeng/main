@@ -1,11 +1,10 @@
-//@@author A0131436N
-
 package doordonote.logic;
 
-import java.io.IOException;
 import java.util.List;
 
 import doordonote.common.Task;
+
+//@@author A0131436N
 
 public interface UIToLogic {
 	List<Task> getTasks();

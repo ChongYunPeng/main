@@ -1,5 +1,3 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import java.util.ArrayList;
@@ -13,6 +11,8 @@ import com.joestelmach.natty.CalendarSource;
 import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;
 
+//@@author A0131436N
+
 /**
  * @author yunpeng
  * A natty date parser wrapper that sets the default time to 8am in the morning.
@@ -21,7 +21,7 @@ import com.joestelmach.natty.Parser;
 public class DateParser {
 	protected Parser natty = null;
 
-	public DateParser() {
+	protected DateParser() {
 		natty = new Parser();
     	BasicConfigurator.configure();
 	}

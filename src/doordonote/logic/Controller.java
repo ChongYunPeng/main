@@ -1,5 +1,3 @@
-//@@author A0131436N
-
 package doordonote.logic;
 
 import java.io.IOException;
@@ -15,6 +13,8 @@ import doordonote.common.Util;
 import doordonote.logic.UIState.ListType;
 import doordonote.storage.Storage;
 import doordonote.storage.StorageHandler;
+
+//@@author A0131436N
 
 public class Controller implements CommandToController {
 	

@@ -1,14 +1,14 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import doordonote.command.Command;
 import doordonote.command.RedoCommand;
 import doordonote.common.Util;
 
+//@@author A0131436N
+
 public class RedoHandler extends CommandHandler {
 
-	public RedoHandler(String commmandBody) throws ExcessArgumentException {
+	protected RedoHandler(String commmandBody) throws ExcessArgumentException {
 		super(commmandBody);
 		if (!Util.isEmptyOrNull(commandBody)) {
 			throw new ExcessArgumentException();

@@ -1,14 +1,14 @@
-//@@author A0131436N
-
 package doordonote.commandfactory;
 
 import doordonote.command.Command;
 import doordonote.command.RestoreCommand;
 import doordonote.common.Util;
 
+//@@author A0131436N
+
 public class RestoreHandler extends CommandHandler {
 
-	public RestoreHandler(String commandBody) throws EmptyCommandBodyException {
+	protected RestoreHandler(String commandBody) throws EmptyCommandBodyException {
 		super(commandBody);
 		if (Util.isEmptyOrNull(commandBody)) {
 			throw new EmptyCommandBodyException();
