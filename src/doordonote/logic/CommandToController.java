@@ -42,4 +42,9 @@ public interface CommandToController {
 	List<Task> updateTaskList() throws IOException;
 
 	String find(Date startDate) throws IOException;
+
+	String getStorageFilePath(String pathName);
+
+	String path(String pathName);
+
 }

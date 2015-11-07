@@ -266,5 +266,19 @@ public class Controller implements CommandToController {
 		return "Displaying from " + Util.getDateString(startDate);
 	}
 
+	@Override
+	public String getStorageFilePath(String pathName) {
+		assert(pathName != null);
+		stateObj.setDefault();
+		return storage.get(pathName);
+	}
+
+	@Override
+	public String path(String pathName) {
+		assert(pathName != null);
+		stateObj.setDefault();
+		return storage.path(pathName);
+	}
+
 
 }

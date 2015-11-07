@@ -66,9 +66,12 @@ public class CommandFactory {
 		case "display" :
 			handler = new DisplayHandler(commandBody);
 			break;
-		// case "get" :
-		// case "path" :
-
+		 case "get" :
+			 handler = new GetPathHandler(commandBody);
+			 break;
+		 case "path" :
+			 handler = new PathHandler(commandBody);
+			 break;
 		default:
 			// treats user input as adding a new task by default if input does not match any command type
 			handler = new AddHandler(trimmedInput, dateParser);
