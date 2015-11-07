@@ -196,19 +196,24 @@ public class TaskWriter {
 			}
 		}
 	}
-
+	
+    //@@author A0132785Y
 	private boolean checkClashCondition(Task originalTask, Task toCheckTask){
 		if((toCheckTask.getStartDate().after(originalTask.getStartDate()) 
-				&& toCheckTask.getStartDate().before(originalTask.getEndDate()) 
+				&& toCheckTask.getStartDate().before(originalTask.getEndDate())) 
 				|| (toCheckTask.getEndDate().after(originalTask.getStartDate()) 
-						&& toCheckTask.getEndDate().before(originalTask.getEndDate())))){
+						&& toCheckTask.getEndDate().before(originalTask.getEndDate())) 
+				|| (originalTask.getStartDate().after(toCheckTask.getStartDate()) 
+						&& originalTask.getEndDate().before(toCheckTask.getEndDate()))
+				|| (originalTask.getStartDate().equals(toCheckTask.getStartDate()))
+				|| (originalTask.getEndDate().equals(toCheckTask.getEndDate()))){
 			return true;
 		} else{
 			return false;
 		}
 	}
 
-
+	//@@author A0131716M
 	protected void clear(){
 		try{
 			FileWriter fw = new FileWriter(currentFile);
