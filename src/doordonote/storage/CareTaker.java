@@ -1,3 +1,4 @@
+//@@author A0131716M
 package doordonote.storage;
 
 import java.util.Deque;
@@ -5,7 +6,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.Stack;
 
 /**
- * @@author A0131716M
+ * @author A0131716M
  *
  */
 

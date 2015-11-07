@@ -1,3 +1,4 @@
+//@@author A0131716M
 package doordonote.storage;
 
 import java.util.Date;
@@ -12,6 +13,10 @@ import doordonote.common.Task;
 import java.util.ArrayList;
 import java.io.IOException;
 
+/**
+ * @author A0131716M
+ *
+ */
 public interface Storage {
 	public String path(String location);
 	public String get(String location);

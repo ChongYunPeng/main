@@ -1,3 +1,4 @@
+//@@author A0131716M
 package doordonote.storage;
 
 import java.io.FileNotFoundException;
@@ -17,17 +18,12 @@ import java.util.HashSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.JsonParseException;
 
 import doordonote.common.Task;
 
-/**
- * @@author A0131716M
- *
- */
 
 /**
- * @@author A0131716M
+ * @author A0131716M
  *
  */
 public class TaskReader {

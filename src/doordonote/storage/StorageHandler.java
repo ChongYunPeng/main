@@ -13,32 +13,31 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 
 /**
- * @@author A0131716M
+ * @author A0131716M
  *
  */
-
 public class StorageHandler implements Storage {
 	
 	private static final String FILE_TYPE = ".json";
-	private final String TASK_STRING_TAIL = "...\"";
-	private final String MESSAGE_ADD = "Task %1$s added";
-	private final String MESSAGE_UPDATE = "Task updated to %1$s";
-	private final String MESSAGE_DELETE = "Task %1$s deleted";
-	private final String MESSAGE_NO_TASK_TO_DELETE = "No Tasks to delete";
-	private final String MESSAGE_NO_TASK_TO_UPDATE = "No Tasks to update";
-	private final String MESSAGE_REMOVE = "Task %1$s removed from file";
-	private final String MESSAGE_CLEAR = "All data deleted from file";
-	private final String MESSAGE_UNDO_SUCCESS = "Undo executed";
-	private final String MESSAGE_UNDO_FAIL = "Undo not executed";
-	private final String MESSAGE_REDO_SUCCESS = "Redo executed";
-	private final String MESSAGE_REDO_FAIL = "Redo not executed";
-	private final String MESSAGE_RESTORE = "Task %1$s restored";
-	private final String MESSAGE_FINISH = "Marked Task %1$s as done";
-	private final String MESSAGE_NOT_FINISH = "Marked Task %1$s as not done";
-	private final String MESSAGE_NOT_FOUND = "File \"%1$s\" is not found.";
-	private final String MESSAGE_READ = "Reading from file \"%1$s\"";
-	private final String MESSAGE_PATH_CREATE = "Creating file \"%1$s\"";
-	private final String MESSAGE_PATH_EXISTS = "File \"%1$s\" exists. Reading from \"%1$s\"";
+	private static final String TASK_STRING_TAIL = "...\"";
+	private static final String MESSAGE_ADD = "Task %1$s added";
+	private static final String MESSAGE_UPDATE = "Task updated to %1$s";
+	private static final String MESSAGE_DELETE = "Task %1$s deleted";
+	private static final String MESSAGE_NO_TASK_TO_UPDATE = "No Tasks to update";
+	private static final String MESSAGE_REMOVE = "Task %1$s removed from file";
+	private static final String MESSAGE_CLEAR = "All data deleted from file";
+	private static final String MESSAGE_UNDO_SUCCESS = "Undo executed";
+	private static final String MESSAGE_UNDO_FAIL = "Undo not executed";
+	private static final String MESSAGE_REDO_SUCCESS = "Redo executed";
+	private static final String MESSAGE_REDO_FAIL = "Redo not executed";
+	private static final String MESSAGE_RESTORE = "Task %1$s restored";
+	private static final String MESSAGE_FINISH = "Marked Task %1$s as done";
+	private static final String MESSAGE_NOT_FINISH = "Marked Task %1$s as not done";
+	private static final String MESSAGE_NOT_FOUND = "File \"%1$s\" is not found.";
+	private static final String MESSAGE_EVENTS_CLASHED = "Task %1$s added but clashes with %2$s";
+	private static final String MESSAGE_READ = "Reading from file \"%1$s\"";
+	private static final String MESSAGE_PATH_CREATE = "Creating file \"%1$s\"";
+	private static final String MESSAGE_PATH_EXISTS = "File \"%1$s\" exists. Reading from \"%1$s\"";
 
 	
 	protected TaskWriter writer;
@@ -96,6 +95,11 @@ public class StorageHandler implements Storage {
 			e.printStackTrace();
 			return "IOException!";
 		}
+		catch(EventsClashException e){
+			String originalTaskStr = shortenTaskName(e.getOriginalTask());
+			String clashedTaskStr = shortenTaskName(e.getClashedTask());
+			return String.format(MESSAGE_EVENTS_CLASHED, clashedTaskStr, originalTaskStr);
+		}
 		catch(DuplicateTaskException e){
 			return e.getMessage();
 		}
@@ -128,15 +132,18 @@ public class StorageHandler implements Storage {
 		catch(DuplicateTaskException e){
 			return e.getMessage();
 		}
+	/*	catch(EventsClashException e){
+			String originalTaskStr = shortenTaskName(e.getOriginalTask());
+			String clashedTaskStr = shortenTaskName(e.getClashedTask());
+			return String.format(MESSAGE_EVENTS_CLASHED, clashedTaskStr, originalTaskStr);
+		}
+		*/
 	}
 
 	public String delete(Task taskToDelete){
 		try{
 			writer.delete(taskToDelete);
 			return String.format(MESSAGE_DELETE, taskToDelete);
-		}
-		catch(EmptyTaskListException e){
-			return MESSAGE_NO_TASK_TO_DELETE;
 		}
 		catch(IOException e){
 			e.printStackTrace();
@@ -228,7 +235,6 @@ public class StorageHandler implements Storage {
 	private Task createTask(String description, Date startDate,
 			Date endDate){
 		Task task = null;
-
 		if(description!=null && startDate==null && endDate==null){
 			task = new FloatingTask(description);
 		} else if(description!=null && startDate==null && endDate!=null){
@@ -238,7 +244,7 @@ public class StorageHandler implements Storage {
 		} else {
 			assert (task != null):"Invalid Task parameters";
 		}
-
+		
 		return task;
 	}
 	

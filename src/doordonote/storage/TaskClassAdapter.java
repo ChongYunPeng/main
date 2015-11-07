@@ -1,3 +1,4 @@
+//@@author A0131716M
 package doordonote.storage;
 
 import java.lang.reflect.Type;
@@ -11,9 +12,10 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 //This class extends Gson library to write sub classes onto json file.
+//A significant portion of this code is gotten from StackOverflow.
 
 /**
- * @@author A0131716M
+ * @author A0131716M
  *
  */
 
