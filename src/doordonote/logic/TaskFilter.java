@@ -35,9 +35,6 @@ public class TaskFilter {
 		case FINISHED :
 			userTaskList = getFinishedTasks();
 			break;
-		case OVERDUE :
-			userTaskList = getOverdueTasks();
-			break;
 		case NORMAL :
 			// fallthrough
 		default :
@@ -95,16 +92,6 @@ public class TaskFilter {
 		return unfinishedTaskList;
 	}
 	
-	private List<Task> getOverdueTasks() {
-//		List<Task> overDueTasks = new ArrayList<Task>();
-//		for(Task task : fullTaskList) {
-//			if (task.getEndDate()) {
-//				unfinishedTaskList.add(task);
-//			}
-//		}
-//		return unfinishedTaskList;
-		return null;
-	}
 
 	//@@author A013
 	private List<Task> getFinishedTasks() {

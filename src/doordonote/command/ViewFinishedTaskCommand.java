@@ -11,7 +11,7 @@ import doordonote.logic.CommandToController;
  *
  * This {@code Command} displays a list of finished {@code Task} to the user
  */
-public class DisplayFinishedTaskCommand implements Command {
+public class ViewFinishedTaskCommand implements Command {
 	
 	@Override
 	public String execute(CommandToController controller) throws IOException {

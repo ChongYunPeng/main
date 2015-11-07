@@ -7,7 +7,7 @@ import java.util.List;
 
 public class UIState {
 	public enum ListType {
-	    DELETED, FINISHED, NORMAL, OVERDUE
+	    DELETED, FINISHED, NORMAL
 	}
 	
 	
@@ -47,9 +47,6 @@ public class UIState {
 			break;
 		case DELETED :
 			title = "Deleted Tasks";
-			break;
-		case OVERDUE :
-			title = "Overdue Tasks";
 			break;
 		default :
 			

@@ -12,7 +12,7 @@ import doordonote.logic.CommandToController;
  * This {@code Command} displays a list of deleted {@code Task} to the user
  *
  */
-public class DisplayDeletedTaskCommand implements Command {
+public class ViewDeletedTaskCommand implements Command {
 	
 	@Override
 	public String execute(CommandToController controller) throws IOException {

@@ -166,7 +166,7 @@ public class StorageHandler implements Storage {
 			throw e;
 		}		
 		assert(listTask!=null);
-		System.out.print(listTask);
+//		System.out.print(listTask);
 		return listTask;
 	}
 

@@ -22,7 +22,6 @@ public class CommandFactory {
 		switch (commandType) {
 
 		case "add" :
-			// TODO addm and addh
 			handler = new AddHandler(commandBody, dateParser);
 			break;
 
@@ -49,8 +48,6 @@ public class CommandFactory {
 			break;
 
 		case "finish" :
-			// fallthrough
-		case "complete" :
 			handler = new FinishHandler(commandBody);
 			break;
 
@@ -63,8 +60,8 @@ public class CommandFactory {
 		case "restore" :
 			handler = new RestoreHandler(commandBody);
 			break;
-		case "display" :
-			handler = new DisplayHandler(commandBody);
+		case "view" :
+			handler = new ViewHandler(commandBody);
 			break;
 		 case "get" :
 			 handler = new GetPathHandler(commandBody);

@@ -207,12 +207,6 @@ public class Controller implements CommandToController {
 		stateObj.displayType = ListType.DELETED;
 		return "Displaying deleted tasks";
 	}
-
-	public String displayOverDue() throws IOException {
-		stateObj.setDefault();
-		stateObj.displayType = ListType.OVERDUE;
-		return "Displaying overdue tasks";		
-	}
 	
 	@Override
 	public String getTaskStringById(int taskId) throws Exception {

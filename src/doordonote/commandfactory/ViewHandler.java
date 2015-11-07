@@ -2,17 +2,16 @@
 
 package doordonote.commandfactory;
 
-import com.sun.xml.internal.fastinfoset.stax.events.Util;
-
 import doordonote.command.Command;
-import doordonote.command.DisplayDeletedTaskCommand;
-import doordonote.command.DisplayFinishedTaskCommand;
+import doordonote.command.ViewDeletedTaskCommand;
+import doordonote.command.ViewFinishedTaskCommand;
+import doordonote.common.Util;
 
-public class DisplayHandler extends CommandHandler {
+public class ViewHandler extends CommandHandler {
 
-	public DisplayHandler(String commandBody) throws EmptyCommandBodyException {
+	public ViewHandler(String commandBody) throws EmptyCommandBodyException {
 		super(commandBody);
-		if (Util.isEmptyString(commandBody)) {
+		if (Util.isEmptyOrNull(commandBody)) {
 			throw new EmptyCommandBodyException();
 		}
 	}
@@ -20,9 +19,9 @@ public class DisplayHandler extends CommandHandler {
 	@Override
 	public Command generateCommand() throws Exception {
 		if (commandBody.trim().toLowerCase().equals("deleted")) {
-			return new DisplayDeletedTaskCommand();
+			return new ViewDeletedTaskCommand();
 		} else if (commandBody.trim().toLowerCase().equals("finished")) {
-			return new DisplayFinishedTaskCommand();
+			return new ViewFinishedTaskCommand();
 		} else {
 			throw new Exception("Invalid display arguments");
 		}
