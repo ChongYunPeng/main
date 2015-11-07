@@ -34,7 +34,7 @@ public final class Util {
 		if (input == null) {
 			return null;
 		} else {
-			DateFormat dateFormatter = new SimpleDateFormat();
+			DateFormat dateFormatter = new SimpleDateFormat("d MMM ''yy H:mm");
 			return dateFormatter.format(input);
 		}
 	}
