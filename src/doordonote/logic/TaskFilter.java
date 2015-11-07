@@ -10,12 +10,12 @@ import java.util.List;
 import doordonote.common.Task;
 import doordonote.storage.Storage;
 
-public class TaskListFilter {
+public class TaskFilter {
 	
 	protected Storage storage = null;
 	protected ArrayList<Task> fullTaskList;
 	
-	protected TaskListFilter(Storage storage) throws IOException {
+	protected TaskFilter(Storage storage) throws IOException {
 		this.storage = storage;
 		fullTaskList = storage.readTasks();
 	}
@@ -24,11 +24,9 @@ public class TaskListFilter {
 		this.storage = storage;
 	}
 	
-	public void updateFullTaskList() throws IOException {
+	public List<Task> getUserTaskList(UIState stateObj) throws IOException {
 		fullTaskList = storage.readTasks();
-	}
-	
-	public List<Task> getUserTaskList(UIState stateObj) {
+		assert (fullTaskList != null);
 		List<Task> userTaskList = null;
 		switch (stateObj.displayType) {
 		case DELETED :
@@ -110,26 +108,22 @@ public class TaskListFilter {
 
 	//@@author A013
 	private List<Task> getFinishedTasks() {
-		List<Task> finishedTasks = null;
-		try {
-			finishedTasks = storage.readDoneTasks();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		List<Task> finishedTasks = new ArrayList<Task>();
+		for(Task task : fullTaskList) {
+			if (task.isDone() && !task.isDeleted()) {
+				finishedTasks.add(task);
+			}
 		}
-		
 		return finishedTasks;
 	}
 
 	private List<Task> getDeletedTasks() {
-		List<Task> deletedTasks = null;
-		try {
-			deletedTasks = storage.readDeletedTasks();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		List<Task> deletedTasks = new ArrayList<Task>();
+		for(Task task : deletedTasks) {
+			if (task.isDeleted()) {
+				deletedTasks.add(task);
+			}
 		}
-		
 		return deletedTasks;
 	}
 	

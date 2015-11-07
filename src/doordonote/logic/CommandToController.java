@@ -35,11 +35,11 @@ public interface CommandToController {
 
 	String displayDeleted() throws IOException;
 
-	String getTaskById(int taskID) throws Exception;
+	String getTaskStringById(int taskID) throws Exception;
 
 	UIState getState();
 
-	List<Task> getUserTaskList() throws IOException;
+	List<Task> updateTaskList() throws IOException;
 
 	String find(Date startDate) throws IOException;
 }

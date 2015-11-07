@@ -3,6 +3,7 @@
 package doordonote.logic;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,37 +19,47 @@ public class Controller implements CommandToController {
 	
 	protected Storage storage = null;
 	protected UIState stateObj = null;
-	protected TaskListFilter taskFilter = null;
+	protected TaskFilter taskFilter = null;
+	
+	protected List<Task> userTaskList = null;
 	
 	
 	public Controller() throws IOException {
-		storage = StorageHandler.getInstance();		
+		this.storage = StorageHandler.getInstance();		
 		stateObj = new UIState();
-		taskFilter = new TaskListFilter(storage);
+		taskFilter = new TaskFilter(storage);
+		updateTaskList();		
 	}
 	
 	/**
-	 * @param store
+	 * @param storage
 	 * 
 	 * Used for injection dependency to replace Storage with a stub for testing
+	 * @throws IOException 
 	 */
-	protected void setStorageTaskList(Storage storage) {
+	protected Controller(Storage storage) throws IOException {
 		this.storage = storage;
-		taskFilter.setStorage(storage);
+		stateObj = new UIState();
+		taskFilter = new TaskFilter(storage);
+		userTaskList = new ArrayList<Task>();
+		updateTaskList();
 	}
 
 	@Override
 	public String add(String taskDescription, Date startDate, Date endDate) throws IOException {
-		List<Task> oldTaskList = taskFilter.getUserTaskList(stateObj);
+		// Should have checked this in Command
+		assert(!Util.isEmptyOrNull(taskDescription));
+		stateObj.clearTempState();
+		
+		List<Task> oldTaskList = updateTaskList();
+		
 		Task taskToBeAdded = Util.createTask(taskDescription, startDate, endDate);
-		String outputMsg = storage.add(taskToBeAdded);
-		
-		taskFilter.updateFullTaskList();
-		
+		String outputMsg = storage.add(taskToBeAdded);		
 		if (stateObj.displayType != ListType.NORMAL) {
 			stateObj.setDefault();
 		} else {
-			List<Task> newTaskList = taskFilter.getUserTaskList(stateObj);
+			List<Task> newTaskList = updateTaskList();
+			assert(newTaskList != null && oldTaskList != null);
 			if (newTaskList.size() > oldTaskList.size()) {
 				stateObj.clearTempState();				
 			} else {
@@ -70,12 +81,10 @@ public class Controller implements CommandToController {
 			outputMsg = storage.delete(taskToDelete);
 
 		}
-		taskFilter.updateFullTaskList();
 		return outputMsg;
 	}
 	
 	protected Task getTask(int taskId) throws Exception {
-		List<Task> userTaskList = taskFilter.getUserTaskList(stateObj);
 		if (taskId > userTaskList.size()) {
 			throw new Exception("Invalid taskID!");
 		}
@@ -89,7 +98,7 @@ public class Controller implements CommandToController {
 		stateObj.filterList = keywords;
 		stateObj.startDate = null;
 		
-		List<Task> userTaskList = taskFilter.getUserTaskList(stateObj);
+		List<Task> userTaskList = updateTaskList();
 		
 		if (!userTaskList.isEmpty()) {
 			return userTaskList.size() + " task(s) found";
@@ -101,6 +110,10 @@ public class Controller implements CommandToController {
 	@Override
 	public String finish(int taskId) throws Exception {
 		stateObj.clearTempState();
+		
+		if (stateObj.displayType == ListType.FINISHED) {
+			throw new Exception("Task is already finished!");
+		}
 
 		Task taskToFinish = getTask(taskId);
 		String outputMsg = storage.finish(taskToFinish);
@@ -124,22 +137,20 @@ public class Controller implements CommandToController {
 		stateObj.clearTempState();
 
 		stateObj.helpBox = commandType;
-		return "Displaying " + commandType + " help";
+		return "Displaying help";
 	}
 
 	@Override
 	public String redo() throws IOException {
-		String outputMsg = storage.redo();
-		taskFilter.updateFullTaskList();
 		stateObj.setDefault();
+		String outputMsg = storage.redo();
 		return outputMsg;
 	}
 
 	@Override
 	public String undo() throws IOException {
-		String outputMsg = storage.undo();
-		taskFilter.updateFullTaskList();
 		stateObj.setDefault();
+		String outputMsg = storage.undo();
 		return outputMsg;
 	}
 
@@ -155,7 +166,7 @@ public class Controller implements CommandToController {
 		Task newTask = Util.createTask(taskDescription, startDate, endDate);
 		String outputMsg = storage.update(taskToUpdate, newTask);
 
-		taskFilter.updateFullTaskList();
+		updateTaskList();
 		
 		stateObj.idNewTask = getNewTaskId(newTask);
 		return outputMsg;
@@ -164,7 +175,6 @@ public class Controller implements CommandToController {
 	@Override
 	public String home() throws IOException {
 		stateObj.setDefault();
-		taskFilter.updateFullTaskList();
 		return MESSAGE_HOME;
 	}
 
@@ -205,7 +215,7 @@ public class Controller implements CommandToController {
 	}
 	
 	@Override
-	public String getTaskById(int taskId) throws Exception {
+	public String getTaskStringById(int taskId) throws Exception {
 		stateObj.clearTempState();
 		Task taskToBeUpdated = getTask(taskId);
 		stateObj.inputBox = getTaskToBeUpdated(taskToBeUpdated, taskId);
@@ -234,15 +244,16 @@ public class Controller implements CommandToController {
 	/**
 	 * @param oldTaskList
 	 * @return taskId of new task added
+	 * @throws IOException 
 	 */
-	protected int getNewTaskId(Task newTask) {
-		List<Task> userTaskList = taskFilter.getUserTaskList(stateObj);
+	protected int getNewTaskId(Task newTask) throws IOException {
+		updateTaskList();
 		return userTaskList.indexOf(newTask);
 	}
 
 	@Override
-	public List<Task> getUserTaskList() throws IOException {
-		List<Task> userTaskList = taskFilter.getUserTaskList(stateObj);
+	public List<Task> updateTaskList() throws IOException {
+		userTaskList = taskFilter.getUserTaskList(stateObj);
 		return userTaskList;
 	}
 

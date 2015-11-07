@@ -44,7 +44,7 @@ public class UpdateCommand implements Command {
 	@Override
 	public String execute(CommandToController controller) throws Exception {
 		if (taskDescription == null) {
-			return controller.getTaskById(this.taskID);
+			return controller.getTaskStringById(this.taskID);
 		}
 		return controller.update(taskID, taskDescription, startDate, endDate);
 	}
