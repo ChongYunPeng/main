@@ -297,7 +297,7 @@ public class TaskWriter {
 
 	private Set<Task> removeFromSet(Task task) throws IOException {
 		Set<Task> set = reader.jsonToSet();
-		assert (set.isEmpty()) : MESSAGE_ASSERT_SET_EMPTY;
+		assert (!set.isEmpty()) : MESSAGE_ASSERT_SET_EMPTY;
 		set.remove(task);
 		return set;
 	}

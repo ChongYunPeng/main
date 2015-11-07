@@ -127,7 +127,7 @@ public class TaskReader {
 		set = jsonToSet();
 		ArrayList<Task> listTask = new ArrayList<Task>();
 		for(Task t : set){
-			if(t.isDone()){
+			if(t.isDone() && !t.isDeleted()){
 				listTask.add(t);
 			}
 		}

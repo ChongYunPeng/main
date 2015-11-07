@@ -16,7 +16,7 @@ public class ViewDeletedTaskCommand implements Command {
 	
 	@Override
 	public String execute(CommandToController controller) throws IOException {
-		return controller.displayDeleted();
+		return controller.viewDeleted();
 	}
 
 }

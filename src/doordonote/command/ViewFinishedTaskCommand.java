@@ -15,7 +15,7 @@ public class ViewFinishedTaskCommand implements Command {
 	
 	@Override
 	public String execute(CommandToController controller) throws IOException {
-		return controller.displayFinished();
+		return controller.viewFinished();
 	}
 
 }

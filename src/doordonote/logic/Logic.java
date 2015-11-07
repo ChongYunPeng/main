@@ -33,7 +33,7 @@ public class Logic implements UIToLogic {
 	public List<Task> getTasks() {
 		List<Task> taskList = null;
 		try {
-			taskList = controller.updateTaskList();
+			taskList = controller.getTaskList();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -5,7 +5,10 @@ package doordonote.logic;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import doordonote.common.Task;
 import doordonote.common.Util;
@@ -23,12 +26,12 @@ public class Controller implements CommandToController {
 	
 	protected List<Task> userTaskList = null;
 	
+//	protected Deque<UIState> undoStack = null;
+//	protected Stack<UIState> redoStack = null;
+	
 	
 	public Controller() throws IOException {
-		this.storage = StorageHandler.getInstance();		
-		stateObj = new UIState();
-		taskFilter = new TaskFilter(storage);
-		updateTaskList();		
+		this(StorageHandler.getInstance());
 	}
 	
 	/**
@@ -41,6 +44,8 @@ public class Controller implements CommandToController {
 		this.storage = storage;
 		stateObj = new UIState();
 		taskFilter = new TaskFilter(storage);
+//		undoStack = new LinkedList<UIState>();
+//		redoStack = new Stack<UIState>();
 		userTaskList = new ArrayList<Task>();
 		updateTaskList();
 	}
@@ -50,15 +55,15 @@ public class Controller implements CommandToController {
 		// Should have checked this in Command
 		assert(!Util.isEmptyOrNull(taskDescription));
 		stateObj.clearTempState();
-		
-		List<Task> oldTaskList = updateTaskList();
+		List<Task> oldTaskList = userTaskList;
 		
 		Task taskToBeAdded = Util.createTask(taskDescription, startDate, endDate);
 		String outputMsg = storage.add(taskToBeAdded);		
 		if (stateObj.displayType != ListType.NORMAL) {
 			stateObj.setDefault();
 		} else {
-			List<Task> newTaskList = updateTaskList();
+			updateTaskList();
+			List<Task> newTaskList = userTaskList;
 			assert(newTaskList != null && oldTaskList != null);
 			if (newTaskList.size() > oldTaskList.size()) {
 				stateObj.clearTempState();				
@@ -98,7 +103,7 @@ public class Controller implements CommandToController {
 		stateObj.filterList = keywords;
 		stateObj.startDate = null;
 		
-		List<Task> userTaskList = updateTaskList();
+		 updateTaskList();
 		
 		if (!userTaskList.isEmpty()) {
 			return userTaskList.size() + " task(s) found";
@@ -194,7 +199,7 @@ public class Controller implements CommandToController {
 
 
 	@Override
-	public String displayFinished() throws IOException {
+	public String viewFinished() throws IOException {
 		stateObj.setDefault();
 		stateObj.displayType = ListType.FINISHED;
 		return "Displaying finished tasks";
@@ -202,7 +207,7 @@ public class Controller implements CommandToController {
 
 
 	@Override
-	public String displayDeleted() throws IOException {
+	public String viewDeleted() throws IOException {
 		stateObj.setDefault();
 		stateObj.displayType = ListType.DELETED;
 		return "Displaying deleted tasks";
@@ -245,12 +250,16 @@ public class Controller implements CommandToController {
 		return userTaskList.indexOf(newTask);
 	}
 
-	@Override
-	public List<Task> updateTaskList() throws IOException {
+	private void updateTaskList() throws IOException {
 		userTaskList = taskFilter.getUserTaskList(stateObj);
-		return userTaskList;
 	}
-
+	
+	@Override
+	public List<Task> getTaskList() throws IOException {
+		updateTaskList();
+		return userTaskList; 
+	}
+	
 	@Override
 	public String find(Date startDate) throws IOException {
 		assert(startDate != null);

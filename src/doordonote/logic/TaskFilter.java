@@ -82,36 +82,18 @@ public class TaskFilter {
 		return userTaskList;
 	}
 
-		private List<Task> getUnfinishedTasks() {
-		List<Task> unfinishedTaskList = new ArrayList<Task>();
-		for(Task task : fullTaskList) {
-			if (!task.isDone() && !task.isDeleted()) {
-				unfinishedTaskList.add(task);
-			}
-		}
-		return unfinishedTaskList;
+	private List<Task> getUnfinishedTasks() throws IOException {
+		return storage.readTasks();
 	}
 	
 
 	//@@author A013
-	private List<Task> getFinishedTasks() {
-		List<Task> finishedTasks = new ArrayList<Task>();
-		for(Task task : fullTaskList) {
-			if (task.isDone() && !task.isDeleted()) {
-				finishedTasks.add(task);
-			}
-		}
-		return finishedTasks;
+	private List<Task> getFinishedTasks() throws IOException {
+		return storage.readDoneTasks();
 	}
 
-	private List<Task> getDeletedTasks() {
-		List<Task> deletedTasks = new ArrayList<Task>();
-		for(Task task : fullTaskList) {
-			if (task.isDeleted()) {
-				deletedTasks.add(task);
-			}
-		}
-		return deletedTasks;
+	private List<Task> getDeletedTasks() throws IOException {
+		return storage.readDeletedTasks();
 	}
 	
 }

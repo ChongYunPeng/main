@@ -31,20 +31,20 @@ public interface CommandToController {
 
 	String restore(int taskId) throws IOException, Exception;
 
-	String displayFinished() throws IOException;
+	String viewFinished() throws IOException;
 
-	String displayDeleted() throws IOException;
+	String viewDeleted() throws IOException;
 
 	String getTaskStringById(int taskID) throws Exception;
 
 	UIState getState();
-
-	List<Task> updateTaskList() throws IOException;
 
 	String find(Date startDate) throws IOException;
 
 	String getStorageFilePath(String pathName);
 
 	String path(String pathName);
+
+	List<Task> getTaskList() throws IOException;
 
 }

@@ -99,7 +99,7 @@ public class ControllerTest {
 	public void displayDeletedTest() throws IOException {
 		UIState testStateObj = new UIState();
 		testStateObj.displayType = ListType.DELETED;
-		controller.displayDeleted();
+		controller.viewDeleted();
 		assertEquals("Test if UIState is updated correctly", 
 			 	 	 testStateObj, 
 			 	 	 controller.getState());
@@ -109,7 +109,7 @@ public class ControllerTest {
 	public void displayFinishedTest() throws IOException {
 		UIState testStateObj = new UIState();
 		testStateObj.displayType = ListType.FINISHED;
-		controller.displayFinished();
+		controller.viewFinished();
 		assertEquals("Test if UIState is updated correctly", 
 			 	 	 testStateObj, 
 			 	 	 controller.getState());
@@ -159,7 +159,7 @@ public class ControllerTest {
 	
 	@Test
 	public void homeTest() throws IOException {
-		controller.displayDeleted(); // Change the display type
+		controller.viewDeleted(); // Change the display type
 		String homeMsg = controller.home();
 		UIState testStateObj = new UIState();
 		
