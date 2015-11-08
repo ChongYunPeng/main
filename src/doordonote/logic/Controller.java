@@ -60,7 +60,7 @@ public class Controller implements CommandToController {
 		// Should have checked this in Command
 		assert(!Util.isEmptyOrNull(taskDescription));
 		
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 		List<Task> oldTaskList = userTaskList;
 		
 		Task taskToBeAdded = Util.createTask(taskDescription, startDate, endDate);
@@ -93,7 +93,7 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String delete(int taskId) throws Exception {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 		Task taskToDelete = getTask(taskId);
 		String outputMsg = null;
 		if (stateObj.displayType == ListType.DELETED) {
@@ -115,7 +115,7 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String find(List<String> keywords) throws IOException {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 		stateObj.filterList = keywords;
 		stateObj.filterDate = null;
 		
@@ -130,7 +130,7 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String finish(int taskId) throws Exception {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 		
 		if (stateObj.displayType == ListType.FINISHED) {
 			throw new Exception("Task is already finished!");
@@ -143,19 +143,21 @@ public class Controller implements CommandToController {
 	
 	@Override
 	public UIState getState() {
-		return stateObj;
+		UIState copyOfUIState = new UIState(stateObj);
+//		stateObj.clearTempState();
+		return copyOfUIState;
 	}
 
 	@Override
 	public String help() {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 		stateObj.helpBox = "help";
 		return "Displaying help";
 	}
 
 	@Override
 	public String help(String commandType) {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 
 		stateObj.helpBox = commandType;
 		return "Displaying help";
@@ -177,7 +179,7 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String update(int taskId, String taskDescription, Date startDate, Date endDate) throws Exception {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 
 		if (stateObj.displayType == ListType.FINISHED || stateObj.displayType == ListType.DELETED) {
 			throw new Exception("Cannot update deleted/ finished tasks!");
@@ -202,7 +204,7 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String restore(int taskId) throws Exception {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 
 		if (stateObj.displayType == ListType.NORMAL) {
 			throw new Exception("Cannot restore an undeleted/ unfinished task!");
@@ -231,7 +233,7 @@ public class Controller implements CommandToController {
 	
 	@Override
 	public String getTaskStringById(int taskId) throws Exception {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 		Task taskToBeUpdated = getTask(taskId);
 		stateObj.inputBox = getTaskToBeUpdated(taskToBeUpdated, taskId);
 		return "Task " + taskId + " found!";
@@ -279,7 +281,7 @@ public class Controller implements CommandToController {
 	@Override
 	public String find(Date startDate) throws IOException {
 		assert(startDate != null);
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 		stateObj.filterDate = startDate;
 		stateObj.filterList = null;
 		return "Displaying from " + Util.getDateString(startDate);
@@ -287,7 +289,7 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String readFromFilePath(String pathName) {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 		assert(pathName != null);
 		String feedback = storage.get(pathName);
 		stateObj.setDefault();
@@ -296,7 +298,7 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String saveFileAt(String pathName) {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 		assert(pathName != null);
 		String feedback = storage.path(pathName);
 		stateObj.setDefault();
@@ -305,9 +307,8 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String getCurrentFilePath() {
-		stateObj.clearTempState();
+//		stateObj.clearTempState();
 		return "Currently reading from: " + storage.getCurrentFilePath();
 	}
-
 
 }

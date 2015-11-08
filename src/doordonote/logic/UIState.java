@@ -41,6 +41,21 @@ public class UIState {
 		setDefault();
 	}
 	
+	/**
+	 * Used to clone a UIState object
+	 * 
+	 * @param 	other
+	 * 			The UIState object to be cloned.
+	 */
+	public UIState(UIState other) {
+		inputBox = other.inputBox;
+		displayType = other.displayType;
+		helpBox = other.helpBox;
+		idNewTask = other.idNewTask;
+		filterList = other.filterList;
+		filterDate = other.filterDate;
+	}
+	
 	public int getIdNewTask() {
 		return idNewTask;
 	}
