@@ -83,6 +83,8 @@ public class TaskReader {
 			currentFile = fileName;
 			TaskWriter.writeToSettings(currentFile);
 			TaskWriter.setReadFile(currentFile);
+			CareTaker careTaker = TaskWriter.getCareTaker();
+			careTaker.resetUndo();
 			return currentFile;
 		}
 	}

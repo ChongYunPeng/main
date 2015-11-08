@@ -38,7 +38,7 @@ public class TaskWriter {
 			new TaskClassAdapter<Task>()).create();
 	private static final Type type = new TypeToken<HashSet<Task>>(){}.getType();
 	private final Originator originator = new Originator();
-	private final CareTaker careTaker = new CareTaker();
+	private static final CareTaker careTaker = new CareTaker();
 
 	private String currentJsonString = INITIAL_JSONSTRING;
 
@@ -76,6 +76,10 @@ public class TaskWriter {
 	protected static void setReadFile(String fileName){
 		currentFile = fileName;
 	}
+	
+	protected static CareTaker getCareTaker(){
+		return careTaker;
+	}
 
 
 	protected int path(String fileName) throws IOException{
@@ -91,6 +95,7 @@ public class TaskWriter {
 			}
 			currentFile = fileName;			
 			TaskReader.setCurrentFile(fileName);
+			careTaker.resetUndo();
 			return 1;
 
 		} else{
@@ -104,6 +109,7 @@ public class TaskWriter {
 				throw e;
 			}
 			TaskReader.setCurrentFile(fileName);
+			careTaker.resetUndo();
 			return 0;
 		}
 

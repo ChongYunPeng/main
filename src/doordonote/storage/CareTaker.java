@@ -9,13 +9,12 @@ import java.util.Stack;
  * @author A0131716M
  *
  */
-
 public class CareTaker {
 	private static final int MAX_UNDO_SIZE = 10;
 	private Deque<Memento> mementoDeque = new LinkedBlockingDeque<Memento>(MAX_UNDO_SIZE);
 	private Stack<Memento> redoStack;
 
-	public void add(Memento state){
+	protected void add(Memento state){
 		if(mementoDeque.size()<MAX_UNDO_SIZE){
 			mementoDeque.addLast(state);
 		} else{
@@ -24,7 +23,7 @@ public class CareTaker {
 		}
 	}
 
-	public Memento get(){
+	protected Memento get(){
 		if(mementoDeque.size()>0){
 			return mementoDeque.peekLast();
 		} else{
@@ -32,7 +31,7 @@ public class CareTaker {
 		}
 	}
 	
-	public Memento removeLast(){
+	protected Memento removeLast(){
 		if(mementoDeque.size()>0){
 			return mementoDeque.pollLast();
 		} else{
@@ -40,20 +39,23 @@ public class CareTaker {
 		}
 	}
 
-	public Memento restore(){
+	protected Memento restore(){
 		if(redoStack.size()>0){		
 			return redoStack.pop();
 		} else{
 			return null;
 		}
 	}
+	
+	protected void resetUndo(){
+		mementoDeque = new LinkedBlockingDeque<Memento>(MAX_UNDO_SIZE);
+	}
 
-
-	public void initRedoStack(Memento memento){
+	protected void initRedoStack(Memento memento){
 		redoStack = new Stack<Memento>();
 	}
 
-	public void toRedoStack(Memento memento){
+	protected void toRedoStack(Memento memento){
 		redoStack.push(memento);
 	}
 
