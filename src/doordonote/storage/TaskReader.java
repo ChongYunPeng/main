@@ -41,7 +41,7 @@ public class TaskReader {
 
 	private static String currentFile;
 
-	public TaskReader(){
+	protected TaskReader(){
 		try{
 			currentFile = getFileString(SETTINGS_FILE).trim();
 			set = jsonToSet();
@@ -51,7 +51,7 @@ public class TaskReader {
 		}
 	}
 
-	public TaskReader(String name){
+	protected TaskReader(String name){
 		currentFile = name;
 		try{
 			set = jsonToSet();
@@ -61,15 +61,15 @@ public class TaskReader {
 		}
 	}
 
-	public String getFileName() {
+	protected String getFileName() {
 		return currentFile;
 	}
 	
-	public static void setCurrentFile(String fileName){
+	protected static void setCurrentFile(String fileName){
 		currentFile = fileName;
 	}
 
-	public String read(String fileName) throws FileNotFoundException{
+	protected String read(String fileName) throws FileNotFoundException{
 		if(!fileName.contains(FILE_TYPE)){
 			fileName += FILE_TYPE;
 		}
@@ -84,7 +84,7 @@ public class TaskReader {
 		}
 	}
 
-	public Set<Task> getJsonSet(){
+	protected Set<Task> getJsonSet(){
 		return set;
 	}
 

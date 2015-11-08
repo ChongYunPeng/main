@@ -46,12 +46,12 @@ public class TaskWriter {
 	TaskReader reader;
 
 
-	public TaskWriter(){
+	protected TaskWriter(){
 		initialize();
 		reader = new TaskReader(currentFile);
 	}
 
-	public TaskWriter(String name){
+	protected TaskWriter(String name){
 		if(!name.contains(FILE_TYPE)){
 			name += FILE_TYPE;
 		}
@@ -60,15 +60,11 @@ public class TaskWriter {
 		reader = new TaskReader(currentFile);
 	}
 
-	public String getFileName() {
+	protected String getFileName() {
 		return currentFile;
 	}
-	
-	public TaskReader getReader(){
-		return reader;
-	}
 
-	public static void setReadFile(String fileName){
+	protected static void setReadFile(String fileName){
 		currentFile = fileName;
 	}
 
@@ -105,7 +101,7 @@ public class TaskWriter {
 	}
 
 
-	public String getCurrentFileString(){
+	protected String getCurrentFileString(){
 		return currentJsonString;
 	}
 
