@@ -63,9 +63,9 @@ public class UI extends Application {
 	private static final String HELP_UPDATE = "update";
 	private static final String HELP_FIND = "find";
 	private static final String HELP_FINISH = "finish";
-	private static final String HELP_PATH = "path";
+	private static final String HELP_SAVE = "save";
 	private static final String HELP_RESTORE = "restore";
-	private static final String HELP_GET = "get";
+	private static final String HELP_READFROM = "readfrom";
 
 	private static final String COMMAND_HOME = "home";
 	private static final String COMMAND_DISPLAY_FINISH = "view finished";
@@ -75,7 +75,9 @@ public class UI extends Application {
 
 	private static final String MESSAGE_WELCOME = "Welcome to DoOrDoNote! "
 			+ "Type in \"help\" for all the help you need!";
-	private static final String MESSAGE_TABLE = "Here is a table of all the commands you can use:";
+	private static final String MESSAGE_COMMAND_TABLE = "Table for Commands: ";
+	private static final String MESSAGE_SHORTCUT_TABLE = "Table for Keyboard Shortcuts: ";
+	private static final String MESSAGE_COLOUR_TABLE = "Table for Colour Coding of Tasks: ";
 	private static final String MESSAGE_HELP = "Hello! "
 			+ "This is the page to provide you with all the help you need for DoOrDoNote";
 	private static final String MESSAGE_NO_INPUT = "Try typing one of our commands. For help, just type \"help\"!";
@@ -249,10 +251,10 @@ public class UI extends Application {
 								case HELP_FINISH: {
 									// Fallthrough
 								}
-								case HELP_GET: {
+								case HELP_READFROM: {
 									// Fallthrough
 								}
-								case HELP_PATH: {
+								case HELP_SAVE: {
 									// Fallthrough
 								}
 								case HELP_RESTORE: {
@@ -319,7 +321,7 @@ public class UI extends Application {
 					}
 				}
 
-				if (ke.getCode().equals(KeyCode.Z) && ke.isControlDown()) {
+				if (ke.getCode().equals(KeyCode.Z) && ke.isShortcutDown()) {
 					try {
 						UIState state = logic.getState();
 						feedback = logic.parseAndExecuteCommand(COMMAND_UNDO);
@@ -342,7 +344,7 @@ public class UI extends Application {
 					}
 				}
 
-				if (ke.getCode().equals(KeyCode.Y) && ke.isControlDown()) {
+				if (ke.getCode().equals(KeyCode.Y) && ke.isShortcutDown()) {
 					try {
 						UIState state = logic.getState();
 						feedback = logic.parseAndExecuteCommand(COMMAND_REDO);
@@ -365,7 +367,7 @@ public class UI extends Application {
 					}
 				}
 
-				if (ke.getCode().equals(KeyCode.D) && ke.isControlDown()) {
+				if (ke.getCode().equals(KeyCode.D) && ke.isShortcutDown()) {
 					try {
 						UIState state = logic.getState();
 						feedback = logic.parseAndExecuteCommand(COMMAND_DISPLAY_DELETE);
@@ -388,7 +390,7 @@ public class UI extends Application {
 					}
 				}
 
-				if (ke.getCode().equals(KeyCode.F) && ke.isControlDown()) {
+				if (ke.getCode().equals(KeyCode.F) && ke.isShortcutDown()) {
 					try {
 						UIState state = logic.getState();
 						feedback = logic.parseAndExecuteCommand(COMMAND_DISPLAY_FINISH);
@@ -411,7 +413,7 @@ public class UI extends Application {
 					}
 				}
 
-				if (ke.getCode().equals(KeyCode.H) && ke.isControlDown()) {
+				if (ke.getCode().equals(KeyCode.H) && ke.isShortcutDown()) {
 					try {
 						feedback = logic.parseAndExecuteCommand(HELP);
 						
@@ -453,9 +455,9 @@ public class UI extends Application {
 		
 		Stage stage = new Stage();
 
-		HBox hBox = new HBox();
-		hBox.setSpacing(15);
-		hBox.setAlignment(Pos.CENTER);
+		HBox hBox1 = new HBox();
+		hBox1.setSpacing(15);
+		hBox1.setAlignment(Pos.CENTER);
 		
 		Image image1 = new Image("question_mark.png");
 		ImageView imv1 = new ImageView(image1);
@@ -468,25 +470,76 @@ public class UI extends Application {
 		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
 		helpHeader.setFill(Color.web("#00143E")); // #00143E
 		
-		hBox.getChildren().addAll(helpHeader, imv1);
+		hBox1.getChildren().addAll(helpHeader, imv1);
+		
+		HBox hBox2 = new HBox();
+		hBox2.setSpacing(15);
+		hBox2.setAlignment(Pos.CENTER);
+		
+		VBox vBox1 = new VBox();
+	    vBox1.setSpacing(5);
+	    vBox1.setAlignment(Pos.TOP_CENTER);
 
-		Text tableHeader = new Text(MESSAGE_TABLE);
-		tableHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 17));
+		Text tableHeader = new Text(MESSAGE_COMMAND_TABLE);
+		tableHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 15));
 		tableHeader.setFill(Color.web("#00143E"));
 
-		Image image2 = new Image("help_resize.jpg");
+		Image image2 = new Image("help.png");
 		ImageView imv2 = new ImageView(image2);
-		imv2.setFitWidth(700);
+		imv2.setFitWidth(650);
 		imv2.setPreserveRatio(true);
 		imv2.setSmooth(true);
 		imv2.setCache(true);
+		
+		vBox1.getChildren().addAll(tableHeader, imv2);
+		
+		VBox vBox2_1 = new VBox();
+		vBox2_1.setSpacing(5);
+		vBox2_1.setAlignment(Pos.TOP_CENTER);
+		
+		Text shortcutHeader = new Text(MESSAGE_SHORTCUT_TABLE);
+		shortcutHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 15));
+		shortcutHeader.setFill(Color.web("#00143E"));
+		
+		Image image3 = new Image("helpshortcut.png");
+		ImageView imv3 = new ImageView(image3);
+		imv3.setFitWidth(550);
+		imv3.setPreserveRatio(true);
+		imv3.setSmooth(true);
+		imv3.setCache(true);
+		
+		vBox2_1.getChildren().addAll(shortcutHeader, imv3);
+		
+		VBox vBox2_2 = new VBox();
+		vBox2_2.setSpacing(5);
+		vBox2_2.setAlignment(Pos.TOP_CENTER);
+		
+		Text colourCodeHeader = new Text(MESSAGE_COLOUR_TABLE);
+		colourCodeHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 15));
+		colourCodeHeader.setFill(Color.web("#00143E"));
+		
+		Image image4 = new Image("helpcolour.png");
+		ImageView imv4 = new ImageView(image4);
+		imv4.setFitWidth(550);
+		imv4.setPreserveRatio(true);
+		imv4.setSmooth(true);
+		imv4.setCache(true);
 
+		vBox2_2.getChildren().addAll(colourCodeHeader, imv4);
+		
 		Button button = new Button(LABEL_OK);
+        
+		VBox vBox2 = new VBox();
+		vBox2.setSpacing(15);
+		vBox2.setAlignment(Pos.TOP_CENTER);
+		vBox2.getChildren().addAll(vBox2_1, vBox2_2, button);
+		
+		hBox2.getChildren().addAll(vBox1, vBox2);
 
 		VBox vBox = new VBox();
-		vBox.setPadding(new Insets(15, 30, 10, 30));
+		vBox.setPadding(new Insets(15, 20, 0, 20));
 		vBox.setSpacing(10);
-		vBox.getChildren().addAll(hBox, tableHeader, imv2, button);
+		vBox.getChildren().addAll(hBox1, hBox2);
 		vBox.setAlignment(Pos.TOP_CENTER);
 		vBox.setStyle("-fx-background-color: #eff4ff;");
 		
@@ -577,7 +630,7 @@ public class UI extends Application {
 		
 		switch (commandType) {
 		case HELP_ADD: {
-			image = new Image("helpadd.jpg");
+			image = new Image("helpadd.png");
 			break;
 		}
 		case HELP_DELETE: {
@@ -585,19 +638,19 @@ public class UI extends Application {
 			break;
 		}
 		case HELP_FIND: {
-			image = new Image("helpfind.jpg");
+			image = new Image("helpfind.png");
 			break;
 		}
 		case HELP_FINISH: {
 			image = new Image("helpfinish.jpg");
 			break;
 		}
-		case HELP_GET: {
-			image = new Image("helpget.jpg");
+		case HELP_READFROM: {
+			image = new Image("helpreadfrom.png");
 			break;
 		}
-		case HELP_PATH: {
-			image = new Image("helppath.jpg");
+		case HELP_SAVE: {
+			image = new Image("helpsave.png");
 			break;
 		}
 		case HELP_RESTORE: {
@@ -605,10 +658,10 @@ public class UI extends Application {
 			break;
 		}
 		case HELP_UPDATE: {
-			image = new Image("helpupdate.jpg");
+			image = new Image("helpupdate.png");
 		}
 		default: {
-			image = new Image("help_resize.jpg");
+			image = new Image("help.png");
 		}
 		}
 		

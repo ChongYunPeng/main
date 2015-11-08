@@ -301,6 +301,7 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String getCurrentFilePath() {
+		stateObj.setDefault();
 		return "Currently reading from: " + storage.getCurrentFilePath();
 	}
 

@@ -191,20 +191,24 @@ public class TaskWriter {
 	}
 
 	//@@author A0132785Y
-	private boolean checkClashCondition(Task originalTask, Task toCheckTask){
-		if((toCheckTask.getStartDate().after(originalTask.getStartDate()) 
-				&& toCheckTask.getStartDate().before(originalTask.getEndDate())) 
-				|| (toCheckTask.getEndDate().after(originalTask.getStartDate()) 
-						&& toCheckTask.getEndDate().before(originalTask.getEndDate())) 
-				|| (originalTask.getStartDate().after(toCheckTask.getStartDate()) 
-						&& originalTask.getEndDate().before(toCheckTask.getEndDate()))
-				|| (originalTask.getStartDate().equals(toCheckTask.getStartDate()))
-				|| (originalTask.getEndDate().equals(toCheckTask.getEndDate()))){
-			return true;
-		} else{
-			return false;
+		private boolean checkClashCondition(Task originalTask, Task toCheckTask){
+			
+			// conditions for clashing
+			boolean condition1 = toCheckTask.getStartDate().after(originalTask.getStartDate()) 
+					&& toCheckTask.getStartDate().before(originalTask.getEndDate());
+			boolean condition2 = toCheckTask.getEndDate().after(originalTask.getStartDate()) 
+					&& toCheckTask.getEndDate().before(originalTask.getEndDate());
+			boolean condition3 = originalTask.getStartDate().after(toCheckTask.getStartDate()) 
+					&& originalTask.getEndDate().before(toCheckTask.getEndDate());
+			boolean condition4 = originalTask.getStartDate().equals(toCheckTask.getStartDate());
+			boolean condition5 = originalTask.getEndDate().equals(toCheckTask.getEndDate());
+			
+			if(condition1 || condition2 || condition3 || condition4 || condition5) {
+				return true;
+			} else {
+				return false;
+			}
 		}
-	}
 
 	//@@author A0131716M
 	protected void clear(){

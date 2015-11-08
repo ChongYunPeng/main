@@ -60,51 +60,63 @@ public abstract class Task implements Comparable<Task>{
     
 	//@@author A0132785Y
 	public int compareTo(Task task){
-		/*if(getEndDate() == null && task.getEndDate() == null){
-			return getDescription().compareTo(task.getDescription());
-		} else if(getEndDate() != null && getStartDate() != null && !(getStartDate().equals(getEndDate())) &&
-				task.getEndDate() != null && task.getStartDate() != null && !(task.getStartDate().equals(task.getEndDate()))){ 
-			return getStartDate().compareTo(task.getStartDate());
-		} else if(getEndDate() == null){
-			return 1;
-		} else if(task.getEndDate() == null){
-			return -1;
-		} else{
-			return getEndDate().compareTo(task.getEndDate());
-		}*/
+		
+        // if both tasks are floating tasks
 		if (task.getEndDate() == null && getEndDate() == null) {
 			return getDescription().compareTo(task.getDescription());
-		} else if (task.getEndDate() != null && getEndDate() == null) {
+		} 
+		// if task is a deadline or event, and the other is floating
+		else if (task.getEndDate() != null && getEndDate() == null) {
 			return 1;
-		} else if (task.getEndDate() == null && getEndDate() != null) {
+		} 
+		// if task is floating and the other is a deadline or event
+		else if (task.getEndDate() == null && getEndDate() != null) {
 			return -1;
 		}
+		// if task is an event and the other is a deadline
 		else if (task.getStartDate() != null && getStartDate() == null) {
-			if(task.getStartDate().getDate() == task.getEndDate().getDate()) {
+			// if task is a single day event
+			if (task.getStartDate().getDate() == task.getEndDate().getDate()) {
 				return getEndDate().compareTo(task.getEndDate());
 			}
-			else{
+			// if task is a multiple day event
+			else {
 				return -1;
 			}
-		} else if (task.getStartDate() == null && getStartDate() != null) {
-			if(getStartDate().getDate() == getEndDate().getDate()) {
+		} 
+		// if task is a deadline and the other is an event
+		else if (task.getStartDate() == null && getStartDate() != null) {
+			// if other task is a single day event
+			if (getStartDate().getDate() == getEndDate().getDate()) {
 				return getEndDate().compareTo(task.getEndDate());
 			}
-			else{
+			// if other task is a multiple day event
+			else {
 				return 1;
 			}
-		} else if (task.getStartDate() == null && getStartDate() == null) {
+		} 
+		// if both tasks are deadlines
+		else if (task.getStartDate() == null && getStartDate() == null) {
 			return getEndDate().compareTo(task.getEndDate());
-		} else if (task.getStartDate().getDate() == task.getEndDate().getDate()
+		} 
+		// both tasks are events: if task is a single day event and other
+		// is a multiple day event
+		else if (task.getStartDate().getDate() == task.getEndDate().getDate()
 				 && getStartDate().getDate() != getEndDate().getDate()) {
 			return 1;
-		} else if (task.getStartDate().getDate() != task.getEndDate().getDate()
+		} 
+		// if task is a multiple day event and other is a single day event
+		else if (task.getStartDate().getDate() != task.getEndDate().getDate()
 				 && getStartDate().getDate() == getEndDate().getDate()) {
 			return -1;
-		} else if (task.getStartDate().getDate() == task.getEndDate().getDate()
+		} 
+		// if both tasks are single day events
+		else if (task.getStartDate().getDate() == task.getEndDate().getDate()
 				 && getStartDate().getDate() == getEndDate().getDate()) {
 			return getStartDate().compareTo(task.getStartDate());
-		} else if (task.getStartDate().getDate() != task.getEndDate().getDate()
+		} 
+		// if both tasks are multiple day events
+		else if (task.getStartDate().getDate() != task.getEndDate().getDate()
 				 && getStartDate().getDate() != getEndDate().getDate()) {
 			return getStartDate().compareTo(task.getStartDate());
 		} else {
