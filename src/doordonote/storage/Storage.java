@@ -36,4 +36,5 @@ public interface Storage {
 	public String restore(Task task) throws IOException, DuplicateTaskException;
 	public String finish(Task task) throws IOException, DuplicateTaskException;
 	public String notFinish(Task task) throws IOException;
+	public String getCurrentFilePath();
 }

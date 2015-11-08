@@ -228,6 +228,10 @@ public class StorageHandler implements Storage {
 		return String.format(MESSAGE_NOT_FINISH,taskStr);
 	}
 	
+	public String getCurrentFilePath(){
+		return reader.getFileName();
+	}
+	
 	private Task createTask(String description, Date startDate,
 			Date endDate){
 		Task task = null;
