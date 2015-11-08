@@ -48,7 +48,6 @@ public class TaskWriter {
 
 	public TaskWriter(){
 		initialize();
-		System.out.println(currentFile);
 		reader = new TaskReader(currentFile);
 	}
 

@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,7 +58,7 @@ public class StorageTest {
 	}
 	
 	@After
-	public void tearDown(){
+	public void tearDown() throws IOException{
 		File file = new File(NAME_DEFAULT);
 		File test = new File(NAME_TEST);
 		str.path(settingsStr);
@@ -92,19 +90,19 @@ public class StorageTest {
 	public void testStorageClear() throws IOException, DuplicateTaskException, EventsClashException{
 		addTasksToStorage();
 		str.clear();
-		assertEquals("[]", reader.getFileString(NAME_DEFAULT));
+		assertEquals("[]", TaskReader.getFileString(NAME_DEFAULT));
 	}
 	
 	@Test
 	public void testCurrentFileStringWithVariousMethods() throws IOException, EmptyTaskListException, DuplicateTaskException, EventsClashException{
 		str.add(task0);
-		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
+		assertEquals(str.getCurrentFileString(), TaskReader.getFileString(NAME_DEFAULT));
 		str.add(task3);
-		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
+		assertEquals(str.getCurrentFileString(), TaskReader.getFileString(NAME_DEFAULT));
 		str.delete(task0);
-		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
+		assertEquals(str.getCurrentFileString(), TaskReader.getFileString(NAME_DEFAULT));
 		str.undo();
-		assertEquals(str.getCurrentFileString(), reader.getFileString(NAME_DEFAULT));
+		assertEquals(str.getCurrentFileString(), TaskReader.getFileString(NAME_DEFAULT));
 		str.add(task2);
 		str.add(task1);
 	}
