@@ -11,7 +11,8 @@ import doordonote.storage.Storage;
 //@@author A0131436N
 
 /**
- * {@code TaskFilter} 
+ * {@code TaskFilter} filters the tasks visible to users based on 
+ * the UIState object.
  * 
  * @author yunpeng
  *
@@ -19,21 +20,43 @@ import doordonote.storage.Storage;
 public class TaskFilter {
 	
 	protected Storage storage = null;
-	protected ArrayList<Task> fullTaskList;
+	protected ArrayList<Task> fullTaskList = null;
 	
 	protected TaskFilter(Storage storage) throws IOException {
 		this.storage = storage;
+//		try {
 		fullTaskList = storage.readTasks();
+//		} catch (Exception e) {
+//			// Creates an empty task list if there is error reading the storage file
+//			fullTaskList = new ArrayList<Task>();
+//			throw new IOException("Error opening storage file. Please use "
+//					+ "readFile to read from another storage file");
+//		}
 	}
 	
-	protected void setStorage(Storage storage) {
-		this.storage = storage;
-	}
+//	protected void setStorage(Storage storage) {
+//		this.storage = storage;
+//	}
 	
 	public List<Task> getUserTaskList(UIState stateObj) throws IOException {
 		fullTaskList = storage.readTasks();
 		assert (fullTaskList != null);
-		List<Task> userTaskList = null;
+		List<Task> userTaskList = filterTaskByDisplayType(stateObj);
+		return filterByDateAndKeywords(stateObj, userTaskList);
+	}
+
+	private List<Task> filterByDateAndKeywords(UIState stateObj, List<Task> userTaskList) {
+		if (stateObj.filterDate != null) {
+			return filterByDate(userTaskList, stateObj.filterDate);
+		} else if (stateObj.filterList != null) {
+			return filterByKeywords(userTaskList, stateObj.filterList);
+		} else {
+			return userTaskList;
+		}
+	}
+	
+	private List<Task> filterTaskByDisplayType(UIState stateObj) throws IOException {
+		List<Task> userTaskList;
 		switch (stateObj.displayType) {
 		case DELETED :
 			userTaskList = getDeletedTasks();
@@ -46,23 +69,11 @@ public class TaskFilter {
 		default :
 			userTaskList = getUnfinishedTasks();
 		}
-		
-		if (userTaskList.isEmpty()) {
-			return userTaskList;
-		}
-		
-		if (stateObj.filterDate != null) {
-			return filter(userTaskList, stateObj.filterDate);
-		} else if (stateObj.filterList == null || stateObj.filterList.isEmpty()) {
-			return userTaskList;
-		} else {
-			return filter(userTaskList, stateObj.filterList);
-		}
+		return userTaskList;
 	}
 	
 
-	protected List<Task> filter(List<Task> unfilteredUserTaskList, Date startDate) {
-		assert(startDate != null);
+	protected List<Task> filterByDate(List<Task> unfilteredUserTaskList, Date startDate) {
 		List<Task> userTaskList = new ArrayList<Task>();
 		for (Task task : unfilteredUserTaskList) {
 			if (task.getEndDate() != null && task.getEndDate().after(startDate)) {
@@ -73,7 +84,7 @@ public class TaskFilter {
 		return userTaskList;		
 	}
 
-	protected List<Task> filter(List<Task> unfilteredUserTaskList, List<String> filterList) {
+	protected List<Task> filterByKeywords(List<Task> unfilteredUserTaskList, List<String> filterList) {
 		List<Task> tempList = null;
 		List<Task> userTaskList = unfilteredUserTaskList;
 		for (String keyword : filterList) {
@@ -91,9 +102,7 @@ public class TaskFilter {
 	private List<Task> getUnfinishedTasks() throws IOException {
 		return storage.readTasks();
 	}
-	
 
-	//@@author A013
 	private List<Task> getFinishedTasks() throws IOException {
 		return storage.readDoneTasks();
 	}

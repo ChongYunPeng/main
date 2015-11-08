@@ -116,4 +116,10 @@ public class StorageStub implements Storage {
 		return null;
 	}
 
+	@Override
+	public String getCurrentFilePath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
