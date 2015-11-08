@@ -48,7 +48,7 @@ public class StorageHandler implements Storage {
 	protected TaskReader reader;
 	private static StorageHandler storageHandler;
 
-	public StorageHandler(){
+	private StorageHandler(){
 		writer = new TaskWriter();
 		reader = new TaskReader();
 	}
