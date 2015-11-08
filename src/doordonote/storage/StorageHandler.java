@@ -52,11 +52,6 @@ public class StorageHandler implements Storage {
 		reader = new TaskReader();
 	}
 
-	public StorageHandler(String fileName){
-		writer = new TaskWriter(fileName);
-		reader = new TaskReader(fileName);
-	}
-
 	public static Storage getInstance(){
 		if(storageHandler == null){
 			storageHandler = new StorageHandler();

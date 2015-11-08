@@ -28,9 +28,9 @@ import doordonote.common.Task;
  */
 public class TaskReader {
 
-	private static final String DEFAULT_NAME = "data.json";
 	private static final String FILE_TYPE = ".json";
 	private static final String INITIAL_JSONSTRING = "[]";
+	private static final String SETTINGS_FILE = "settings.dodn";
 	private static final Charset ENCODING = StandardCharsets.UTF_8;
 	private static final int HASHSET_SIZE = 4099;
 	private static final Gson gson = new GsonBuilder().registerTypeAdapter(Task.class, 
@@ -42,8 +42,8 @@ public class TaskReader {
 	private static String currentFile;
 
 	public TaskReader(){
-		currentFile = DEFAULT_NAME;
 		try{
+			currentFile = getFileString(SETTINGS_FILE).trim();
 			set = jsonToSet();
 		}
 		catch (IOException e){
@@ -145,7 +145,7 @@ public class TaskReader {
 
 
 	// This method reads strings from a file
-	protected static String getFileString(String fileName) throws IOException{
+	public static String getFileString(String fileName) throws IOException{
 		byte[] encoded = Files.readAllBytes(Paths.get(fileName));
 		return new String(encoded, ENCODING);
 	}

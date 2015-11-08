@@ -48,7 +48,8 @@ public class TaskWriter {
 
 	public TaskWriter(){
 		initialize();
-		reader = new TaskReader();
+		System.out.println(currentFile);
+		reader = new TaskReader(currentFile);
 	}
 
 	public TaskWriter(String name){
@@ -63,13 +64,17 @@ public class TaskWriter {
 	public String getFileName() {
 		return currentFile;
 	}
+	
+	public TaskReader getReader(){
+		return reader;
+	}
 
 	public static void setReadFile(String fileName){
 		currentFile = fileName;
 	}
 
 
-	public int path(String fileName) throws IOException{
+	protected int path(String fileName) throws IOException{
 		File file = new File(fileName);
 		if(file.exists()){
 			file = new File(fileName);
@@ -88,12 +93,12 @@ public class TaskWriter {
 			try{
 				file.createNewFile();
 				writeToSettings(fileName);
+				currentFile = fileName;
 				writeToFile(currentJsonString);
 			}
 			catch (IOException e){
 				throw e;
 			}
-			currentFile = fileName;
 			TaskReader.setCurrentFile(fileName);
 			return 0;
 		}
@@ -260,8 +265,6 @@ public class TaskWriter {
 			set.remove(taskToUpdate);
 			json = addToSet(newUpdatedTask, set);
 		}
-
-
 		if(json!=null){
 			toUndoStack(json);
 		}
@@ -308,7 +311,7 @@ public class TaskWriter {
 	}
 
 
-	public boolean undo(){
+	protected boolean undo(){
 		originator.getStateFromMemento(careTaker.get());
 		String state = originator.getState();
 		if(state!=null){
@@ -326,7 +329,7 @@ public class TaskWriter {
 		return false;		
 	}
 
-	public boolean redo(){
+	protected boolean redo(){
 		originator.setState(currentJsonString);
 		careTaker.add(originator.saveStateToMemento());
 		originator.getStateFromMemento(careTaker.restore());
@@ -344,7 +347,7 @@ public class TaskWriter {
 		return false;
 	}
 
-	public static void writeToSettings(String file) throws FileNotFoundException {
+	protected static void writeToSettings(String file) throws FileNotFoundException {
 		PrintWriter writer = new PrintWriter(SETTINGS_FILE);
 		writer.println(file);
 		writer.close();
