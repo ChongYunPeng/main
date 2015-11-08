@@ -289,7 +289,7 @@ public class UI extends Application {
 							}
 						} catch (Exception e) {
 							feedback = e.getMessage();							
-							UIState state = new UIState();
+							UIState state = logic.getState();
 
 							border.setCenter(addMainDisplay(0, state.getDisplayType()));
 							
@@ -305,8 +305,9 @@ public class UI extends Application {
 
 				if (ke.getCode().equals(KeyCode.ESCAPE)) {
 					try {
-						UIState state = logic.getState();
+
 						feedback = logic.parseAndExecuteCommand(COMMAND_HOME);
+						UIState state = logic.getState();
 
 						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
@@ -320,6 +321,9 @@ public class UI extends Application {
 						commandBox.clear();
 					} catch (Exception e) {
 						feedback = e.getMessage();
+						UIState state = logic.getState();
+						
+						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
@@ -328,8 +332,9 @@ public class UI extends Application {
 
 				if (ke.getCode().equals(KeyCode.Z) && ke.isShortcutDown()) {
 					try {
-						UIState state = logic.getState();
+
 						feedback = logic.parseAndExecuteCommand(COMMAND_UNDO);
+						UIState state = logic.getState();
 						
 						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
@@ -343,6 +348,9 @@ public class UI extends Application {
 						commandBox.clear();
 					} catch (Exception e) {
 						feedback = e.getMessage();
+						UIState state = logic.getState();
+						
+						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
@@ -351,8 +359,9 @@ public class UI extends Application {
 
 				if (ke.getCode().equals(KeyCode.Y) && ke.isShortcutDown()) {
 					try {
-						UIState state = logic.getState();
+
 						feedback = logic.parseAndExecuteCommand(COMMAND_REDO);
+						UIState state = logic.getState();
 						
 						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
@@ -366,6 +375,9 @@ public class UI extends Application {
 						commandBox.clear();
 					} catch (Exception e) {
 						feedback = e.getMessage();
+						UIState state = logic.getState();
+						
+						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
@@ -374,8 +386,9 @@ public class UI extends Application {
 
 				if (ke.getCode().equals(KeyCode.D) && ke.isShortcutDown()) {
 					try {
-						UIState state = logic.getState();
+
 						feedback = logic.parseAndExecuteCommand(COMMAND_DISPLAY_DELETE);
+						UIState state = logic.getState();
 						
 						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
@@ -389,6 +402,9 @@ public class UI extends Application {
 						commandBox.clear();
 					} catch (Exception e) {
 						feedback = e.getMessage();
+						UIState state = logic.getState();
+						
+						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
@@ -397,8 +413,9 @@ public class UI extends Application {
 
 				if (ke.getCode().equals(KeyCode.F) && ke.isShortcutDown()) {
 					try {
-						UIState state = logic.getState();
+						
 						feedback = logic.parseAndExecuteCommand(COMMAND_DISPLAY_FINISH);
+						UIState state = logic.getState();
 						
 						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
@@ -412,6 +429,9 @@ public class UI extends Application {
 						commandBox.clear();
 					} catch (Exception e) {
 						feedback = e.getMessage();
+						UIState state = logic.getState();
+						
+						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));
@@ -440,6 +460,9 @@ public class UI extends Application {
 						commandBox.clear();
 					} catch (Exception e) {
 						feedback = e.getMessage();
+						UIState state = logic.getState();
+						
+						border.setCenter(addMainDisplay(0, state.getDisplayType()));
 						
 						output.setText(feedback);
 						output.setFill(Color.web("#F20505"));

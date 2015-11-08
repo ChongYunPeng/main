@@ -192,6 +192,7 @@ public class Controller implements CommandToController {
 		updateTaskList();
 		
 		stateObj.idNewTask = getNewTaskId(newTask);
+		stateObj.inputBox = "";
 		return outputMsg;
 	}
 	
@@ -236,6 +237,7 @@ public class Controller implements CommandToController {
 //		stateObj.clearTempState();
 		Task taskToBeUpdated = getTask(taskId);
 		stateObj.inputBox = getTaskToBeUpdated(taskToBeUpdated, taskId);
+		stateObj.idNewTask = -1;
 		return "Task " + taskId + " found!";
 	}
 
