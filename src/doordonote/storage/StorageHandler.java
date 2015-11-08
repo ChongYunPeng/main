@@ -41,7 +41,6 @@ public class StorageHandler implements Storage {
 	private static final String MESSAGE_PATH_CREATE = "Creating file \"%1$s\". Reading from this file.";
 	private static final String MESSAGE_PATH_EXISTS = "File exists. Reading from \"%1$s\"";
 	private static final String MESSAGE_INVALID_PATH = "Path is invalid or DoOrDoNote does not have access to directory!";
-	private static final String MESSAGE_ERROR = "Opps! Something went wrong!";
 	private static final String MESSAGE_INVALID_TASK = "Invalid tasks parameters!";
 
 	protected TaskWriter writer;
@@ -97,7 +96,6 @@ public class StorageHandler implements Storage {
 		}
 		catch(IOException e){
 			throw e;
-	//		return MESSAGE_ERROR;
 		}
 		catch(EventsClashException e){
 			String originalTaskStr = shortenTaskName(e.getOriginalTask());
@@ -106,7 +104,6 @@ public class StorageHandler implements Storage {
 		}
 		catch(DuplicateTaskException e){
 			throw e;
-			//return e.getMessage();
 		}
 	}
 
@@ -132,11 +129,9 @@ public class StorageHandler implements Storage {
 		}
 		catch(IOException e){
 			throw e;
-	//		return MESSAGE_ERROR;
 		}
 		catch(DuplicateTaskException e){
 			throw e;
-			//return e.getMessage();
 		}
 	}
 
@@ -147,7 +142,6 @@ public class StorageHandler implements Storage {
 		}
 		catch(IOException e){
 			throw e;
-	//		return MESSAGE_ERROR;
 		}
 	}
 

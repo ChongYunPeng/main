@@ -9,11 +9,11 @@ package doordonote.storage;
 public class Memento {
 	private String state;
 
-	public Memento(String state){
+	protected Memento(String state){
 		this.state = state;
 	}
 
-	public String getState(){
+	protected String getState(){
 		return state;
 	}	
 }

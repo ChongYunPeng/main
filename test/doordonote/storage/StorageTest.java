@@ -72,6 +72,7 @@ public class StorageTest {
 	}
 	
 	@Test
+	// This test if the correct file is being read from and written to.
 	public void testPathAndGet() throws IOException, EmptyTaskListException, DuplicateTaskException, EventsClashException{
 		str.add(task0);
 		ArrayList<Task> arrlist = new ArrayList<Task>();
@@ -87,6 +88,7 @@ public class StorageTest {
 	}
 	
 	@Test
+	// This test if empty Json string to written when file is cleared
 	public void testStorageClear() throws IOException, DuplicateTaskException, EventsClashException{
 		addTasksToStorage();
 		str.clear();
@@ -94,6 +96,7 @@ public class StorageTest {
 	}
 	
 	@Test
+	// This test if currentFileString parameter in TaskWriter is equals to that in the file.
 	public void testCurrentFileStringWithVariousMethods() throws IOException, EmptyTaskListException, DuplicateTaskException, EventsClashException{
 		str.add(task0);
 		assertEquals(str.getCurrentFileString(), TaskReader.getFileString(NAME_DEFAULT));
@@ -109,6 +112,7 @@ public class StorageTest {
 	
 	
 	@Test
+	// This test if tasks are in the correct order.
 	public void testStorageReadAndWrite() throws IOException, DuplicateTaskException, EventsClashException{
 		ArrayList<Task> expected = addTasksToStorage();
 		assertFalse(expected.equals(reader.readTasks()));
@@ -132,6 +136,7 @@ public class StorageTest {
 	}
 	
 	@Test
+	// This test for undo and redo
 	public void testStorageUndoAndRedo() throws IOException, EmptyTaskListException, DuplicateTaskException, EventsClashException{
 		ArrayList<Task> arrlist = new ArrayList<Task>();
 		str.add(task0);
