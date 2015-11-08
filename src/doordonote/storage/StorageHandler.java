@@ -2,15 +2,16 @@
 package doordonote.storage;
 
 import java.util.Date;
+import java.util.ArrayList;
+import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import doordonote.common.DeadlineTask;
 import doordonote.common.EventTask;
 import doordonote.common.FloatingTask;
 import doordonote.common.Task;
 
-import java.util.ArrayList;
-import java.io.IOException;
-import java.io.FileNotFoundException;
+
 
 /**
  * @author A0131716M
@@ -88,15 +89,15 @@ public class StorageHandler implements Storage {
 		}
 	}
 
-	public String add(Task task) throws DuplicateTaskException{
+	public String add(Task task) throws DuplicateTaskException, IOException{
 		try{
 			writer.add(task);
 			String taskStr = shortenTaskName(task);
 			return String.format(MESSAGE_ADD, taskStr);
 		}
 		catch(IOException e){
-			e.printStackTrace();
-			return MESSAGE_ERROR;
+			throw e;
+	//		return MESSAGE_ERROR;
 		}
 		catch(EventsClashException e){
 			String originalTaskStr = shortenTaskName(e.getOriginalTask());
@@ -109,18 +110,18 @@ public class StorageHandler implements Storage {
 		}
 	}
 
-	public String add(String description, Date startDate, Date endDate) throws DuplicateTaskException{
+	public String add(String description, Date startDate, Date endDate) throws DuplicateTaskException, IOException{
 		Task task = createTask(description, startDate, endDate);
 		return add(task);
 	}
 
 
-	public String update(Task taskToUpdate, String description, Date startDate, Date endDate) throws DuplicateTaskException {
+	public String update(Task taskToUpdate, String description, Date startDate, Date endDate) throws DuplicateTaskException, IOException {
 		Task updatedTask = createTask(description, startDate, endDate);
 		return update(taskToUpdate, updatedTask);
 	}
 
-	public String update(Task taskToUpdate, Task updatedTask) throws DuplicateTaskException {
+	public String update(Task taskToUpdate, Task updatedTask) throws DuplicateTaskException, IOException {
 		try{
 			writer.update(taskToUpdate, updatedTask);
 			String taskStr = shortenTaskName(updatedTask);
@@ -130,8 +131,8 @@ public class StorageHandler implements Storage {
 			return MESSAGE_NO_TASK_TO_UPDATE;
 		}
 		catch(IOException e){
-			e.printStackTrace();
-			return MESSAGE_ERROR;
+			throw e;
+	//		return MESSAGE_ERROR;
 		}
 		catch(DuplicateTaskException e){
 			throw e;
@@ -139,14 +140,14 @@ public class StorageHandler implements Storage {
 		}
 	}
 
-	public String delete(Task taskToDelete){
+	public String delete(Task taskToDelete) throws IOException{
 		try{
 			writer.delete(taskToDelete);
 			return String.format(MESSAGE_DELETE, taskToDelete);
 		}
 		catch(IOException e){
-			e.printStackTrace();
-			return MESSAGE_ERROR;
+			throw e;
+	//		return MESSAGE_ERROR;
 		}
 	}
 

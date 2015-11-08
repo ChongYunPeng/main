@@ -44,6 +44,7 @@ public class TaskWriter {
 
 	private static String currentFile;
 	TaskReader reader;
+	private static boolean isValidJson = true;
 
 
 	protected TaskWriter(){
@@ -58,6 +59,14 @@ public class TaskWriter {
 		currentFile = name;
 		initialize();
 		reader = new TaskReader(currentFile);
+	}
+
+	protected static void setInvalidJson(){
+		isValidJson = false;
+	}
+
+	protected static void setValidJson(){
+		isValidJson = true;
 	}
 
 	protected String getFileName() {
@@ -134,23 +143,27 @@ public class TaskWriter {
 
 
 	protected void add(Task task) throws IOException, DuplicateTaskException, EventsClashException{
-		String json = null;
-		try{
-			json = writeTask(task);
-		}
-		catch(DuplicateTaskException e){
-			if(e.getValue()==0 || e.getValue()==1){
-				toUndoStack(json);
-				throw e;
-			} else{
+		if(isValidJson){
+			String json = null;
+			try{
+				json = writeTask(task);
+			}
+			catch(DuplicateTaskException e){
+				if(e.getValue()==0 || e.getValue()==1){
+					toUndoStack(json);
+					throw e;
+				} else{
+					throw e;
+				}
+			}
+			catch(EventsClashException e){
 				throw e;
 			}
-		}
-		catch(EventsClashException e){
-			throw e;
-		}
-		if(json != null){
-			toUndoStack(json);
+			if(json != null){
+				toUndoStack(json);
+			}
+		} else{
+			throw new IOException();
 		}
 	}
 
@@ -224,10 +237,14 @@ public class TaskWriter {
 	}
 
 	protected void delete(Task task) throws IOException{
-		Set<Task> set = removeFromSet(task);
-		task.setDeleted();
-		String json = addToSet(task, set);
-		toUndoStack(json);
+		if(isValidJson){
+			Set<Task> set = removeFromSet(task);
+			task.setDeleted();
+			String json = addToSet(task, set);
+			toUndoStack(json);
+		} else{
+			throw new IOException();
+		}
 	}
 
 	protected void remove(Task task) throws IOException{
@@ -239,33 +256,37 @@ public class TaskWriter {
 
 	protected void update(Task taskToUpdate, Task newUpdatedTask) 
 			throws EmptyTaskListException, IOException, DuplicateTaskException{
-		Set<Task> set = reader.jsonToSet();
-		String json = null;
-		try{
-			json = writeTask(newUpdatedTask);
-			set.remove(taskToUpdate);
-			set.add(newUpdatedTask);
-			json = gson.toJson(set, type);
-			writeToFile(json);
-		}
-		catch(DuplicateTaskException e){
-			if(e.getValue() == -1){
-				throw new DuplicateTaskException(String.format(MESSAGE_UPDATE_DUPLICATE, newUpdatedTask));
-			} else{
+		if(isValidJson){
+			Set<Task> set = reader.jsonToSet();
+			String json = null;
+			try{
+				json = writeTask(newUpdatedTask);
 				set.remove(taskToUpdate);
-				set.remove(newUpdatedTask);
 				set.add(newUpdatedTask);
 				json = gson.toJson(set, type);
 				writeToFile(json);
-				throw e;
 			}
-		}
-		catch(EventsClashException e){
-			set.remove(taskToUpdate);
-			json = addToSet(newUpdatedTask, set);
-		}
-		if(json!=null){
-			toUndoStack(json);
+			catch(DuplicateTaskException e){
+				if(e.getValue() == -1){
+					throw new DuplicateTaskException(String.format(MESSAGE_UPDATE_DUPLICATE, newUpdatedTask));
+				} else{
+					set.remove(taskToUpdate);
+					set.remove(newUpdatedTask);
+					set.add(newUpdatedTask);
+					json = gson.toJson(set, type);
+					writeToFile(json);
+					throw e;
+				}
+			}
+			catch(EventsClashException e){
+				set.remove(taskToUpdate);
+				json = addToSet(newUpdatedTask, set);
+			}
+			if(json!=null){
+				toUndoStack(json);
+			}
+		} else{
+			throw new IOException();
 		}
 	}
 
