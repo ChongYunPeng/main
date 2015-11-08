@@ -5,17 +5,22 @@ import doordonote.logic.CommandToController;
 //@@author A0131436N
 
 /**
- * @author yunpeng
- *
+ *	Command to display help to users.
  */
 public class HelpCommand implements Command {
 	protected String commandType = null;
 	
+	/**
+	 * @param 	commandType
+	 * 			The command user needs help for.
+	 */
 	public HelpCommand(String commandType) {
 		this.commandType = commandType; 
 	}
 	
-	public HelpCommand() {}
+	public HelpCommand() {
+		
+	}
 
 	@Override
 	public String execute(CommandToController controller) {

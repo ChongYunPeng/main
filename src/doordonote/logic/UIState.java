@@ -3,20 +3,39 @@ package doordonote.logic;
 import java.util.Date;
 import java.util.List;
 
+import doordonote.common.Util;
+
 //@@author A0131436N
 
 public class UIState {
+	
+	// Type of display
 	public enum ListType {
 	    DELETED, FINISHED, NORMAL
 	}
 	
 	
+	// Fills the user inputBox with this String.
+	// Only used by the update method in Controller
 	protected String inputBox = null;
+	
+	// Determines the type of helpBox to display
 	protected String helpBox = null;
+	
+	// Determines the type of Tasks to display
 	protected ListType displayType = null;
+	
+	// Stores the id of a new task. UI will use this id 
+	// to highlight newly added tasks
 	protected int idNewTask = -1;
+	
+	// A list of words used to filter the task. Set by the find
+	// find method in controller
 	protected List<String> filterList = null;
-	protected Date startDate = null;
+	
+	// Filters and displays the list of tasks that ends after
+	// this Date
+	protected Date filterDate = null;
 	
 	public UIState() {
 		setDefault();
@@ -33,50 +52,80 @@ public class UIState {
 	public String getInputBox() {
 		return inputBox;
 	}
+	
 	public String getHelpBox() {
 		return helpBox;
 	}
+	
+	/**
+	 * Gets a suitable title based on the current state
+	 * of the UIState 
+	 * 
+	 * @return the title that should be displayed
+	 */
 	public String getTitle() {
 		String title = "";
+		title = getTitleBasedOnDisplayType();
+		if (filterDate != null) {
+			return getTitleForFilterDate(title);
+		} else if (filterList != null && !filterList.isEmpty()) {
+			return getTitleForFilterList(title);
+		} else {
+			return title;
+		}
+	}
+
+	private String getTitleBasedOnDisplayType() {
+		String title;
 		switch (displayType) {
-		case NORMAL :
-			title = "Home";
-			break;
 		case FINISHED :
 			title = "Finished Tasks";
 			break;
 		case DELETED :
 			title = "Deleted Tasks";
 			break;
+		case NORMAL :
+			// fall through
 		default :
-			
+			title = "Home";
 		}
-		if (filterList == null || filterList.isEmpty()) {
-			return title;
-		} else {
-			title += " Filter by: ";
-			for (String word : filterList) {
-				title += word + ", ";
-			}
-			return title;
-		}
-		
-		
+		return title;
 	}
 
+	private String getTitleForFilterDate(String title) {
+		title += "- Tasks that ends after: ";
+		title += Util.getDateString(filterDate);
+		return title;
+	}
+
+	private String getTitleForFilterList(String title) {
+		title += "- Filter by: ";
+		for (String word : filterList) {
+			title += word + ", ";
+		}
+		return title;
+	}
+
+	
+	/**
+	 * Removes states that should not persist
+	 */
 	protected void clearTempState() {
 		inputBox = "";
 		helpBox = null;
 		idNewTask = -1;
 	}
 	
+	/**
+	 * Sets the default state
+	 */
 	protected void setDefault() {
 		inputBox = "";
 		displayType = ListType.NORMAL;
 		helpBox = null;
 		idNewTask = -1;
 		filterList = null;
-		startDate = null;
+		filterDate = null;
 	}
 
 	/* 
@@ -97,7 +146,7 @@ public class UIState {
         		this.displayType == otherUIState.displayType &&
 	        	this.idNewTask == otherUIState.idNewTask &&
 	        	this.filterList == otherUIState.filterList &&
-	        	this.startDate == otherUIState.startDate) {
+	        	this.filterDate == otherUIState.filterDate) {
         		return true;
         	}
         }
@@ -116,7 +165,7 @@ public class UIState {
 		result = prime * result + ((helpBox == null) ? 0 : helpBox.hashCode());
 		result = prime * result + idNewTask;
 		result = prime * result + ((filterList == null) ? 0 : filterList.hashCode());
-		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+		result = prime * result + ((filterDate == null) ? 0 : filterDate.hashCode());
 		return result;
 	}
 }

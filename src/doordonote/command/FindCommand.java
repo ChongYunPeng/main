@@ -16,10 +16,11 @@ public class FindCommand implements Command {
 	
 	/**
 	 * @param 	keywords
-	 * 		  	Filters and displays only tasks that contains (not case sensitive) 
-	 * 			every String in this {@code List}.
+	 * 		  	Filters user task list by only tasks that contains (not case sensitive) 
+	 * 			words in {@code keywords}.
 	 */
 	public FindCommand(List<String> keywords) {
+		assert(keywords != null);
 		this.keywords = keywords;
 	}
 

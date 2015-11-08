@@ -6,11 +6,21 @@ import doordonote.logic.CommandToController;
 
 //@@author A0131436N
 
+/**
+ * Command used to save a storage file in a particular path in the file system.
+ * If a file of the same name already exists, simply read from the existing file. 
+ *
+ */
 public class PathCommand implements Command {
 	protected String pathName = null;
 	
-	public PathCommand(String commandBody) {
-		pathName = commandBody;
+	/**
+	 * @param 	path
+	 * 			Location on the file system to create .json storage file.
+	 * 			If file already exists, simply read from it.
+	 */
+	public PathCommand(String path) {
+		pathName = path;
 	}
 
 	@Override

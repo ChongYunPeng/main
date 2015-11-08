@@ -5,11 +5,12 @@ import java.util.Date;
 import java.util.List;
 
 import doordonote.common.Task;
+import doordonote.storage.DuplicateTaskException;
 
 //@@author A0131436N
 
 public interface CommandToController {
-	String add(String taskDescription, Date startDate, Date endDate) throws IOException;
+	String add(String taskDescription, Date startDate, Date endDate) throws IOException, DuplicateTaskException;
 
 	String delete(int taskId) throws Exception;
 

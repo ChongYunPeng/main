@@ -1,4 +1,3 @@
-
 package doordonote.command;
 
 import java.io.IOException;
@@ -6,6 +5,7 @@ import java.util.Date;
 
 import doordonote.common.Util;
 import doordonote.logic.CommandToController;
+import doordonote.storage.DuplicateTaskException;
 
 //@@author A0131436N
 
@@ -36,7 +36,7 @@ public class AddCommand implements Command {
 	}
 	
 	@Override
-	public String execute(CommandToController controller) throws IOException {
+	public String execute(CommandToController controller) throws IOException, DuplicateTaskException {
 		assert(controller != null);
 		return controller.add(taskDescription, startDate, endDate);
 	}

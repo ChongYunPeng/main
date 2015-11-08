@@ -12,6 +12,8 @@ public class FinishCommand implements Command {
 	protected int taskIdToFinish = -1;
 	
 	/**
+	 * Marks a task as finished.
+	 * 
 	 * @param 	taskIdToFinish
 	 * 			This is the ID of the task users will see in the UI.
 	 */

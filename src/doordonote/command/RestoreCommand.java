@@ -13,8 +13,8 @@ public class RestoreCommand implements Command {
 
 	/**
 	 * @param 	indexToRestore
-	 * 		 	restores a deleted/ finished {@code Task}
-	 * 		 	Task restored is marked as undeleted and unfinished
+	 * 			Task ID to be restored.
+	 * 		 	Task restored is treated as undeleted and unfinished
 	 */
 	public RestoreCommand(int indexToRestore) {
 		assert(indexToRestore > 0);

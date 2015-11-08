@@ -10,6 +10,12 @@ import doordonote.storage.Storage;
 
 //@@author A0131436N
 
+/**
+ * {@code TaskFilter} 
+ * 
+ * @author yunpeng
+ *
+ */
 public class TaskFilter {
 	
 	protected Storage storage = null;
@@ -45,8 +51,8 @@ public class TaskFilter {
 			return userTaskList;
 		}
 		
-		if (stateObj.startDate != null) {
-			return filter(userTaskList, stateObj.startDate);
+		if (stateObj.filterDate != null) {
+			return filter(userTaskList, stateObj.filterDate);
 		} else if (stateObj.filterList == null || stateObj.filterList.isEmpty()) {
 			return userTaskList;
 		} else {

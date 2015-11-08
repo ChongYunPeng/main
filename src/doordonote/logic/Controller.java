@@ -11,6 +11,7 @@ import java.util.Stack;
 import doordonote.common.Task;
 import doordonote.common.Util;
 import doordonote.logic.UIState.ListType;
+import doordonote.storage.DuplicateTaskException;
 import doordonote.storage.Storage;
 import doordonote.storage.StorageHandler;
 
@@ -26,10 +27,14 @@ public class Controller implements CommandToController {
 	
 	protected List<Task> userTaskList = null;
 	
-//	protected Deque<UIState> undoStack = null;
-//	protected Stack<UIState> redoStack = null;
+	protected Deque<UIState> undoStack = null;
+	protected Stack<UIState> redoStack = null;
 	
 	
+	/**
+	 * 
+	 * @throws IOException
+	 */
 	public Controller() throws IOException {
 		this(StorageHandler.getInstance());
 	}
@@ -37,28 +42,39 @@ public class Controller implements CommandToController {
 	/**
 	 * @param storage
 	 * 
-	 * Used for injection dependency to replace Storage with a stub for testing
+	 * Constructor used for injection dependency to replace Storage with a stub for testing
 	 * @throws IOException 
 	 */
 	protected Controller(Storage storage) throws IOException {
 		this.storage = storage;
 		stateObj = new UIState();
 		taskFilter = new TaskFilter(storage);
-//		undoStack = new LinkedList<UIState>();
-//		redoStack = new Stack<UIState>();
+		undoStack = new LinkedList<UIState>();
+		redoStack = new Stack<UIState>();
 		userTaskList = new ArrayList<Task>();
 		updateTaskList();
 	}
 
 	@Override
-	public String add(String taskDescription, Date startDate, Date endDate) throws IOException {
+	public String add(String taskDescription, Date startDate, Date endDate) throws IOException, DuplicateTaskException {
 		// Should have checked this in Command
 		assert(!Util.isEmptyOrNull(taskDescription));
+		
 		stateObj.clearTempState();
 		List<Task> oldTaskList = userTaskList;
 		
 		Task taskToBeAdded = Util.createTask(taskDescription, startDate, endDate);
-		String outputMsg = storage.add(taskToBeAdded);		
+		
+		String outputMsg;
+		try {
+			outputMsg = storage.add(taskToBeAdded);
+		} catch (DuplicateTaskException e) {
+			// TODO add a logger here
+			throw e;
+		}		
+		
+		
+		
 		if (stateObj.displayType != ListType.NORMAL) {
 			stateObj.setDefault();
 		} else {
@@ -101,7 +117,7 @@ public class Controller implements CommandToController {
 	public String find(List<String> keywords) throws IOException {
 		stateObj.clearTempState();
 		stateObj.filterList = keywords;
-		stateObj.startDate = null;
+		stateObj.filterDate = null;
 		
 		 updateTaskList();
 		
@@ -264,7 +280,7 @@ public class Controller implements CommandToController {
 	public String find(Date startDate) throws IOException {
 		assert(startDate != null);
 		stateObj.clearTempState();
-		stateObj.startDate = startDate;
+		stateObj.filterDate = startDate;
 		stateObj.filterList = null;
 		return "Displaying from " + Util.getDateString(startDate);
 	}

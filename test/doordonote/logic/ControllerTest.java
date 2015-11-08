@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import doordonote.logic.UIState.ListType;
+import doordonote.storage.DuplicateTaskException;
 import doordonote.storage.Storage;
 
 public class ControllerTest {
@@ -43,7 +44,7 @@ public class ControllerTest {
 	}
 	
 	@Test
-	public void addTest() throws IOException {
+	public void addTest() throws IOException, DuplicateTaskException {
 		String description = "task to be added";
 		// Creates DateTime object with information like year, month,
         // day, hour, minute, second and milliseconds
@@ -121,7 +122,7 @@ public class ControllerTest {
 		Date startDate = startDt.toDate();
 		controller.find(startDate);
 		UIState testStateObj = new UIState();
-		testStateObj.startDate = startDate;
+		testStateObj.filterDate = startDate;
 		
 		
 		assertEquals("Test if UIState is updated correctly", 
