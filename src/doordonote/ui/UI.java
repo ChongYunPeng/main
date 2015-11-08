@@ -66,6 +66,7 @@ public class UI extends Application {
 	private static final String HELP_SAVE = "save";
 	private static final String HELP_RESTORE = "restore";
 	private static final String HELP_READFROM = "readfrom";
+	private static final String HELP_VIEW = "view";
 
 	private static final String COMMAND_HOME = "home";
 	private static final String COMMAND_DISPLAY_FINISH = "view finished";
@@ -112,6 +113,7 @@ public class UI extends Application {
 		
 		try {
 			logic = new Logic();
+			count = 1;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -141,7 +143,7 @@ public class UI extends Application {
 	 *
 	 * @return     vertical box VBox.
 	 */
-	protected static VBox addBottomArea() {
+	public static VBox addBottomArea() {
 		
 		VBox vBox = new VBox();
 		vBox.setPadding(new Insets(10, 12, 10, 12));
@@ -171,7 +173,7 @@ public class UI extends Application {
 	 *
 	 * @return     horizontal box HBox.
 	 */
-	protected static HBox addCommandArea() {
+	public static HBox addCommandArea() {
 
 		HBox hBox = new HBox();
 		hBox.setPadding(new Insets(5, 12, 5, 12));
@@ -203,7 +205,7 @@ public class UI extends Application {
 	 * @param commandBox  TextField where user can enter input      
 	 * @return            void
 	 */
-	protected static void handleUserInput(TextField commandBox) {
+	public static void handleUserInput(TextField commandBox) {
 
 		commandBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			String feedback;
@@ -258,6 +260,9 @@ public class UI extends Application {
 									// Fallthrough
 								}
 								case HELP_RESTORE: {
+									// Fallthrough
+								}
+								case HELP_VIEW: {
 									// Fallthrough
 								}
 								case HELP_UPDATE: {
@@ -451,7 +456,7 @@ public class UI extends Application {
 	 *  
 	 * @return            Help window Stage
 	 */
-	protected static Stage createHelpWindow() {
+	public static Stage createHelpWindow() {
 		
 		Stage stage = new Stage();
 
@@ -537,7 +542,7 @@ public class UI extends Application {
 		hBox2.getChildren().addAll(vBox1, vBox2);
 
 		VBox vBox = new VBox();
-		vBox.setPadding(new Insets(15, 20, 0, 20));
+		vBox.setPadding(new Insets(10, 20, 0, 20));
 		vBox.setSpacing(10);
 		vBox.getChildren().addAll(hBox1, hBox2);
 		vBox.setAlignment(Pos.TOP_CENTER);
@@ -569,7 +574,7 @@ public class UI extends Application {
 	 *                    help is to be displayed            
 	 * @return            Help window Stage for specific command type
 	 */
-	protected static Stage createHelpCommandWindow(String commandType) {
+	public static Stage createHelpCommandWindow(String commandType) {
 		
 		Stage stage = new Stage();
 		
@@ -624,7 +629,7 @@ public class UI extends Application {
 		return stage;
 	}
 	
-	protected static Image getTableImage(String commandType) {
+	public static Image getTableImage(String commandType) {
 		
 		Image image;
 		
@@ -659,6 +664,11 @@ public class UI extends Application {
 		}
 		case HELP_UPDATE: {
 			image = new Image("helpupdate.png");
+			break;
+		}
+		case HELP_VIEW: {
+			image = new Image("helpview.png");
+			break;
 		}
 		default: {
 			image = new Image("help.png");
@@ -676,7 +686,7 @@ public class UI extends Application {
 	 * @param listType    type of task lists to be displayed (home, deleted, finished)
 	 * @return            horizontal box HBox for main display
 	 */
-	protected static HBox addMainDisplay(int taskId, doordonote.logic.UIState.ListType listType) {
+	public static HBox addMainDisplay(int taskId, doordonote.logic.UIState.ListType listType) {
 
 		HBox main = new HBox();
 
@@ -697,7 +707,7 @@ public class UI extends Application {
 	 * @param listType    type of task lists to be displayed (home, deleted, finished)
 	 * @return            horizontal box HBox containing boxes for different types of tasks
 	 */
-	protected static HBox displayTasks(HBox main, int taskId, doordonote.logic.UIState.ListType listType) {
+	public static HBox displayTasks(HBox main, int taskId, doordonote.logic.UIState.ListType listType) {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 		List<Task> taskList = logic.getTasks();
@@ -755,7 +765,7 @@ public class UI extends Application {
 
 	}
 	
-	protected static ScrollPane createScroll() {
+	public static ScrollPane createScroll() {
 		
 		ScrollPane scroll = new ScrollPane();
 		VBox.setVgrow(scroll, Priority.ALWAYS);
@@ -795,7 +805,7 @@ public class UI extends Application {
 	 * @param formatter   SimpleDateFormat formatter for formatting dates
 	 * @return            boolean value to check for events spanning days
 	 */
-	protected static boolean checkForEventsSpanningDays(List<Task> taskList, SimpleDateFormat formatter) {
+	public static boolean checkForEventsSpanningDays(List<Task> taskList, SimpleDateFormat formatter) {
 		boolean haveEventsSpanningDays = false;
 
 		for (int i = 0; i < taskList.size(); i++) {
@@ -822,7 +832,7 @@ public class UI extends Application {
 	 * @param listType    type of task lists to be displayed (home, deleted, finished)
 	 * @return            horizontal box HBox for main display
 	 */
-	protected static VBox displaySingleDayTasks(int taskId, boolean isHome, List<Task> taskList,
+	public static VBox displaySingleDayTasks(int taskId, boolean isHome, List<Task> taskList,
 			SimpleDateFormat formatter) {
 		
 		VBox vBox = new VBox();
@@ -963,7 +973,7 @@ public class UI extends Application {
 		return vBox;
 	}
 	
-	protected static String getDateToBeDisplayedString(Task task) {
+	public static String getDateToBeDisplayedString(Task task) {
 
 		Calendar calEnd = DateUtil.DateToCalendar(task.getEndDate());
 		String day = DateUtil.getDay(calEnd);
@@ -980,7 +990,7 @@ public class UI extends Application {
 		return dateString;
 	}
 	
-	protected static String getDeadlineString(Task task) {
+	public static String getDeadlineString(Task task) {
 		
 		Calendar calEnd = DateUtil.DateToCalendar(task.getEndDate());
 		String timeEnd = DateUtil.getTime(calEnd);
@@ -991,7 +1001,7 @@ public class UI extends Application {
 		
 	}
 	
-	protected static String getSingleDayEventString(Task task) {
+	public static String getSingleDayEventString(Task task) {
 		
 		Calendar calStart = DateUtil.DateToCalendar(task.getStartDate());
 		String timeStart = DateUtil.getTime(calStart);
@@ -1004,7 +1014,7 @@ public class UI extends Application {
 		return taskString;
 	}
 	
-	protected static boolean checkForSameDay(Task task1, Task task2) {
+	public static boolean checkForSameDay(Task task1, Task task2) {
 		
 		Calendar calEnd1 = DateUtil.DateToCalendar(task1.getEndDate());
 		String month1 = DateUtil.getMonth(calEnd1);
@@ -1020,7 +1030,7 @@ public class UI extends Application {
 		
 	}
 	
-	protected static boolean checkIfMultipleDayEvent(Task task, SimpleDateFormat formatter) {
+	public static boolean checkIfMultipleDayEvent(Task task, SimpleDateFormat formatter) {
 		
 		String startDate = formatter.format(task.getStartDate());
 		String endDate = formatter.format(task.getEndDate());
@@ -1030,7 +1040,7 @@ public class UI extends Application {
 		return isMultipleDayEvent;
 	}
 
-	protected static VBox displayEventsSpanningDays(int taskId, boolean isHome, List<Task> taskList,
+	public static VBox displayEventsSpanningDays(int taskId, boolean isHome, List<Task> taskList,
 			SimpleDateFormat formatter) {
 
 		VBox vBox = new VBox();
@@ -1089,7 +1099,7 @@ public class UI extends Application {
 		return vBox;
 	}
 	
-	protected static String getMultipleDayEventString(Task task) {
+	public static String getMultipleDayEventString(Task task) {
 		
 		Calendar calStart = DateUtil.DateToCalendar(task.getStartDate());
 		String startDay = DateUtil.getDay(calStart);
@@ -1110,7 +1120,7 @@ public class UI extends Application {
 		return taskString;
 	}
 
-	protected static VBox displayFloatingTasks(int taskId, boolean isHome, List<Task> taskList) {
+	public static VBox displayFloatingTasks(int taskId, boolean isHome, List<Task> taskList) {
 		VBox vBox = new VBox();
 		vBox.setAlignment(Pos.TOP_LEFT);
 		vBox.setPadding(new Insets(18, 18, 18, 18));
@@ -1156,7 +1166,7 @@ public class UI extends Application {
 		return vBox;
 	}
 
-	protected static HBox addHeader(doordonote.logic.UIState.ListType listType) {
+	public static HBox addHeader(doordonote.logic.UIState.ListType listType) {
 		
 		HBox hBox = new HBox();
 		hBox.setPadding(new Insets(20, 25, 20, 25));
@@ -1176,7 +1186,7 @@ public class UI extends Application {
 		return hBox;
 	}
 	
-	protected static void setTitleEffects() {
+	public static void setTitleEffects() {
 		
 		DropShadow shadow = new DropShadow();
 		shadow.setOffsetY(4.0f);
@@ -1190,7 +1200,7 @@ public class UI extends Application {
 		title.setY(270.0f);
 	}
 
-	protected static Timeline createBlinker(Node node) {
+	public static Timeline createBlinker(Node node) {
 		
 		Timeline blink = new Timeline(
 				new KeyFrame(Duration.seconds(0), new KeyValue(node.opacityProperty(), 1, Interpolator.DISCRETE)),
@@ -1201,7 +1211,7 @@ public class UI extends Application {
 		return blink;
 	}
 
-	protected static FillTransition changeColour(Shape shape, Color color) {
+	public static FillTransition changeColour(Shape shape, Color color) {
 		
 		FillTransition fill = new FillTransition(Duration.seconds(5), shape, Color.web("#DFCA00"), color);
 		
@@ -1217,7 +1227,7 @@ public class UI extends Application {
 		launch(args);
 	}
 
-	protected static String getFirstWord(String input) {
+	public static String getFirstWord(String input) {
 		
 		String commandTypeString = input.trim().split("\\s+")[0];
 		return commandTypeString.toLowerCase();
@@ -1273,7 +1283,7 @@ public class UI extends Application {
 
 	}
 
-	protected Stage createHelpUpdateWindow() {
+	public Stage createHelpUpdateWindow() {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
@@ -1321,7 +1331,7 @@ public class UI extends Application {
 
 	}
 
-	protected Stage createHelpFindWindow() {
+	public Stage createHelpFindWindow() {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
@@ -1369,7 +1379,7 @@ public class UI extends Application {
 
 	}
 
-	protected Stage createHelpFinishWindow() {
+	public Stage createHelpFinishWindow() {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
@@ -1417,7 +1427,7 @@ public class UI extends Application {
 
 	}
 
-	protected Stage createHelpPathWindow() {
+	public Stage createHelpPathWindow() {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
@@ -1465,7 +1475,7 @@ public class UI extends Application {
 
 	}
 
-	protected Stage createHelpRestoreWindow() {
+	public Stage createHelpRestoreWindow() {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
@@ -1513,7 +1523,7 @@ public class UI extends Application {
 
 	}
 
-	protected Stage createHelpGetWindow() {
+	public Stage createHelpGetWindow() {
 		Stage stage = new Stage();
 		HBox hb = new HBox();
 		hb.setSpacing(15);
@@ -1561,7 +1571,7 @@ public class UI extends Application {
 
 	}
 
-	protected HBox displayDeletedOrFinishedTasks(HBox main) {
+	public HBox displayDeletedOrFinishedTasks(HBox main) {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 		List<Task> taskList = logic.getTasks();
@@ -1862,7 +1872,7 @@ public class UI extends Application {
 
 	}
 
-	protected static String wrapText(String text) {
+	public static String wrapText(String text) {
 		StringBuilder sb = new StringBuilder(text);
 
 		int x = 0;
