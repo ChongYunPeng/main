@@ -17,6 +17,8 @@ import java.util.HashSet;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import doordonote.common.Task;
@@ -38,6 +40,7 @@ public class TaskReader {
 	private static final Type type = new TypeToken<HashSet<Task>>(){}.getType();
 
 	private Set<Task> set = new HashSet<Task>(HASHSET_SIZE);
+	private boolean isValidJson;
 
 	private static String currentFile;
 
@@ -64,7 +67,7 @@ public class TaskReader {
 	protected String getFileName() {
 		return currentFile;
 	}
-	
+
 	protected static void setCurrentFile(String fileName){
 		currentFile = fileName;
 	}
@@ -93,21 +96,27 @@ public class TaskReader {
 	//arraylist of Task sorted by Date. FloatingTasks are
 	//at the back of this ArrayList
 	protected ArrayList<Task> readTasks() throws IOException{
-		set = jsonToSet();
-		ArrayList<Task> listTask = new ArrayList<Task>();
-		if(set == null){
-			FileWriter writer = new FileWriter(currentFile);
-			writer.write(INITIAL_JSONSTRING);
-			writer.close();
-			return listTask;
-		} else{
-		for(Task t : set){
-			if(!t.isDeleted() && !t.isDone()){
-				listTask.add(t);
+		if(isValidJson){
+			TaskWriter.setValidJson();
+			set = jsonToSet();
+			ArrayList<Task> listTask = new ArrayList<Task>();
+			if(set == null){
+				FileWriter writer = new FileWriter(currentFile);
+				writer.write(INITIAL_JSONSTRING);
+				writer.close();
+				return listTask;
+			} else{
+				for(Task t : set){
+					if(!t.isDeleted() && !t.isDone()){
+						listTask.add(t);
+					}
+				}
+				Collections.sort(listTask);
+				return listTask;
 			}
-		}
-		Collections.sort(listTask);
-		return listTask;
+		} else{
+			TaskWriter.setInvalidJson();
+			throw new IOException();
 		}
 	}
 
@@ -138,6 +147,15 @@ public class TaskReader {
 	// This method gets json string from currentFile and map it
 	protected HashSet<Task> jsonToSet() throws IOException {
 		String json = getFileString(currentFile);
+		try{
+			new JsonParser().parse(json);
+		}
+		catch(JsonParseException e){
+			isValidJson = false;
+			HashSet<Task> jsonSet = new HashSet<Task>();
+			return jsonSet;
+		}
+		isValidJson = true;
 		HashSet<Task> jsonSet = null;
 		jsonSet = gson.fromJson(json, type);
 		return jsonSet;

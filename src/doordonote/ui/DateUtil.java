@@ -37,7 +37,7 @@ public class DateUtil {
 	private static final String MESSAGE_ASSERT_WRONG_MINUTES = "Minutes cannot exceed 59";
 	private static final String MESSAGE_ASSERT_WRONG_HOUR = "Hour cannot exceed 23";
 	
-	protected static Calendar DateToCalendar(Date date) {
+	public static Calendar DateToCalendar(Date date) {
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -45,7 +45,7 @@ public class DateUtil {
 		return cal;
 	}
 
-	protected static String getDay(Calendar cal) {
+	public static String getDay(Calendar cal) {
 		
 		String day = null;
 		
@@ -86,7 +86,7 @@ public class DateUtil {
 		return day;
 	}
 
-	protected static String getMonth(Calendar cal) {
+	public static String getMonth(Calendar cal) {
 		
 		String month = null;
 		
@@ -148,7 +148,7 @@ public class DateUtil {
 		return month;
 	}
 
-	protected static String getMinutes(Calendar cal) {
+	public static String getMinutes(Calendar cal) {
 		
 		String minutesString;
 		int minutes = cal.get(Calendar.MINUTE);
@@ -170,7 +170,7 @@ public class DateUtil {
 		return minutesString;        
 	}
 
-	protected static String getTime(Calendar cal) {
+	public static String getTime(Calendar cal) {
 		
 		String time;
 		String minutes = getMinutes(cal);
@@ -219,7 +219,7 @@ public class DateUtil {
 
 	}
 
-	protected static boolean checkForToday(Date date) {
+	public static boolean checkForToday(Date date) {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 		Date today = new Date();
@@ -228,7 +228,7 @@ public class DateUtil {
 		return isToday;
 	}
 
-	protected static boolean checkForOverdue(Date date) {
+	public static boolean checkForOverdue(Date date) {
 		
 		Date today = new Date();
 		boolean isOverdue = date.before(today);
@@ -237,7 +237,7 @@ public class DateUtil {
 
 	}
 
-	protected static boolean checkForOngoing(Date start, Date end) {
+	public static boolean checkForOngoing(Date start, Date end) {
 		
 		Date today = new Date();
 		boolean isOngoing = (!today.before(start)) && (!today.after(end));
