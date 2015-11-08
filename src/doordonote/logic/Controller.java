@@ -286,17 +286,22 @@ public class Controller implements CommandToController {
 	}
 
 	@Override
-	public String getStorageFilePath(String pathName) {
+	public String readFromFilePath(String pathName) {
 		assert(pathName != null);
 		stateObj.setDefault();
 		return storage.get(pathName);
 	}
 
 	@Override
-	public String path(String pathName) {
+	public String saveFileAt(String pathName) {
 		assert(pathName != null);
 		stateObj.setDefault();
 		return storage.path(pathName);
+	}
+
+	@Override
+	public String getCurrentFilePath() {
+		return "Currently reading from: " + storage.getCurrentFilePath();
 	}
 
 

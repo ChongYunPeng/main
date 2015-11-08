@@ -11,7 +11,7 @@ import doordonote.logic.CommandToController;
  * If a file of the same name already exists, simply read from the existing file. 
  *
  */
-public class PathCommand implements Command {
+public class SetPathCommand implements Command {
 	protected String pathName = null;
 	
 	/**
@@ -19,13 +19,13 @@ public class PathCommand implements Command {
 	 * 			Location on the file system to create .json storage file.
 	 * 			If file already exists, simply read from it.
 	 */
-	public PathCommand(String path) {
+	public SetPathCommand(String path) {
 		pathName = path;
 	}
 
 	@Override
 	public String execute(CommandToController controller) throws IOException, Exception {
-		return controller.path(pathName);
+		return controller.saveFileAt(pathName);
 	}
 
 }

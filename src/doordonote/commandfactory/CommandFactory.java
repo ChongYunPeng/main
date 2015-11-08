@@ -65,11 +65,11 @@ public class CommandFactory {
 		case "view" :
 			handler = new ViewHandler(commandBody);
 			break;
-		 case "get" :
-			 handler = new GetPathHandler(commandBody);
+		 case "readfrom" :
+			 handler = new ReadPathHandler(commandBody);
 			 break;
-		 case "path" :
-			 handler = new PathHandler(commandBody);
+		 case "save" :
+			 handler = new SetPathHandler(commandBody);
 			 break;
 		default:
 			// treats user input as adding a new task by default if input does not match any command type

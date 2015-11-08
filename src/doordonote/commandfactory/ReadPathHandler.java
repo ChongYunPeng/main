@@ -2,24 +2,27 @@ package doordonote.commandfactory;
 
 import doordonote.command.Command;
 import doordonote.command.GetPathCommand;
+import doordonote.command.ReadPathCommand;
 import doordonote.common.Util;
 
 //@@author A0131436N
 
-public class GetPathHandler extends CommandHandler {
+public class ReadPathHandler extends CommandHandler {
 
-	protected GetPathHandler(String commandBody) throws EmptyCommandBodyException {
+	protected ReadPathHandler(String commandBody) {
 		super(commandBody);
-		
-		if (Util.isEmptyOrNull(this.commandBody)) {
-			throw new EmptyCommandBodyException();
-		}
+
 	}
 
 	@Override
 	public Command generateCommand()
 			throws NumberFormatException, NegativeIndexException, ExcessArgumentException, Exception {
-		return new GetPathCommand(this.commandBody);
+		
+		if (Util.isEmptyOrNull(this.commandBody)) {
+			return new GetPathCommand();
+		}
+		
+		return new ReadPathCommand(this.commandBody);
 	}
 
 }

@@ -42,10 +42,12 @@ public interface CommandToController {
 
 	String find(Date startDate) throws IOException;
 
-	String getStorageFilePath(String pathName);
+	String readFromFilePath(String pathName);
 
-	String path(String pathName);
+	String saveFileAt(String pathName);
 
 	List<Task> getTaskList() throws IOException;
+
+	String getCurrentFilePath();
 
 }

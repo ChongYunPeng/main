@@ -1,14 +1,14 @@
 package doordonote.commandfactory;
 
 import doordonote.command.Command;
-import doordonote.command.PathCommand;
+import doordonote.command.SetPathCommand;
 import doordonote.common.Util;
 
 //@@author A0131436N
 
-public class PathHandler extends CommandHandler {
+public class SetPathHandler extends CommandHandler {
 
-	protected PathHandler(String commandBody) throws EmptyCommandBodyException {
+	protected SetPathHandler(String commandBody) throws EmptyCommandBodyException {
 		super(commandBody);
 		
 		if (Util.isEmptyOrNull(commandBody)) {
@@ -19,7 +19,7 @@ public class PathHandler extends CommandHandler {
 	@Override
 	public Command generateCommand()
 			throws NumberFormatException, NegativeIndexException, ExcessArgumentException, Exception {
-		return new PathCommand(commandBody);
+		return new SetPathCommand(commandBody);
 	}
 
 }
