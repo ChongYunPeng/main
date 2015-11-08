@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import doordonote.common.Task;
+
 public class DateUtil {
 	
 	private static final String DAY_SUN = "Sunday";
@@ -37,7 +39,7 @@ public class DateUtil {
 	private static final String MESSAGE_ASSERT_WRONG_MINUTES = "Minutes cannot exceed 59";
 	private static final String MESSAGE_ASSERT_WRONG_HOUR = "Hour cannot exceed 23";
 	
-	public static Calendar DateToCalendar(Date date) {
+	public static Calendar dateToCalendar(Date date) {
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -244,4 +246,31 @@ public class DateUtil {
 		
 		return isOngoing;
 	}
+	
+	public static boolean checkForSameDay(Task task1, Task task2) {
+		
+		Calendar calEnd1 = dateToCalendar(task1.getEndDate());
+		String month1 = getMonth(calEnd1);
+		int date1 = calEnd1.get(Calendar.DAY_OF_MONTH);
+		
+		Calendar calEnd2 = dateToCalendar(task2.getEndDate());
+		String month2 = getMonth(calEnd2);
+		int date2 = calEnd2.get(Calendar.DAY_OF_MONTH);
+		
+		boolean isNotSameDate = date1 != date2 || !(month1.equals(month2));
+		
+		return isNotSameDate;
+		
+	}
+	
+	public static boolean checkIfMultipleDayEvent(Task task, SimpleDateFormat formatter) {
+		
+		String startDate = formatter.format(task.getStartDate());
+		String endDate = formatter.format(task.getEndDate());
+
+		boolean isMultipleDayEvent = !(startDate.equals(endDate));
+		
+		return isMultipleDayEvent;
+	}
+	
 }

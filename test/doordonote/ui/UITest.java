@@ -43,8 +43,8 @@ public class UITest {
 			dt1 = formatter.parse(dateInString1);
 			dt2 = formatter.parse(dateInString2);
 
-			Calendar cl1 = DateUtil.DateToCalendar(dt1);
-			Calendar cl2 = DateUtil.DateToCalendar(dt2);
+			Calendar cl1 = DateUtil.dateToCalendar(dt1);
+			Calendar cl2 = DateUtil.dateToCalendar(dt2);
 
 			String day1 = DateUtil.getDay(cl1);
 			String day2 = DateUtil.getDay(cl2);
@@ -65,8 +65,8 @@ public class UITest {
 			dt1 = formatter.parse(dateInString1);
 			dt3 = formatter.parse(dateInString3);
 
-			Calendar cl1 = DateUtil.DateToCalendar(dt1);
-			Calendar cl3 = DateUtil.DateToCalendar(dt3);
+			Calendar cl1 = DateUtil.dateToCalendar(dt1);
+			Calendar cl3 = DateUtil.dateToCalendar(dt3);
 
 			String month1 = DateUtil.getMonth(cl1);
 			String month3 = DateUtil.getMonth(cl3);
@@ -87,8 +87,8 @@ public class UITest {
 			dt1 = formatter.parse(dateInString1);
 			dt3 = formatter.parse(dateInString3);
 
-			Calendar cl1 = DateUtil.DateToCalendar(dt1);
-			Calendar cl3 = DateUtil.DateToCalendar(dt3);
+			Calendar cl1 = DateUtil.dateToCalendar(dt1);
+			Calendar cl3 = DateUtil.dateToCalendar(dt3);
 
 			String minutes1 = DateUtil.getMinutes(cl1);
 			String minutes3 = DateUtil.getMinutes(cl3);
@@ -111,10 +111,10 @@ public class UITest {
 			dt3 = formatter.parse(dateInString3);
 			dt4 = formatter.parse(dateInString4);
 
-			Calendar cl1 = DateUtil.DateToCalendar(dt1);
-			Calendar cl2 = DateUtil.DateToCalendar(dt2);
-			Calendar cl3 = DateUtil.DateToCalendar(dt3);
-			Calendar cl4 = DateUtil.DateToCalendar(dt4);
+			Calendar cl1 = DateUtil.dateToCalendar(dt1);
+			Calendar cl2 = DateUtil.dateToCalendar(dt2);
+			Calendar cl3 = DateUtil.dateToCalendar(dt3);
+			Calendar cl4 = DateUtil.dateToCalendar(dt4);
 
 			String time1 = DateUtil.getTime(cl1);
 			String time2 = DateUtil.getTime(cl2);
@@ -318,13 +318,13 @@ public class UITest {
 			Task task4 = new DeadlineTask("HW", dt2);
 			Task task5 = new EventTask("Ball", dt4, dt4);
 
-			boolean check1 = UI.checkForSameDay(task1, task2);
-			boolean check2 = UI.checkForSameDay(task2, task3);
-			boolean check3 = UI.checkForSameDay(task1, task3);
-			boolean check4 = UI.checkForSameDay(task1, task5);
-			boolean check5 = UI.checkForSameDay(task1, task4);
-			boolean check6 = UI.checkForSameDay(task3, task4);
-			boolean check7 = UI.checkForSameDay(task2, task5);
+			boolean check1 = DateUtil.checkForSameDay(task1, task2);
+			boolean check2 = DateUtil.checkForSameDay(task2, task3);
+			boolean check3 = DateUtil.checkForSameDay(task1, task3);
+			boolean check4 = DateUtil.checkForSameDay(task1, task5);
+			boolean check5 = DateUtil.checkForSameDay(task1, task4);
+			boolean check6 = DateUtil.checkForSameDay(task3, task4);
+			boolean check7 = DateUtil.checkForSameDay(task2, task5);
 
 			assertEquals(check1, false);
 			assertEquals(check2, false);
@@ -351,8 +351,8 @@ public class UITest {
 			Task task1 = new EventTask("Flying Pig", dt1, dt3);
 			Task task2 = new EventTask("Swimming", dt1, dt5);
 
-			boolean check1 = UI.checkIfMultipleDayEvent(task1, formatter2);
-			boolean check2 = UI.checkIfMultipleDayEvent(task2, formatter2);
+			boolean check1 = DateUtil.checkIfMultipleDayEvent(task1, formatter2);
+			boolean check2 = DateUtil.checkIfMultipleDayEvent(task2, formatter2);
 
 			assertEquals(check1, true);
 			assertEquals(check2, false);
