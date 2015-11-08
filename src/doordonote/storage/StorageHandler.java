@@ -85,7 +85,7 @@ public class StorageHandler implements Storage {
 		}
 	}
 
-	public String add(Task task){
+	public String add(Task task) throws DuplicateTaskException{
 		try{
 			writer.add(task);
 			String taskStr = shortenTaskName(task);
@@ -101,22 +101,23 @@ public class StorageHandler implements Storage {
 			return String.format(MESSAGE_EVENTS_CLASHED, clashedTaskStr, originalTaskStr);
 		}
 		catch(DuplicateTaskException e){
-			return e.getMessage();
+			throw e;
+			//return e.getMessage();
 		}
 	}
 
-	public String add(String description, Date startDate, Date endDate){
+	public String add(String description, Date startDate, Date endDate) throws DuplicateTaskException{
 		Task task = createTask(description, startDate, endDate);
 		return add(task);
 	}
 
 
-	public String update(Task taskToUpdate, String description, Date startDate, Date endDate) {
+	public String update(Task taskToUpdate, String description, Date startDate, Date endDate) throws DuplicateTaskException {
 		Task updatedTask = createTask(description, startDate, endDate);
 		return update(taskToUpdate, updatedTask);
 	}
 
-	public String update(Task taskToUpdate, Task updatedTask){
+	public String update(Task taskToUpdate, Task updatedTask) throws DuplicateTaskException {
 		try{
 			writer.update(taskToUpdate, updatedTask);
 			String taskStr = shortenTaskName(updatedTask);
@@ -130,14 +131,9 @@ public class StorageHandler implements Storage {
 			return "IOException!";
 		}
 		catch(DuplicateTaskException e){
-			return e.getMessage();
+			throw e;
+			//return e.getMessage();
 		}
-	/*	catch(EventsClashException e){
-			String originalTaskStr = shortenTaskName(e.getOriginalTask());
-			String clashedTaskStr = shortenTaskName(e.getClashedTask());
-			return String.format(MESSAGE_EVENTS_CLASHED, clashedTaskStr, originalTaskStr);
-		}
-		*/
 	}
 
 	public String delete(Task taskToDelete){

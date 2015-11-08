@@ -20,11 +20,11 @@ import java.io.IOException;
 public interface Storage {
 	public String path(String location);
 	public String get(String location);
-	public String add(Task task);
-	public String add(String description, Date startDate, Date endDate);
+	public String add(Task task)throws DuplicateTaskException;
+	public String add(String description, Date startDate, Date endDate)throws DuplicateTaskException;
 	public String update(Task taskToUpdate, String descirption,
-			Date startDate, Date endDate);
-	public String update(Task oldTask, Task newTask);
+			Date startDate, Date endDate)throws DuplicateTaskException;
+	public String update(Task oldTask, Task newTask)throws DuplicateTaskException;
 	public String delete(Task taskToDelete);
 	public String remove(Task taskToRemove) throws IOException;
 	public ArrayList<Task> readTasks() throws IOException;
