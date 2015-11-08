@@ -69,27 +69,20 @@ public class TaskWriter {
 	}
 
 
-	public int path(String fileName){
+	public int path(String fileName) throws IOException{
 		File file = new File(fileName);
-		if(!file.exists()){
+		if(file.exists()){
 			file = new File(fileName);
 			try{
+				writeToFile(currentJsonString);
 				writeToSettings(fileName);
 			}
 			catch (IOException e){
-				e.printStackTrace();
+				throw e;
 			}
-			currentFile = fileName;
-			try{
-				writeToFile(currentJsonString);
-
-			}
-			catch (IOException e){
-				e.printStackTrace();
-			}
-
+			currentFile = fileName;			
 			TaskReader.setCurrentFile(fileName);
-			return 0;
+			return 1;
 
 		} else{
 			try{
@@ -98,11 +91,11 @@ public class TaskWriter {
 				writeToFile(currentJsonString);
 			}
 			catch (IOException e){
-				e.printStackTrace();
+				throw e;
 			}
 			currentFile = fileName;
 			TaskReader.setCurrentFile(fileName);
-			return 1;
+			return 0;
 		}
 
 	}
@@ -184,20 +177,20 @@ public class TaskWriter {
 		String json = addToSet(task, set);
 		return json;
 	}
-	
+
 	private void checkTaskClash(Task task, Set<Task> set) throws IOException, EventsClashException{
 		ArrayList<Task> arrlist = reader.readTasks();
 		for(int i = 0; i < arrlist.size(); i++){
 			if(arrlist.get(i) instanceof EventTask && task instanceof EventTask && checkClashCondition(arrlist.get(i), task)){
-			    set = reader.jsonToSet();
+				set = reader.jsonToSet();
 				String json = addToSet(task, set);
 				toUndoStack(json);
 				throw new EventsClashException(arrlist.get(i), task);
 			}
 		}
 	}
-	
-    //@@author A0132785Y
+
+	//@@author A0132785Y
 	private boolean checkClashCondition(Task originalTask, Task toCheckTask){
 		if((toCheckTask.getStartDate().after(originalTask.getStartDate()) 
 				&& toCheckTask.getStartDate().before(originalTask.getEndDate())) 

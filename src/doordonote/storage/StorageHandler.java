@@ -17,7 +17,8 @@ import java.io.FileNotFoundException;
  *
  */
 public class StorageHandler implements Storage {
-	
+
+	private static final int TASK_CUTOFF_LENGTH = 30;
 	private static final String FILE_TYPE = ".json";
 	private static final String TASK_STRING_TAIL = "...\"";
 	private static final String MESSAGE_ADD = "Task %1$s added";
@@ -36,10 +37,12 @@ public class StorageHandler implements Storage {
 	private static final String MESSAGE_NOT_FOUND = "File \"%1$s\" is not found.";
 	private static final String MESSAGE_EVENTS_CLASHED = "Task %1$s added but clashes with %2$s";
 	private static final String MESSAGE_READ = "Reading from file \"%1$s\"";
-	private static final String MESSAGE_PATH_CREATE = "Creating file \"%1$s\"";
-	private static final String MESSAGE_PATH_EXISTS = "File \"%1$s\" exists. Reading from \"%1$s\"";
+	private static final String MESSAGE_PATH_CREATE = "Creating file \"%1$s\". Reading from this file.";
+	private static final String MESSAGE_PATH_EXISTS = "File exists. Reading from \"%1$s\"";
+	private static final String MESSAGE_INVALID_PATH = "Path is invalid or DoOrDoNote does not have access to directory!";
+	private static final String MESSAGE_ERROR = "Opps! Something went wrong!";
+	private static final String MESSAGE_INVALID_TASK = "Invalid tasks parameters!";
 
-	
 	protected TaskWriter writer;
 	protected TaskReader reader;
 	private static StorageHandler storageHandler;
@@ -66,19 +69,24 @@ public class StorageHandler implements Storage {
 				!(fileName.substring(fileName.length()-4)).contains(FILE_TYPE)){
 			fileName += FILE_TYPE;
 		}
-		int create = writer.path(fileName);
-		if(create==0){
-			return String.format(MESSAGE_PATH_CREATE, fileName);
-		} else if(create==1){
-			return String.format(MESSAGE_PATH_EXISTS, fileName);
+		try{
+			int create = writer.path(fileName);
+			if(create==0){
+				return String.format(MESSAGE_PATH_CREATE, fileName);
+			} else if(create==1){
+				return String.format(MESSAGE_PATH_EXISTS, fileName);
+			}
 		}
-		return null;
+		catch (IOException e){
+			return MESSAGE_INVALID_PATH;
+		}
+		return MESSAGE_INVALID_PATH;
 	}
-	
+
 	public String get(String fileName){
 		try{
-		 String currentFile = reader.read(fileName);
-		 return String.format(MESSAGE_READ, currentFile);		 
+			String currentFile = reader.read(fileName);
+			return String.format(MESSAGE_READ, currentFile);		 
 		}
 		catch (FileNotFoundException e){
 			return String.format(MESSAGE_NOT_FOUND, fileName);
@@ -93,7 +101,7 @@ public class StorageHandler implements Storage {
 		}
 		catch(IOException e){
 			e.printStackTrace();
-			return "IOException!";
+			return MESSAGE_ERROR;
 		}
 		catch(EventsClashException e){
 			String originalTaskStr = shortenTaskName(e.getOriginalTask());
@@ -128,7 +136,7 @@ public class StorageHandler implements Storage {
 		}
 		catch(IOException e){
 			e.printStackTrace();
-			return "IOException!";
+			return MESSAGE_ERROR;
 		}
 		catch(DuplicateTaskException e){
 			throw e;
@@ -143,7 +151,7 @@ public class StorageHandler implements Storage {
 		}
 		catch(IOException e){
 			e.printStackTrace();
-			return "IOException!";
+			return MESSAGE_ERROR;
 		}
 	}
 
@@ -162,7 +170,6 @@ public class StorageHandler implements Storage {
 			throw e;
 		}		
 		assert(listTask!=null);
-//		System.out.print(listTask);
 		return listTask;
 	}
 
@@ -177,7 +184,7 @@ public class StorageHandler implements Storage {
 		assert(listTask!=null);
 		return listTask;
 	}
-	
+
 	public ArrayList<Task> readDoneTasks() throws IOException{
 		ArrayList<Task> listTask = null;
 		try{
@@ -210,13 +217,13 @@ public class StorageHandler implements Storage {
 			return MESSAGE_REDO_FAIL;
 		}
 	}
-	
+
 	public String restore(Task task) throws IOException, DuplicateTaskException{
 		writer.restore(task);
 		String taskStr = shortenTaskName(task);
 		return String.format(MESSAGE_RESTORE, taskStr);
 	}
-	
+
 	public String finish(Task task) throws IOException, DuplicateTaskException{
 		writer.setDone(task);
 		String taskStr = shortenTaskName(task);
@@ -227,11 +234,11 @@ public class StorageHandler implements Storage {
 		String taskStr = shortenTaskName(task);
 		return String.format(MESSAGE_NOT_FINISH,taskStr);
 	}
-	
+
 	public String getCurrentFilePath(){
 		return reader.getFileName();
 	}
-	
+
 	private Task createTask(String description, Date startDate,
 			Date endDate){
 		Task task = null;
@@ -242,16 +249,16 @@ public class StorageHandler implements Storage {
 		} else if(description!=null && startDate!=null && endDate!=null){
 			task = new EventTask(description, startDate, endDate);
 		} else {
-			assert (task != null):"Invalid Task parameters";
+			assert (task != null): MESSAGE_INVALID_TASK;
 		}
-		
+
 		return task;
 	}
-	
+
 	private String shortenTaskName(Task task){
 		String taskStr = task.toString();
-		if(taskStr.length()>32){
-			taskStr = taskStr.substring(0, 31);
+		if(taskStr.length()>TASK_CUTOFF_LENGTH+2){
+			taskStr = taskStr.substring(0, TASK_CUTOFF_LENGTH+1);
 			taskStr += TASK_STRING_TAIL;
 		}
 		return taskStr;
