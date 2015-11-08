@@ -8,21 +8,17 @@ import doordonote.common.Util;
 
 public class FinishHandler extends CommandHandler {
 
-	protected FinishHandler(String commmandBody) throws EmptyCommandBodyException {
+	protected FinishHandler(String commmandBody) throws Exception {
 		super(commmandBody);
 		if (Util.isEmptyOrNull(commandBody)) {
-			throw new EmptyCommandBodyException();
+			throw new Exception(String.format(EXCEPTION_NO_ARGUMENT, "finish"));
 		}
 	}
 
 	@Override
-	public Command generateCommand() throws NumberFormatException, NegativeIndexException {
-		int indexToFinish = getTaskIdFromString(commandBody);
-		if (indexToFinish <= 0) {
-			throw new NegativeIndexException();
-		} else {
-			return new FinishCommand(indexToFinish);
-		}	
+	public Command generateCommand() throws Exception {
+		int indexToFinish = getTaskIdFromString(commandBody, "finish");
+		return new FinishCommand(indexToFinish);
 	}
 
 }

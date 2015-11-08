@@ -7,22 +7,25 @@ import doordonote.common.Util;
 
 //@@author A0131436N
 
+/**
+ * Reads the storage file from the user specified path.
+ * If no path is specified, returns the current file path that is being used.
+ * 
+ * @author yunpeng
+ *
+ */
 public class ReadPathHandler extends CommandHandler {
 
 	protected ReadPathHandler(String commandBody) {
 		super(commandBody);
-
 	}
 
 	@Override
-	public Command generateCommand()
-			throws NumberFormatException, NegativeIndexException, ExcessArgumentException, Exception {
-		
-		if (Util.isEmptyOrNull(this.commandBody)) {
+	public Command generateCommand() {		
+		if (Util.isEmptyOrNull(commandBody)) {
 			return new GetPathCommand();
 		}
-		
-		return new ReadPathCommand(this.commandBody);
+		return new ReadPathCommand(commandBody);
 	}
 
 }

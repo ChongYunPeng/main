@@ -1,6 +1,5 @@
 package doordonote.commandfactory;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class DateParser {
 	
 	public Date parse(String input) {
 		List<Date> dateList = parseAndGetDateList(input);
-		if (dateList.isEmpty()) {
+		if (dateList == null) {
 			return null;
 		} else {
 			return dateList.get(0);
@@ -37,7 +36,7 @@ public class DateParser {
 	
 	public Date parse(String input, Date defaultTime) {
 		List<Date> dateList = parseAndGetDateList(input, defaultTime);
-		if (dateList.isEmpty()) {
+		if (dateList == null) {
 			return null;
 		} else {
 			return dateList.get(0);
@@ -45,23 +44,27 @@ public class DateParser {
 	}
 	
 	public List<Date> parseAndGetDateList(String input) {
+		Date defaultDate = getDateTodayEightAm();
+		return parseAndGetDateList(input, defaultDate);
+	}
+
+	private Date getDateTodayEightAm() {
 		DateTime midnightToday = new DateTime().withTimeAtStartOfDay();
 		DateTime eightAm = midnightToday.plusHours(8);
 		Date defaultDate = eightAm.toDate();
-		return parseAndGetDateList(input, defaultDate);
+		return defaultDate;
 	}
 	
 	public List<Date> parseAndGetDateList(String input, Date defaultTime) {
-		// input should always be checked to be no null
-		assert(input != null);
+		assert(input != null); // input should always be checked to be no null
+		
 		CalendarSource.setBaseDate(defaultTime);
-		List<DateGroup> baseDateList = natty.parse(input);
-		try {
-			DateGroup baseDateGroup = baseDateList.get(0);
-			List<Date> dateList = baseDateGroup.getDates();
-			return dateList;
-		} catch (IndexOutOfBoundsException e) {
-			return new ArrayList<Date>();
-		}	
+		List<DateGroup> baseDateGroupList = natty.parse(input);
+		if (baseDateGroupList.isEmpty()) {
+			return null;
+		}
+		DateGroup baseDateGroup = baseDateGroupList.get(0);
+		List<Date> dateList = baseDateGroup.getDates();
+		return dateList;
 	}
 }

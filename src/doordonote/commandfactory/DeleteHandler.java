@@ -8,21 +8,17 @@ import doordonote.common.Util;
 
 public class DeleteHandler extends CommandHandler {
 	
-	protected DeleteHandler(String commmandBody) throws EmptyCommandBodyException {
+	protected DeleteHandler(String commmandBody) throws Exception {
 		super(commmandBody);
 		if (Util.isEmptyOrNull(commandBody)) {
-			throw new EmptyCommandBodyException();
+			throw new Exception(String.format(EXCEPTION_NO_ARGUMENT, "delete"));
 		}
 	}
 
 	@Override
-	public Command generateCommand() throws NumberFormatException, NegativeIndexException {
-		int indexToDelete = getTaskIdFromString(commandBody);
-		if (indexToDelete <= 0) {
-			throw new NegativeIndexException();
-		} else {
-			return new DeleteCommand(indexToDelete);
-		}	
+	public Command generateCommand() throws Exception {
+		int indexToDelete = getTaskIdFromString(commandBody, "delete");
+		return new DeleteCommand(indexToDelete);	
 	}
 
 }

@@ -310,5 +310,4 @@ public class Controller implements CommandToController {
 //		stateObj.clearTempState();
 		return "Currently reading from: " + storage.getCurrentFilePath();
 	}
-
 }

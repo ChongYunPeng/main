@@ -72,7 +72,6 @@ public class TaskFilter {
 		return userTaskList;
 	}
 	
-
 	protected List<Task> filterByDate(List<Task> unfilteredUserTaskList, Date startDate) {
 		List<Task> userTaskList = new ArrayList<Task>();
 		for (Task task : unfilteredUserTaskList) {

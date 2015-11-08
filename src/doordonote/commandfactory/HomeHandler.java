@@ -8,21 +8,16 @@ import doordonote.common.Util;
 
 public class HomeHandler extends CommandHandler {
 
-	protected HomeHandler(String commmandBody) throws ExcessArgumentException {
+	protected HomeHandler(String commmandBody) throws Exception {
 		super(commmandBody);
-		if (!commandBody.isEmpty()) {
-			throw new ExcessArgumentException();
+		if (!Util.isEmptyOrNull(commmandBody)) {
+			throw new Exception(String.format(EXCEPTION_EXCESS_ARGUMENTS, "home"));
 		}
 	}
 
 	@Override
-	public Command generateCommand() throws ExcessArgumentException {
-		if (Util.isEmptyOrNull(commandBody)) {
-			return new HomeCommand();
-		} else {
-			// this command should not have any arguments
-			throw new ExcessArgumentException();
-		}
+	public Command generateCommand() {
+		return new HomeCommand();
 	}
 
 }

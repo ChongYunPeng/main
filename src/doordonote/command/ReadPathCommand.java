@@ -8,7 +8,7 @@ import doordonote.logic.CommandToController;
 
 /**
  * 
- * This {@code Command} is used to load a storage file from the input path. 
+ * This {@code Command} is used to read from a storage file at the user input path. 
  *
  */
 public class ReadPathCommand implements Command {

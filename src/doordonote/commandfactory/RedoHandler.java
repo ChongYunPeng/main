@@ -8,10 +8,10 @@ import doordonote.common.Util;
 
 public class RedoHandler extends CommandHandler {
 
-	protected RedoHandler(String commmandBody) throws ExcessArgumentException {
+	protected RedoHandler(String commmandBody) throws Exception {
 		super(commmandBody);
 		if (!Util.isEmptyOrNull(commandBody)) {
-			throw new ExcessArgumentException();
+			throw new Exception(String.format(EXCEPTION_EXCESS_ARGUMENTS, "redo"));
 		}
 	}
 

@@ -8,10 +8,10 @@ import doordonote.common.Util;
 
 public class UndoHandler extends CommandHandler {
 
-	protected UndoHandler(String commmandBody) throws ExcessArgumentException {
+	protected UndoHandler(String commmandBody) throws Exception {
 		super(commmandBody);
 		if (!Util.isEmptyOrNull(commandBody)) {
-			throw new ExcessArgumentException();
+			throw new Exception(String.format(EXCEPTION_EXCESS_ARGUMENTS, "undo"));
 		}
 	}
 

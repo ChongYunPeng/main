@@ -8,11 +8,12 @@ import doordonote.common.Util;
 //@@author A0131436N
 
 public class ViewHandler extends CommandHandler {
+	protected static final String EXCEPTION_INVALID_VIEW_ARGUMENT = "Do you mean 'view deleted' or 'view finished'?";
 
-	protected ViewHandler(String commandBody) throws EmptyCommandBodyException {
+	protected ViewHandler(String commandBody) throws Exception {
 		super(commandBody);
 		if (Util.isEmptyOrNull(commandBody)) {
-			throw new EmptyCommandBodyException();
+			throw new Exception(String.format(EXCEPTION_NO_ARGUMENT, "view"));
 		}
 		this.commandBody = commandBody.trim().toLowerCase();
 	}
@@ -24,7 +25,7 @@ public class ViewHandler extends CommandHandler {
 		} else if (commandBody.contains("fin")) {
 			return new ViewFinishedTaskCommand();
 		} else {
-			throw new Exception("Invalid display arguments");
+			throw new Exception(EXCEPTION_INVALID_VIEW_ARGUMENT);
 		}
 	}
 

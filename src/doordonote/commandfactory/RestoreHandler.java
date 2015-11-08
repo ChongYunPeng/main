@@ -8,21 +8,17 @@ import doordonote.common.Util;
 
 public class RestoreHandler extends CommandHandler {
 
-	protected RestoreHandler(String commandBody) throws EmptyCommandBodyException {
+	protected RestoreHandler(String commandBody) throws Exception {
 		super(commandBody);
 		if (Util.isEmptyOrNull(commandBody)) {
-			throw new EmptyCommandBodyException();
+			throw new Exception(String.format(EXCEPTION_NO_ARGUMENT, "restore"));
 		}
 	}
 
 	@Override
-	public Command generateCommand() throws NumberFormatException, NegativeIndexException {
-		int indexToRestore = getTaskIdFromString(commandBody);
-		if (indexToRestore <= 0) {
-			throw new NegativeIndexException();
-		} else {
-			return new RestoreCommand(indexToRestore);
-		}	
+	public Command generateCommand() throws Exception {
+		int indexToRestore = getTaskIdFromString(commandBody, "restore");
+		return new RestoreCommand(indexToRestore);
 	}
 
 }
