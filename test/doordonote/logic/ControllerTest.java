@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import doordonote.common.Util;
 import doordonote.logic.UIState.ListType;
 import doordonote.storage.DuplicateTaskException;
 import doordonote.storage.Storage;
@@ -36,9 +37,9 @@ public class ControllerTest {
 		String description3 = "Task 3";
 		
 		storage = new StorageStub();
-		storage.add(description1, startDt1.toDate(), endDt1.toDate());
-		storage.add(description2, null, endDt2.toDate());
-		storage.add(description3, null, null);
+		storage.add(Util.createTask(description1, startDt1.toDate(), endDt1.toDate()));
+		storage.add(Util.createTask(description2, null, endDt2.toDate()));
+		storage.add(Util.createTask(description3, null, null));
 		
 		controller = new Controller(storage);
 	}
@@ -173,35 +174,5 @@ public class ControllerTest {
 					 controller.getState());
 	}
 	
-//	@Test
-//	public void redoTest() {
-//		fail("Not yet implemented");
-//	}
-//	
-//	@Test
-//	public void restoreTest() {
-//		fail("Not yet implemented");
-//	}
-//
-//	
-//	@Test
-//	public void undoTest() {
-//		fail("Not yet implemented");
-//	}
-//	
-//	@Test
-//	public void updateTest() {
-//		fail("Not yet implemented");
-//	}
-//	
-//	@Test
-//	public void pathTest() {
-//		fail("Not yet implemented");
-//	}
-//	
-//	@Test
-//	public void getTest() {
-//		fail("Not yet implemented");
-//	}
 
 }

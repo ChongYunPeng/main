@@ -52,6 +52,7 @@ public class LogicTest {
 		testStorage.add(floatingTask2);
 		testStorage.add(deadlineTask);
 		testStorage.finish(floatingTask2);
+		logic.getTasks();
 		
 		testUnfinishedTaskList = new ArrayList<Task>();
 		testFinishedTaskList = new ArrayList<Task>();
@@ -118,6 +119,7 @@ public class LogicTest {
 	@Test
 	public void deleteTest() throws Exception {
 		String feedback = logic.parseAndExecuteCommand("del 2");
+		
 		assertEquals("Check that feedback is correct", "Task \"Watch LOTR\" deleted", feedback);
 		
 		assertEquals("Check that UIState is correct", new UIState(), logic.getState());
@@ -136,19 +138,19 @@ public class LogicTest {
 	}
 	
 	@Test
-	public void finishTest() {
+	public void finishTest() throws Exception {
+		String feedback = logic.parseAndExecuteCommand("fin 2");
 		
-	}
+		assertEquals("Check that UIState is correct", new UIState(), logic.getState());
+		assertEquals("Check that feedback is correct", "Marked Task \"Watch LOTR\" as done", feedback);
+		
+		Task deletedTask = new FloatingTask("Watch LOTR");
+		testUnfinishedTaskList.remove(deletedTask);
+		assertEquals("Check that unfinished Task list is correct", testUnfinishedTaskList, logic.getTasks());
 
-	@Test
-	public void updateTest() {
-
+		
+		logic.parseAndExecuteCommand("view finished");
+		assertEquals("Check that finished Task list has 2 Tasks", 2, logic.getTasks().size());
 	}
-	
-	@Test
-	public void restoreTest() {
-
-	}
-	
 	
 }

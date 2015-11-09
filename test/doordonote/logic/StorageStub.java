@@ -4,10 +4,8 @@ package doordonote.logic;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import doordonote.common.Task;
-import doordonote.common.Util;
 import doordonote.storage.Storage;
 
 public class StorageStub implements Storage {
@@ -31,18 +29,6 @@ public class StorageStub implements Storage {
 	public String add(Task task) {
 		taskList.add(task);
 		return "Add is called";
-	}
-
-	@Override
-	public String add(String description, Date startDate, Date endDate) {
-		Task task = Util.createTask(description, startDate, endDate);
-		return add(task);
-	}
-
-	@Override
-	public String update(Task taskToUpdate, String description, Date startDate, Date endDate) {
-		Task task = Util.createTask(description, startDate, endDate);
-		return update(taskToUpdate,task);
 	}
 
 	@Override

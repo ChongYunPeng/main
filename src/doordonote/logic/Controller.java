@@ -30,7 +30,7 @@ public class Controller implements CommandToController {
 	private static final String MESSAGE_TASK_FOUND = "Task %1$s found!";
 	private static final String MESSAGE_FIND_BY_DATE = "Displaying tasks that ends after %1$s.";
 
-	private static final String EXCEPTION_INVALID_TASK_ID = "Task ID %1$s is not valid. There are only %2$s tasks in the list";
+	private static final String EXCEPTION_INVALID_TASK_ID = "Task ID %1$s is not valid. There are only %2$s task(s) in the list";
 	private static final String EXCEPTION_TASK_ALREADY_FINISH = "Task is already finished!";
 	private static final String EXCEPTION_CANNOT_UPDATE_FINISH_OR_DELETED_TASK = "Cannot update deleted/ finished tasks";
 	private static final int UNDO_STACK_SIZE = 10;
