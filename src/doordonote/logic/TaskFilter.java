@@ -24,22 +24,21 @@ public class TaskFilter {
 	
 	protected TaskFilter(Storage storage) {
 		this.storage = storage;
-//		try {
 		try {
 			fullTaskList = storage.readTasks();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fullTaskList = new ArrayList<Task>();
 		}
-//		} catch (Exception e) {
-//			// Creates an empty task list if there is error reading the storage file
-//			fullTaskList = new ArrayList<Task>();
-//			throw new IOException("Error opening storage file. Please use "
-//					+ "readFile to read from another storage file");
-//		}
 	}
 	
 	
+	/**
+	 * Filters the full task list based on the stateObj
+	 * 
+	 * @param stateObj
+	 * @return user task list based on the UIState object.
+	 * @throws IOException
+	 */
 	public List<Task> getUserTaskList(UIState stateObj) throws IOException {
 		fullTaskList = storage.readTasks();
 		assert (fullTaskList != null);
@@ -81,7 +80,6 @@ public class TaskFilter {
 				userTaskList.add(task);
 			}
 		}
-
 		return userTaskList;		
 	}
 
