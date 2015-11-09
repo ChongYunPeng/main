@@ -7,10 +7,10 @@ import doordonote.logic.UIToLogic;
 import doordonote.logic.UIState;
 import doordonote.ui.DateUtil;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.text.SimpleDateFormat;
-import java.io.IOException;
 import java.lang.StringBuilder;
 
 import org.apache.commons.lang.WordUtils;
@@ -727,7 +727,16 @@ public class UI extends Application {
 	public static HBox displayTasks(HBox main, int taskId, doordonote.logic.UIState.ListType listType) {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-		List<Task> taskList = logic.getTasks();
+		List<Task> taskList;
+		try {
+			taskList = logic.getTasks();
+		}
+		catch (Exception e) {
+			taskList = new ArrayList<Task>();
+			output.setText(e.getMessage());
+			output.setFill(Color.web("#F20505"));
+			
+		}
 
 		boolean haveEventsSpanningDays = checkForEventsSpanningDays(taskList, formatter);
 		boolean isHome = listType.equals(doordonote.logic.UIState.ListType.NORMAL);
@@ -1565,7 +1574,14 @@ public class UI extends Application {
 	public HBox displayDeletedOrFinishedTasks(HBox main) {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-		List<Task> taskList = logic.getTasks();
+		List<Task> taskList;
+		try {
+			taskList = logic.getTasks();
+		}
+		catch (Exception e) {
+			taskList = new ArrayList<Task>();
+		}
+		
 		boolean haveEventsOrDeadlines = true;
 		boolean haveFloatingTasks = false;
 		boolean haveSameDate = true;
