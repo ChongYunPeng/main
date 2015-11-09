@@ -40,10 +40,7 @@ public final class Util {
 	}
 	
 	
-	/**
-	 * @author A0131716M
-	 *
-	 */
+	//@@author A0131716M	
 	public static Task createTask(String description, Date startDate, Date endDate){
 		Task task = null;
 

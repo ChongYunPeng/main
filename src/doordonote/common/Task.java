@@ -57,11 +57,11 @@ public abstract class Task implements Comparable<Task>{
 	public abstract int hashCode();
 
 	public abstract boolean equals(Object obj);
-    
+
 	//@@author A0132785Y
 	public int compareTo(Task task){
-		
-        // if both tasks are floating tasks
+
+		// if both tasks are floating tasks
 		if (task.getEndDate() == null && getEndDate() == null) {
 			return getDescription().compareTo(task.getDescription());
 		} 
@@ -102,41 +102,38 @@ public abstract class Task implements Comparable<Task>{
 		// both tasks are events: if task is a single day event and other
 		// is a multiple day event
 		else if (task.getStartDate().getDate() == task.getEndDate().getDate()
-				 && getStartDate().getDate() != getEndDate().getDate()) {
+				&& getStartDate().getDate() != getEndDate().getDate()) {
 			return 1;
 		} 
 		// if task is a multiple day event and other is a single day event
 		else if (task.getStartDate().getDate() != task.getEndDate().getDate()
-				 && getStartDate().getDate() == getEndDate().getDate()) {
+				&& getStartDate().getDate() == getEndDate().getDate()) {
 			return -1;
 		} 
 		// if both tasks are single day events
 		else if (task.getStartDate().getDate() == task.getEndDate().getDate()
-				 && getStartDate().getDate() == getEndDate().getDate()) {
+				&& getStartDate().getDate() == getEndDate().getDate()) {
 			return getStartDate().compareTo(task.getStartDate());
 		} 
 		// if both tasks are multiple day events
 		else if (task.getStartDate().getDate() != task.getEndDate().getDate()
-				 && getStartDate().getDate() != getEndDate().getDate()) {
+				&& getStartDate().getDate() != getEndDate().getDate()) {
 			return getStartDate().compareTo(task.getStartDate());
 		} else {
 			return 0;
 		}
 	}
-	
-	/**
-	 * @@author A0131716M
-	 *
-	 */
 
+
+	//@@author A0131716M
 	public String toString(){
 		String str = "\"";
 		str += getDescription();
 		str += "\"";
 		return str.trim();
 	}
-	
-	
+
+
 
 
 }
