@@ -15,7 +15,7 @@ public interface UIToLogic {
 	 * @return A sorted {@code List<Task>}
 	 * @throws IOException 
 	 */
-	List<Task> getTasks();
+	List<Task> getTasks() throws IOException;
 	
 	/**
 	 * @param 	userInput

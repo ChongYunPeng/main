@@ -20,6 +20,8 @@ import doordonote.common.Task;
 import doordonote.storage.Storage;
 import doordonote.storage.StorageHandler;
 
+//@@author A0131436N
+
 public class LogicTest {
 	private static String currentPath = null;
 	private static Storage testStorage = null;
@@ -41,10 +43,9 @@ public class LogicTest {
 		Task floatingTask2 = new FloatingTask("Read Starwars");
 		Task deadlineTask = new DeadlineTask("Finish Report", dt1.toDate());
 
-
 		// Initialize the storage path
 		testStorage.path("test");
-		logic= new Logic();
+		logic = new Logic();
 		testStorage.clear();
 		testStorage.add(floatingTask1);
 		testStorage.add(floatingTask2);
@@ -66,7 +67,7 @@ public class LogicTest {
 		boolean success = new File("test.json").delete();
 		System.out.println("File deleted = " + success);
 	}
-	
+
 	@AfterClass
 	public static void restorePath() {
 		testStorage.get(currentPath);
@@ -92,7 +93,7 @@ public class LogicTest {
 		assertEquals("Check that task list is correct", testUnfinishedTaskList, logic.getTasks());
 
 	}
-	
+
 	@Test
 	public void addExceptionTest() {
 		try {
@@ -109,12 +110,26 @@ public class LogicTest {
 					"add command requires arguments. Type 'help add' for more details.", e.getMessage());
 		}
 	}
-	
-	
+
 	@Test
 	public void deleteTest() {
-		
-		
+
+	}
+	
+	@Test
+	public void finishTest() {
+
 	}
 
+	@Test
+	public void updateTest() {
+
+	}
+	
+	@Test
+	public void restoreTest() {
+
+	}
+	
+	
 }
