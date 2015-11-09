@@ -5,7 +5,6 @@ package doordonote.storage;
  * @author A0131716M
  *
  */
-
 public class Originator {
 	private String state;
 

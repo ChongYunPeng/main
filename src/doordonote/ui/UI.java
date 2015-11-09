@@ -865,7 +865,7 @@ public class UI extends Application {
 		for (int i = 0; i < taskList.size(); i++) {
 			if (!(taskList.get(i).getType().equals(TYPE_FLOATING))) {
 				if (taskList.get(i).getType().equals(TYPE_EVENT)) {
-					if (checkIfMultipleDayEvent(taskList.get(i), formatter)) {
+					if (DateUtil.checkIfMultipleDayEvent(taskList.get(i), formatter)) {
 						continue;
 					}
 				}
@@ -926,12 +926,12 @@ public class UI extends Application {
 					haveSameDate = true;
 					if (!(taskList.get(j).getType().equals(TYPE_FLOATING))) {
 						if (taskList.get(j).getType().equals(TYPE_EVENT)) {
-							if (checkIfMultipleDayEvent(taskList.get(j), formatter)) {
+							if (DateUtil.checkIfMultipleDayEvent(taskList.get(j), formatter)) {
 								continue;
 							}
 						}
 
-						if (checkForSameDay(taskList.get(i), taskList.get(j)))
+						if (DateUtil.checkForSameDay(taskList.get(i), taskList.get(j)))
 							haveSameDate = false;
 						else {
 							Text taskDesc2;
@@ -992,7 +992,7 @@ public class UI extends Application {
 	
 	public static String getDateToBeDisplayedString(Task task) {
 
-		Calendar calEnd = DateUtil.DateToCalendar(task.getEndDate());
+		Calendar calEnd = DateUtil.dateToCalendar(task.getEndDate());
 		String day = DateUtil.getDay(calEnd);
 		String month = DateUtil.getMonth(calEnd);
 		int date = calEnd.get(Calendar.DAY_OF_MONTH);
@@ -1009,7 +1009,7 @@ public class UI extends Application {
 	
 	public static String getDeadlineString(Task task) {
 		
-		Calendar calEnd = DateUtil.DateToCalendar(task.getEndDate());
+		Calendar calEnd = DateUtil.dateToCalendar(task.getEndDate());
 		String timeEnd = DateUtil.getTime(calEnd);
 		
 		String taskString = count++ + ". " + "[by " + timeEnd + "] " + task.getDescription();
@@ -1020,41 +1020,15 @@ public class UI extends Application {
 	
 	public static String getSingleDayEventString(Task task) {
 		
-		Calendar calStart = DateUtil.DateToCalendar(task.getStartDate());
+		Calendar calStart = DateUtil.dateToCalendar(task.getStartDate());
 		String timeStart = DateUtil.getTime(calStart);
 		
-		Calendar calEnd = DateUtil.DateToCalendar(task.getEndDate());
+		Calendar calEnd = DateUtil.dateToCalendar(task.getEndDate());
 		String timeEnd = DateUtil.getTime(calEnd);
 		
 		String taskString = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + task.getDescription();
 		
 		return taskString;
-	}
-	
-	public static boolean checkForSameDay(Task task1, Task task2) {
-		
-		Calendar calEnd1 = DateUtil.DateToCalendar(task1.getEndDate());
-		String month1 = DateUtil.getMonth(calEnd1);
-		int date1 = calEnd1.get(Calendar.DAY_OF_MONTH);
-		
-		Calendar calEnd2 = DateUtil.DateToCalendar(task2.getEndDate());
-		String month2 = DateUtil.getMonth(calEnd2);
-		int date2 = calEnd2.get(Calendar.DAY_OF_MONTH);
-		
-		boolean isNotSameDate = date1 != date2 || !(month1.equals(month2));
-		
-		return isNotSameDate;
-		
-	}
-	
-	public static boolean checkIfMultipleDayEvent(Task task, SimpleDateFormat formatter) {
-		
-		String startDate = formatter.format(task.getStartDate());
-		String endDate = formatter.format(task.getEndDate());
-
-		boolean isMultipleDayEvent = !(startDate.equals(endDate));
-		
-		return isMultipleDayEvent;
 	}
 
 	public static VBox displayEventsSpanningDays(int taskId, boolean isHome, List<Task> taskList,
@@ -1118,13 +1092,13 @@ public class UI extends Application {
 	
 	public static String getMultipleDayEventString(Task task) {
 		
-		Calendar calStart = DateUtil.DateToCalendar(task.getStartDate());
+		Calendar calStart = DateUtil.dateToCalendar(task.getStartDate());
 		String startDay = DateUtil.getDay(calStart);
 		String startMonth = DateUtil.getMonth(calStart);
 		String startTime = DateUtil.getTime(calStart);
 		int startDate = calStart.get(Calendar.DAY_OF_MONTH);
 
-		Calendar calEnd = DateUtil.DateToCalendar(task.getEndDate());
+		Calendar calEnd = DateUtil.dateToCalendar(task.getEndDate());
 		String endDay = DateUtil.getDay(calEnd);
 		String endMonth = DateUtil.getMonth(calEnd);
 		String endTime = DateUtil.getTime(calEnd);
@@ -1689,7 +1663,7 @@ public class UI extends Application {
 					}
 				}
 
-				Calendar calEnd = DateUtil.DateToCalendar(taskList.get(i).getEndDate());
+				Calendar calEnd = DateUtil.dateToCalendar(taskList.get(i).getEndDate());
 				String day = DateUtil.getDay(calEnd);
 				String month = DateUtil.getMonth(calEnd);
 				int date = calEnd.get(Calendar.DAY_OF_MONTH);
@@ -1709,7 +1683,7 @@ public class UI extends Application {
 					task = count++ + ". " + "[by " + timeEnd + "] " + taskList.get(i).getDescription();
 					taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
 				} else {
-					Calendar calStart = DateUtil.DateToCalendar(taskList.get(i).getStartDate());
+					Calendar calStart = DateUtil.dateToCalendar(taskList.get(i).getStartDate());
 					String timeStart = DateUtil.getTime(calStart);
 					task = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + taskList.get(i).getDescription();
 					taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
@@ -1729,7 +1703,7 @@ public class UI extends Application {
 								continue;
 							}
 						}
-						Calendar calEnd2 = DateUtil.DateToCalendar(taskList.get(j).getEndDate());
+						Calendar calEnd2 = DateUtil.dateToCalendar(taskList.get(j).getEndDate());
 						String month2 = DateUtil.getMonth(calEnd2);
 						int date2 = calEnd2.get(Calendar.DAY_OF_MONTH);
 						String timeEnd2 = DateUtil.getTime(calEnd2);
@@ -1741,7 +1715,7 @@ public class UI extends Application {
 								task = count++ + ". " + "[by " + timeEnd2 + "] " + taskList.get(j).getDescription();
 								taskDesc2 = new Text(WordUtils.wrap(task, 62, "\n", true));
 							} else {
-								Calendar calStart2 = DateUtil.DateToCalendar(taskList.get(j).getStartDate());
+								Calendar calStart2 = DateUtil.dateToCalendar(taskList.get(j).getStartDate());
 								String timeStart2 = DateUtil.getTime(calStart2);
 								task = count++ + ". " + "[" + timeStart2 + "-" + timeEnd2 + "] "
 										+ taskList.get(j).getDescription();
@@ -1818,13 +1792,13 @@ public class UI extends Application {
 						String end = formatter.format(taskList.get(i).getEndDate());
 
 						if (!(start.equals(end))) {
-							Calendar calStart = DateUtil.DateToCalendar(taskList.get(i).getStartDate());
+							Calendar calStart = DateUtil.dateToCalendar(taskList.get(i).getStartDate());
 							String startDay = DateUtil.getDay(calStart);
 							String startMonth = DateUtil.getMonth(calStart);
 							String startTime = DateUtil.getTime(calStart);
 							int startDate = calStart.get(Calendar.DAY_OF_MONTH);
 
-							Calendar calEnd = DateUtil.DateToCalendar(taskList.get(i).getEndDate());
+							Calendar calEnd = DateUtil.dateToCalendar(taskList.get(i).getEndDate());
 							String endDay = DateUtil.getDay(calEnd);
 							String endMonth = DateUtil.getMonth(calEnd);
 							String endTime = DateUtil.getTime(calEnd);

@@ -5,7 +5,6 @@ package doordonote.storage;
  * @author A0131716M
  *
  */
-
 public class Memento {
 	private String state;
 

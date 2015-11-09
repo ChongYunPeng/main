@@ -44,6 +44,8 @@ public class TaskWriter {
 
 	private static String currentFile;
 	TaskReader reader;
+	
+	//This parameter is to check if file is a valid Json file. Freeze operations if file is not valid.
 	private static boolean isValidJson = true;
 
 
