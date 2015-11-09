@@ -1,7 +1,6 @@
 //@@author A0131716M
 package doordonote.storage;
 
-import java.util.Date;
 
 /**
  * @@author A0131716M
@@ -21,9 +20,6 @@ public interface Storage {
 	public String path(String location);
 	public String get(String location);
 	public String add(Task task)throws DuplicateTaskException, IOException;
-	public String add(String description, Date startDate, Date endDate)throws DuplicateTaskException, IOException;
-	public String update(Task taskToUpdate, String descirption,
-			Date startDate, Date endDate)throws DuplicateTaskException, IOException;
 	public String update(Task oldTask, Task newTask)throws DuplicateTaskException, IOException;
 	public String delete(Task taskToDelete) throws IOException;
 	public String remove(Task taskToRemove) throws IOException;

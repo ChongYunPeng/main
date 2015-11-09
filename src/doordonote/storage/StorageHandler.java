@@ -1,14 +1,11 @@
 //@@author A0131716M
 package doordonote.storage;
 
-import java.util.Date;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
-import doordonote.common.DeadlineTask;
-import doordonote.common.EventTask;
-import doordonote.common.FloatingTask;
+
 import doordonote.common.Task;
 
 
@@ -41,8 +38,7 @@ public class StorageHandler implements Storage {
 	private static final String MESSAGE_PATH_CREATE = "Creating file \"%1$s\". Reading from this file.";
 	private static final String MESSAGE_PATH_EXISTS = "File exists. Saving to \"%1$s\"";
 	private static final String MESSAGE_INVALID_PATH = "Path is invalid or DoOrDoNote does not have access to directory!";
-	private static final String MESSAGE_INVALID_TASK = "Invalid tasks parameters!";
-
+	
 	protected TaskWriter writer;
 	protected TaskReader reader;
 	private static StorageHandler storageHandler;
@@ -109,17 +105,6 @@ public class StorageHandler implements Storage {
 		catch(DuplicateTaskException e){
 			throw e;
 		}
-	}
-
-	public String add(String description, Date startDate, Date endDate) throws DuplicateTaskException, IOException{
-		Task task = createTask(description, startDate, endDate);
-		return add(task);
-	}
-
-
-	public String update(Task taskToUpdate, String description, Date startDate, Date endDate) throws DuplicateTaskException, IOException {
-		Task updatedTask = createTask(description, startDate, endDate);
-		return update(taskToUpdate, updatedTask);
 	}
 
 	public String update(Task taskToUpdate, Task updatedTask) throws DuplicateTaskException, IOException {
@@ -231,22 +216,6 @@ public class StorageHandler implements Storage {
 
 	public String getCurrentFilePath(){
 		return reader.getFileName();
-	}
-
-	private Task createTask(String description, Date startDate,
-			Date endDate){
-		Task task = null;
-		if(description!=null && startDate==null && endDate==null){
-			task = new FloatingTask(description);
-		} else if(description!=null && startDate==null && endDate!=null){
-			task = new DeadlineTask(description, endDate);
-		} else if(description!=null && startDate!=null && endDate!=null){
-			task = new EventTask(description, startDate, endDate);
-		} else {
-			assert (task != null): MESSAGE_INVALID_TASK;
-		}
-
-		return task;
 	}
 
 	private String shortenTaskName(Task task){
