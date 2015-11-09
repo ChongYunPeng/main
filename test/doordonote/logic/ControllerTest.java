@@ -63,7 +63,7 @@ public class ControllerTest {
 		
 		// Testing if add is called and if ListType is set to Normal
 		assertEquals("Test if storage.add() is called", "Add is called", feedBack);
-		assertEquals("Test if UISTATE is updated correctly", testStateObj1, controller.getState());
+		assertEquals("Test if UIState is updated correctly", testStateObj1, controller.getState());
 		
 		UIState testStateObj2 = new UIState();
 		List<String> filterList = new ArrayList<String>();
@@ -71,12 +71,13 @@ public class ControllerTest {
 		testStateObj2.filterList = filterList;
 		testStateObj2.idNewTask = 1;
 		controller.stateObj.filterList = filterList;
+		controller.getTaskList();
 		controller.add("test task 3", null, null);
 		
 		
 		// Testing if add maintains the same filterList if task added
 		// can be seen from current list
-		assertEquals("Test if UISTATE maintains the filter criteria", testStateObj2, controller.getState());
+		assertEquals("Test if UIState maintains the filter criteria", testStateObj2, controller.getState());
 	}
 	
 	@Test
