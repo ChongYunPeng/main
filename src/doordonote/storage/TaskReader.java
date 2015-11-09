@@ -100,10 +100,10 @@ public class TaskReader {
 	//This method reads the current json file and returns an
 	//arraylist of Task sorted by Date. FloatingTasks are
 	//at the back of this ArrayList
-	protected ArrayList<Task> readTasks() throws IOException{
-		if(isValidJson){
-			TaskWriter.setValidJson();
+	protected ArrayList<Task> readTasks() throws IOException{			
 			set = jsonToSet();
+			if(isValidJson){
+			TaskWriter.setValidJson();
 			ArrayList<Task> listTask = new ArrayList<Task>();
 			if(set == null){
 				FileWriter writer = new FileWriter(currentFile);

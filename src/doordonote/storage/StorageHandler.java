@@ -39,7 +39,7 @@ public class StorageHandler implements Storage {
 	private static final String MESSAGE_EVENTS_CLASHED = "Task %1$s added but clashes with %2$s";
 	private static final String MESSAGE_READ = "Reading from file \"%1$s\"";
 	private static final String MESSAGE_PATH_CREATE = "Creating file \"%1$s\". Reading from this file.";
-	private static final String MESSAGE_PATH_EXISTS = "File exists. Reading from \"%1$s\"";
+	private static final String MESSAGE_PATH_EXISTS = "File exists. Saving to \"%1$s\"";
 	private static final String MESSAGE_INVALID_PATH = "Path is invalid or DoOrDoNote does not have access to directory!";
 	private static final String MESSAGE_INVALID_TASK = "Invalid tasks parameters!";
 

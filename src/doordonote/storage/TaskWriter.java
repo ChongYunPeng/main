@@ -88,24 +88,27 @@ public class TaskWriter {
 		File file = new File(fileName);
 		if(file.exists()){
 			file = new File(fileName);
+			currentFile = fileName;	
 			try{
 				writeToFile(currentJsonString);
 				writeToSettings(fileName);
 			}
 			catch (IOException e){
 				throw e;
-			}
-			currentFile = fileName;			
+			}					
 			TaskReader.setCurrentFile(fileName);
 			careTaker.resetUndo();
 			return 1;
-
 		} else{
-			try{
+			try{				
 				file.createNewFile();
 				writeToSettings(fileName);
 				currentFile = fileName;
+				if(isValidJson){
 				writeToFile(currentJsonString);
+				} else{
+					writeToFile(INITIAL_JSONSTRING);
+				}
 			}
 			catch (IOException e){
 				throw e;
