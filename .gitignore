@@ -2,5 +2,6 @@
 .project
 .classpath
 .*
+/*.json
 data.json
 settings.dodn
