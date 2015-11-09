@@ -110,14 +110,8 @@ public class UI extends Application {
 	private static UIToLogic logic = null;
 
 	public UI() {
-		
-		try {
-			logic = new Logic();
-			count = 1;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		logic = new Logic();
+		count = 1;
 	}
 
 	@Override

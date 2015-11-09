@@ -20,6 +20,7 @@ import doordonote.storage.StorageHandler;
 public class Controller implements CommandToController {
 	
 	private static final String MESSAGE_HOME = "Displaying all unfinished task(s)";
+	private static final int UNDO_STACK_SIZE = 10;
 	
 	protected Storage storage = null;
 	protected UIState stateObj = null;
@@ -31,11 +32,7 @@ public class Controller implements CommandToController {
 	protected Stack<UIState> redoStack = null;
 	
 	
-	/**
-	 * 
-	 * @throws IOException
-	 */
-	public Controller() throws IOException {
+	public Controller() {
 		this(StorageHandler.getInstance());
 	}
 	
@@ -45,41 +42,42 @@ public class Controller implements CommandToController {
 	 * Constructor used for injection dependency to replace Storage with a stub for testing
 	 * @throws IOException 
 	 */
-	protected Controller(Storage storage) throws IOException {
+	protected Controller(Storage storage) {
 		this.storage = storage;
 		stateObj = new UIState();
 		taskFilter = new TaskFilter(storage);
 		undoStack = new LinkedList<UIState>();
 		redoStack = new Stack<UIState>();
 		userTaskList = new ArrayList<Task>();
-		updateTaskList();
+		try {
+			updateTaskList();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public String add(String taskDescription, Date startDate, Date endDate) throws IOException, DuplicateTaskException {
-		// Should have checked this in Command
 		assert(!Util.isEmptyOrNull(taskDescription));
 		
-//		stateObj.clearTempState();
 		List<Task> oldTaskList = userTaskList;
-		
 		Task taskToBeAdded = Util.createTask(taskDescription, startDate, endDate);
+		String outputMsg = storage.add(taskToBeAdded);
+		addCurrentStateToUndoStackAndClearRedoStack();
 		
-		String outputMsg;
-		try {
-			outputMsg = storage.add(taskToBeAdded);
-		} catch (DuplicateTaskException e) {
-			// TODO add a logger here
-			throw e;
-		}		
-		
-		
-		
+		updateTaskList();
+		setUIStateOnAdd(oldTaskList);
+		stateObj.idNewTask = getNewTaskId(taskToBeAdded);
+		return outputMsg;
+	}
+
+	private void setUIStateOnAdd(List<Task> oldTaskList) throws IOException {
 		if (stateObj.displayType != ListType.NORMAL) {
 			stateObj.setDefault();
 		} else {
-			updateTaskList();
 			List<Task> newTaskList = userTaskList;
+			
 			assert(newTaskList != null && oldTaskList != null);
 			if (newTaskList.size() > oldTaskList.size()) {
 				stateObj.clearTempState();				
@@ -87,13 +85,10 @@ public class Controller implements CommandToController {
 				stateObj.setDefault();
 			}
 		}
-		stateObj.idNewTask = getNewTaskId(taskToBeAdded);
-		return outputMsg;
 	}
 
 	@Override
 	public String delete(int taskId) throws Exception {
-//		stateObj.clearTempState();
 		Task taskToDelete = getTask(taskId);
 		String outputMsg = null;
 		if (stateObj.displayType == ListType.DELETED) {
@@ -102,10 +97,11 @@ public class Controller implements CommandToController {
 			outputMsg = storage.delete(taskToDelete);
 
 		}
+		addCurrentStateToUndoStackAndClearRedoStack();
 		return outputMsg;
 	}
 	
-	protected Task getTask(int taskId) throws Exception {
+	private Task getTask(int taskId) throws Exception {
 		if (taskId > userTaskList.size()) {
 			throw new Exception("Invalid taskID!");
 		}
@@ -115,11 +111,10 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String find(List<String> keywords) throws IOException {
-//		stateObj.clearTempState();
 		stateObj.filterList = keywords;
 		stateObj.filterDate = null;
 		
-		 updateTaskList();
+		updateTaskList();
 		
 		if (!userTaskList.isEmpty()) {
 			return userTaskList.size() + " task(s) found";
@@ -129,58 +124,61 @@ public class Controller implements CommandToController {
 	}
 
 	@Override
-	public String finish(int taskId) throws Exception {
-//		stateObj.clearTempState();
-		
+	public String finish(int taskId) throws Exception {		
 		if (stateObj.displayType == ListType.FINISHED) {
 			throw new Exception("Task is already finished!");
 		}
 
 		Task taskToFinish = getTask(taskId);
 		String outputMsg = storage.finish(taskToFinish);
+		addCurrentStateToUndoStackAndClearRedoStack();
+
     	return outputMsg;
 	}
 	
 	@Override
 	public UIState getState() {
 		UIState copyOfUIState = new UIState(stateObj);
-//		stateObj.clearTempState();
+		stateObj.clearTempState();
 		return copyOfUIState;
 	}
 
 	@Override
 	public String help() {
-//		stateObj.clearTempState();
 		stateObj.helpBox = "help";
 		return "Displaying help";
 	}
 
 	@Override
 	public String help(String commandType) {
-//		stateObj.clearTempState();
-
 		stateObj.helpBox = commandType;
 		return "Displaying help";
 	}
 
 	@Override
 	public String redo() throws IOException {
-		stateObj.setDefault();
 		String outputMsg = storage.redo();
+		if (redoStack.isEmpty()) {
+			return outputMsg;
+		}
+		stateObj = redoStack.pop();
+		undoStack.push(new UIState(stateObj));
 		return outputMsg;
 	}
 
 	@Override
 	public String undo() throws IOException {
-		stateObj.setDefault();
 		String outputMsg = storage.undo();
+		if (undoStack.isEmpty()) {
+			return outputMsg;
+		}
+		stateObj = undoStack.pop();
+		redoStack.push(new UIState(stateObj));
 		return outputMsg;
 	}
 
 	@Override
 	public String update(int taskId, String taskDescription, Date startDate, Date endDate) throws Exception {
-//		stateObj.clearTempState();
-
 		if (stateObj.displayType == ListType.FINISHED || stateObj.displayType == ListType.DELETED) {
 			throw new Exception("Cannot update deleted/ finished tasks!");
 		}
@@ -188,6 +186,7 @@ public class Controller implements CommandToController {
 		Task taskToUpdate = getTask(taskId);
 		Task newTask = Util.createTask(taskDescription, startDate, endDate);
 		String outputMsg = storage.update(taskToUpdate, newTask);
+		addCurrentStateToUndoStackAndClearRedoStack();
 
 		updateTaskList();
 		
@@ -205,14 +204,14 @@ public class Controller implements CommandToController {
 
 	@Override
 	public String restore(int taskId) throws Exception {
-//		stateObj.clearTempState();
-
 		if (stateObj.displayType == ListType.NORMAL) {
 			throw new Exception("Cannot restore an undeleted/ unfinished task!");
 		}
 		
 		Task taskToRestore = getTask(taskId);
 		String outputMsg = storage.restore(taskToRestore);
+		addCurrentStateToUndoStackAndClearRedoStack();
+		
 		return outputMsg;
 	}
 
@@ -234,7 +233,6 @@ public class Controller implements CommandToController {
 	
 	@Override
 	public String getTaskStringById(int taskId) throws Exception {
-//		stateObj.clearTempState();
 		Task taskToBeUpdated = getTask(taskId);
 		stateObj.inputBox = getTaskToBeUpdated(taskToBeUpdated, taskId);
 		stateObj.idNewTask = -1;
@@ -260,19 +258,6 @@ public class Controller implements CommandToController {
 		return "update " + taskId + " " + taskString;
 	}
 	
-	/**
-	 * @param oldTaskList
-	 * @return taskId of new task added
-	 * @throws IOException 
-	 */
-	protected int getNewTaskId(Task newTask) throws IOException {
-		updateTaskList();
-		return userTaskList.indexOf(newTask);
-	}
-
-	private void updateTaskList() throws IOException {
-		userTaskList = taskFilter.getUserTaskList(stateObj);
-	}
 	
 	@Override
 	public List<Task> getTaskList() throws IOException {
@@ -281,12 +266,12 @@ public class Controller implements CommandToController {
 	}
 	
 	@Override
-	public String find(Date startDate) throws IOException {
-		assert(startDate != null);
+	public String find(Date filterDate) throws IOException {
+		assert(filterDate != null);
 //		stateObj.clearTempState();
-		stateObj.filterDate = startDate;
+		stateObj.filterDate = filterDate;
 		stateObj.filterList = null;
-		return "Displaying from " + Util.getDateString(startDate);
+		return "Displaying from " + Util.getDateString(filterDate);
 	}
 
 	@Override
@@ -294,22 +279,46 @@ public class Controller implements CommandToController {
 //		stateObj.clearTempState();
 		assert(pathName != null);
 		String feedback = storage.get(pathName);
+		undoStack.clear();
+		redoStack.clear();
+		
 		stateObj.setDefault();
 		return feedback;
 	}
 
 	@Override
 	public String saveFileAt(String pathName) {
-//		stateObj.clearTempState();
 		assert(pathName != null);
 		String feedback = storage.path(pathName);
+		undoStack.clear();
+		redoStack.clear();
+		
 		stateObj.setDefault();
 		return feedback;
 	}
 
 	@Override
 	public String getCurrentFilePath() {
-//		stateObj.clearTempState();
 		return "Currently reading from: " + storage.getCurrentFilePath();
+	}
+	
+	private int getNewTaskId(Task newTask) throws IOException {
+		updateTaskList();
+		return userTaskList.indexOf(newTask);
+	}
+	
+	private void updateTaskList() throws IOException {
+		userTaskList = taskFilter.getUserTaskList(stateObj);
+	}
+
+	/**
+	 * Adds current UIState to undoStack and clear redoStack
+	 */
+	private void addCurrentStateToUndoStackAndClearRedoStack() {
+		undoStack.push(new UIState(stateObj));
+		redoStack.clear();
+		if (undoStack.size() > UNDO_STACK_SIZE) {
+			undoStack.removeLast();
+		}
 	}
 }

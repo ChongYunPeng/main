@@ -22,10 +22,15 @@ public class TaskFilter {
 	protected Storage storage = null;
 	protected ArrayList<Task> fullTaskList = null;
 	
-	protected TaskFilter(Storage storage) throws IOException {
+	protected TaskFilter(Storage storage) {
 		this.storage = storage;
 //		try {
-		fullTaskList = storage.readTasks();
+		try {
+			fullTaskList = storage.readTasks();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		} catch (Exception e) {
 //			// Creates an empty task list if there is error reading the storage file
 //			fullTaskList = new ArrayList<Task>();
@@ -34,9 +39,6 @@ public class TaskFilter {
 //		}
 	}
 	
-//	protected void setStorage(Storage storage) {
-//		this.storage = storage;
-//	}
 	
 	public List<Task> getUserTaskList(UIState stateObj) throws IOException {
 		fullTaskList = storage.readTasks();
@@ -72,10 +74,10 @@ public class TaskFilter {
 		return userTaskList;
 	}
 	
-	protected List<Task> filterByDate(List<Task> unfilteredUserTaskList, Date startDate) {
+	protected List<Task> filterByDate(List<Task> unfilteredUserTaskList, Date filterDate) {
 		List<Task> userTaskList = new ArrayList<Task>();
 		for (Task task : unfilteredUserTaskList) {
-			if (task.getEndDate() != null && task.getEndDate().after(startDate)) {
+			if (task.getEndDate() != null && task.getEndDate().after(filterDate)) {
 				userTaskList.add(task);
 			}
 		}

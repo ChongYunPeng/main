@@ -21,8 +21,8 @@ public class DateParser {
 	protected Parser natty = null;
 
 	protected DateParser() {
+		BasicConfigurator.configure();
 		natty = new Parser();
-    	BasicConfigurator.configure();
 	}
 	
 	public Date parse(String input) {

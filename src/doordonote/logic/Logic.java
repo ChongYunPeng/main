@@ -11,21 +11,36 @@ import doordonote.common.Task;
 
 //@@author A0131436N
 
+/**
+ * Entry to the Logic component.
+ * 
+ * @author yunpeng
+ *
+ */
 public class Logic implements UIToLogic {
+	protected static final String EXCEPTION_CORRUPTED_FILE = 
+			"Storage file is corrupted. Use 'readfrom' or 'save' to read from or create new file";
+
 	protected CommandFactory cmdFactory = null;
 	protected CommandToController controller = null;
-	
-	public Logic() throws IOException {
+
+	public Logic() {
 		cmdFactory = new CommandFactory();
 		controller = new Controller();
 	}
-	
+
 	@Override
 	public String parseAndExecuteCommand(String userInput) throws Exception {
 		Command cmd = cmdFactory.parse(userInput);
-		return cmd.execute(controller);
+		String feedback;
+		try {
+			feedback = cmd.execute(controller);
+		} catch (IOException e) {
+			throw new IOException(EXCEPTION_CORRUPTED_FILE);
+		}
+		return feedback;
 	}
-	
+
 	@Override
 	public UIState getState() {
 		return controller.getState();
@@ -37,11 +52,9 @@ public class Logic implements UIToLogic {
 		try {
 			taskList = controller.getTaskList();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			throw new IOException(EXCEPTION_CORRUPTED_FILE);
 		}
 		return taskList;
 	}
-	
 
 }

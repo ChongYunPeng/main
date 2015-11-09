@@ -1,5 +1,6 @@
 package doordonote.logic;
 
+import java.io.IOException;
 import java.util.List;
 
 import doordonote.common.Task;
@@ -9,9 +10,10 @@ import doordonote.common.Task;
 public interface UIToLogic {
 	/** 
 	 * Gets a list of Tasks filtered based on the UIState object.
-	 * Tasks in the list should be sorted.
+	 * Tasks in the list is sorted.
 	 * 
-	 * @return A sorted {@code List<Task}
+	 * @return A sorted {@code List<Task>}
+	 * @throws IOException 
 	 */
 	List<Task> getTasks();
 	
@@ -24,5 +26,10 @@ public interface UIToLogic {
 	 * 			input is not executed properly.
 	 */
 	String parseAndExecuteCommand(String userInput) throws Exception;
+	
+	/**
+	 * 
+	 * @return UIState object that will be interpreted by UI
+	 */
 	UIState getState();
 }
