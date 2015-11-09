@@ -214,81 +214,12 @@ public class UI extends Application {
 							UIState state = logic.getState();
 
 							if (state.getHelpBox() == null) {
-								output.setText(feedback);
-								output.setFill(Color.web("#00811C"));
-		
-								border.setCenter(addMainDisplay(state.getIdNewTask() + 1, state.getDisplayType()));
-								border.setTop(addHeader(state.getDisplayType()));
-								
-								if (state.getTitle() != null) {
-									title.setText(state.getTitle());
-								}
-								if (state.getInputBox() == null || state.getInputBox() == "") {
-									commandBox.clear();
-								} else {
-									commandBox.setText(state.getInputBox());
-									commandBox.positionCaret(state.getInputBox().length() + 1);
-								}
+								handleNonHelpCommand(feedback, state, commandBox);
 							} else {
-								output.setText(feedback);
-								output.setFill(Color.web("#00811C"));
-
-								Stage helpStage;
-								switch (state.getHelpBox()) {
-								case HELP_ADD: {
-									// Fallthrough
-								}
-								case HELP_DELETE: {
-									// Fallthrough
-								}
-								case HELP_FIND: {
-									// Fallthrough
-								}
-								case HELP_FINISH: {
-									// Fallthrough
-								}
-								case HELP_READFROM: {
-									// Fallthrough
-								}
-								case HELP_SAVE: {
-									// Fallthrough
-								}
-								case HELP_RESTORE: {
-									// Fallthrough
-								}
-								case HELP_VIEW: {
-									// Fallthrough
-								}
-								case HELP_UPDATE: {
-									helpStage = createHelpCommandWindow(state.getHelpBox());
-									break;
-								}
-								default: {
-									helpStage = createHelpWindow();
-									break;
-								}
-								}
-
-								helpStage.show();
-								helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-									@Override
-									public void handle(KeyEvent evt) {
-										if (evt.getCode().equals(KeyCode.ESCAPE)
-												|| evt.getCode().equals(KeyCode.ENTER)) {
-											helpStage.close();
-										}
-									}
-								});
-								commandBox.clear();
+								handleHelpCommand(feedback, state, commandBox);
 							}
 						} catch (Exception e) {
-							feedback = e.getMessage();							
-							UIState state = logic.getState();
-
-							border.setCenter(addMainDisplay(0, state.getDisplayType()));
-							
-							output.setText(feedback);
-							output.setFill(Color.web("#F20505"));
+							handleExecutionException(e.getMessage());
 						}
 					} else {
 						feedback = MESSAGE_NO_INPUT;
@@ -299,167 +230,67 @@ public class UI extends Application {
 
 				if (ke.getCode().equals(KeyCode.ESCAPE)) {
 					try {
-
 						feedback = logic.parseAndExecuteCommand(COMMAND_HOME);
 						UIState state = logic.getState();
 
-						output.setText(feedback);
-						output.setFill(Color.web("#00811C"));
-						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						border.setTop(addHeader(state.getDisplayType()));
-						if (state.getTitle() != null) {
-							title.setText(state.getTitle());
-						}
-						
-						commandBox.clear();
+						handleNonHelpCommand(feedback, state, commandBox);
 					} catch (Exception e) {
-						feedback = e.getMessage();
-						UIState state = logic.getState();
-						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						
-						output.setText(feedback);
-						output.setFill(Color.web("#F20505"));
+						handleExecutionException(e.getMessage());
 					}
 				}
 
 				if (ke.getCode().equals(KeyCode.Z) && ke.isShortcutDown()) {
 					try {
-
 						feedback = logic.parseAndExecuteCommand(COMMAND_UNDO);
 						UIState state = logic.getState();
 						
-						output.setText(feedback);
-						output.setFill(Color.web("#00811C"));
-						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						border.setTop(addHeader(state.getDisplayType()));
-						if (state.getTitle() != null) {
-							title.setText(state.getTitle());
-						}
-						
-						commandBox.clear();
+						handleNonHelpCommand(feedback, state, commandBox);
 					} catch (Exception e) {
-						feedback = e.getMessage();
-						UIState state = logic.getState();
-						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						
-						output.setText(feedback);
-						output.setFill(Color.web("#F20505"));
+						handleExecutionException(e.getMessage());
 					}
 				}
 
 				if (ke.getCode().equals(KeyCode.Y) && ke.isShortcutDown()) {
 					try {
-
 						feedback = logic.parseAndExecuteCommand(COMMAND_REDO);
 						UIState state = logic.getState();
 						
-						output.setText(feedback);
-						output.setFill(Color.web("#00811C"));
-						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						border.setTop(addHeader(state.getDisplayType()));
-						if (state.getTitle() != null) {
-							title.setText(state.getTitle());
-						}
-						
-						commandBox.clear();
+						handleNonHelpCommand(feedback, state, commandBox);
 					} catch (Exception e) {
-						feedback = e.getMessage();
-						UIState state = logic.getState();
-						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						
-						output.setText(feedback);
-						output.setFill(Color.web("#F20505"));
+						handleExecutionException(e.getMessage());
 					}
 				}
 
 				if (ke.getCode().equals(KeyCode.D) && ke.isShortcutDown()) {
 					try {
-
 						feedback = logic.parseAndExecuteCommand(COMMAND_DISPLAY_DELETE);
 						UIState state = logic.getState();
 						
-						output.setText(feedback);
-						output.setFill(Color.web("#00811C"));
-						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						border.setTop(addHeader(state.getDisplayType()));
-						if (state.getTitle() != null) {
-							title.setText(state.getTitle());
-						}
-						
-						commandBox.clear();
+						handleNonHelpCommand(feedback, state, commandBox);
 					} catch (Exception e) {
-						feedback = e.getMessage();
-						UIState state = logic.getState();
-						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						
-						output.setText(feedback);
-						output.setFill(Color.web("#F20505"));
+						handleExecutionException(e.getMessage());
 					}
 				}
 
 				if (ke.getCode().equals(KeyCode.F) && ke.isShortcutDown()) {
 					try {
-						
 						feedback = logic.parseAndExecuteCommand(COMMAND_DISPLAY_FINISH);
 						UIState state = logic.getState();
 						
-						output.setText(feedback);
-						output.setFill(Color.web("#00811C"));
-						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						border.setTop(addHeader(state.getDisplayType()));
-						if (state.getTitle() != null) {
-							title.setText(state.getTitle());
-						}
-						
-						commandBox.clear();
+						handleNonHelpCommand(feedback, state, commandBox);
 					} catch (Exception e) {
-						feedback = e.getMessage();
-						UIState state = logic.getState();
-						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						
-						output.setText(feedback);
-						output.setFill(Color.web("#F20505"));
+						handleExecutionException(e.getMessage());
 					}
 				}
 
 				if (ke.getCode().equals(KeyCode.H) && ke.isShortcutDown()) {
 					try {
 						feedback = logic.parseAndExecuteCommand(HELP);
-						
-						output.setText(feedback);
-						output.setFill(Color.web("#00811C"));
-						
-						Stage helpStage = createHelpWindow();
-						helpStage.show();
-						helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-							@Override
-							public void handle(KeyEvent evt) {
-								if (evt.getCode().equals(KeyCode.ESCAPE) || evt.getCode().equals(KeyCode.ENTER)) {
-									helpStage.close();
-								}
-							}
-						});
-
-						
-						commandBox.clear();
-					} catch (Exception e) {
-						feedback = e.getMessage();
 						UIState state = logic.getState();
 						
-						border.setCenter(addMainDisplay(0, state.getDisplayType()));
-						
-						output.setText(feedback);
-						output.setFill(Color.web("#F20505"));
+						handleHelpCommand(feedback, state, commandBox);
+					} catch (Exception e) {
+						handleExecutionException(e.getMessage());
 					}
 				}
 
@@ -467,6 +298,91 @@ public class UI extends Application {
 		});
 	}
     
+	public static void handleExecutionException(String feedback) {
+		
+		UIState state = logic.getState();
+		
+		border.setCenter(addMainDisplay(0, state.getDisplayType()));
+		
+		output.setText(feedback);
+		output.setFill(Color.web("#F20505"));
+		
+	}
+	
+	public static void handleNonHelpCommand(String feedback, UIState state, TextField commandBox) {
+		
+		output.setText(feedback);
+		output.setFill(Color.web("#00811C"));
+
+		border.setCenter(addMainDisplay(state.getIdNewTask() + 1, state.getDisplayType()));
+		border.setTop(addHeader(state.getDisplayType()));
+		
+		if (state.getTitle() != null) {
+			title.setText(state.getTitle());
+		}
+		if (state.getInputBox() == null || state.getInputBox() == "") {
+			commandBox.clear();
+		} else {
+			commandBox.setText(state.getInputBox());
+			commandBox.positionCaret(state.getInputBox().length() + 1);
+		}
+		
+	}
+	
+	public static void handleHelpCommand(String feedback, UIState state, TextField commandBox) {
+		
+		output.setText(feedback);
+		output.setFill(Color.web("#00811C"));
+
+		Stage helpStage;
+		switch (state.getHelpBox()) {
+		case HELP_ADD: {
+			// Fallthrough
+		}
+		case HELP_DELETE: {
+			// Fallthrough
+		}
+		case HELP_FIND: {
+			// Fallthrough
+		}
+		case HELP_FINISH: {
+			// Fallthrough
+		}
+		case HELP_READFROM: {
+			// Fallthrough
+		}
+		case HELP_SAVE: {
+			// Fallthrough
+		}
+		case HELP_RESTORE: {
+			// Fallthrough
+		}
+		case HELP_VIEW: {
+			// Fallthrough
+		}
+		case HELP_UPDATE: {
+			helpStage = createHelpCommandWindow(state.getHelpBox());
+			break;
+		}
+		default: {
+			helpStage = createHelpWindow();
+			break;
+		}
+		}
+
+		helpStage.show();
+		helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent evt) {
+				if (evt.getCode().equals(KeyCode.ESCAPE)
+						|| evt.getCode().equals(KeyCode.ENTER)) {
+					helpStage.close();
+				}
+			}
+		});
+		commandBox.clear();
+	}
+	
 	/**
 	 * Returns the Stage for the Help window 
 	 * box with all useful info for the user.
@@ -703,8 +619,9 @@ public class UI extends Application {
 	 * @param listType    type of task lists to be displayed (home, deleted, finished)
 	 * @return            horizontal box HBox for main display
 	 */
-	public static HBox addMainDisplay(int taskId, doordonote.logic.UIState.ListType listType) {
 
+	public static HBox addMainDisplay(int taskId, doordonote.logic.UIState.ListType listType) {
+		
 		HBox main = new HBox();
 
 		main.setPadding(new Insets(40, 25, 30, 25));
@@ -712,19 +629,6 @@ public class UI extends Application {
 		main.setStyle("-fx-background-image: url('whitee.png');" + "-fx-background-size: 100% 100%; "
 				+ "-fx-background-repeat: no-repeat;");
 
-		return displayTasks(main, taskId, listType);
-	}
-    
-	/**
-	 * Returns the horizontal box for the main window 
-	 * displaying all the tasks inside their boxes
-	 *  
-	 * @param main        horizontal box HBox for the main display 
-	 * @param taskId      id of the task to be highlighted after update or add command
-	 * @param listType    type of task lists to be displayed (home, deleted, finished)
-	 * @return            horizontal box HBox containing boxes for different types of tasks
-	 */
-	public static HBox displayTasks(HBox main, int taskId, doordonote.logic.UIState.ListType listType) {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 		List<Task> taskList;
