@@ -77,17 +77,15 @@ public interface CommandToController {
 	 * Redo the last undo.
 	 * 
 	 * @return feedback message to be displayed to users.
-	 * @throws IOException
 	 */
-	String redo() throws IOException;
+	String redo();
 	
 	/**
 	 * Undo the last changes made to the file (e.g. add/ delete/ update/ finish/ restore).
 	 * 
 	 * @return feedback message to be displayed to users.
-	 * @throws IOException
 	 */
-	String undo() throws IOException;
+	String undo();
 	
 	/**
 	 * Replaces the task specified with a completely new task.
@@ -124,17 +122,15 @@ public interface CommandToController {
 	 * Displays all done tasks to user.
 	 * 
 	 * @return feedback message to be displayed to users.
-	 * @throws IOException
 	 */
-	String viewFinished() throws IOException;
+	String viewFinished();
 
 	/**
 	 * Displays all deleted tasks to user.
 	 * 
 	 * @return feedback message to be displayed to users.
-	 * @throws IOException
 	 */
-	String viewDeleted() throws IOException;
+	String viewDeleted();
 
 	/**
 	 * Used by update to create a String from a Task. This method will
@@ -146,7 +142,7 @@ public interface CommandToController {
 	 * @return feedback message to be displayed to users.
 	 * @throws Exception
 	 */
-	String getTaskStringById(int taskID) throws Exception;
+	String getTaskStringToUserInputBoxById(int taskID) throws Exception;
 
 	/**
 	 * @return UIState object for UI to determine what kind of data should be displayed.

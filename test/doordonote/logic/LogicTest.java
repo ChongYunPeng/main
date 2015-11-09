@@ -43,6 +43,7 @@ public class LogicTest {
 		Task floatingTask2 = new FloatingTask("Read Starwars");
 		Task deadlineTask = new DeadlineTask("Finish Report", dt1.toDate());
 
+		
 		// Initialize the storage path
 		testStorage.path("test");
 		logic = new Logic();
@@ -51,13 +52,16 @@ public class LogicTest {
 		testStorage.add(floatingTask2);
 		testStorage.add(deadlineTask);
 		testStorage.finish(floatingTask2);
-
+		
 		testUnfinishedTaskList = new ArrayList<Task>();
 		testFinishedTaskList = new ArrayList<Task>();
 
 		testUnfinishedTaskList.add(deadlineTask);
 		testUnfinishedTaskList.add(floatingTask1);
-
+		// Tasklist:
+		// Finish report
+		// watch LOTR
+		
 		testFinishedTaskList.add(floatingTask2);
 
 	}
@@ -112,13 +116,28 @@ public class LogicTest {
 	}
 
 	@Test
-	public void deleteTest() {
+	public void deleteTest() throws Exception {
+		String feedback = logic.parseAndExecuteCommand("del 2");
+		assertEquals("Check that feedback is correct", "Task \"Watch LOTR\" deleted", feedback);
+		
+		assertEquals("Check that UIState is correct", new UIState(), logic.getState());
+		assertEquals("Check that feedback is correct", "Task \"Watch LOTR\" deleted", feedback);
+		
+		Task deletedTask = new FloatingTask("Watch LOTR");
+		testUnfinishedTaskList.remove(deletedTask);
+		assertEquals("Check that unfinished Task list is correct", testUnfinishedTaskList, logic.getTasks());
 
+		
+		logic.parseAndExecuteCommand("view deleted");
+		List<Task> deletedTaskList = new ArrayList<Task>();
+		deletedTask.setDeleted();
+		deletedTaskList.add(deletedTask);
+		assertEquals("Check that deleted Task list is correct", deletedTaskList, logic.getTasks());
 	}
 	
 	@Test
 	public void finishTest() {
-
+		
 	}
 
 	@Test
