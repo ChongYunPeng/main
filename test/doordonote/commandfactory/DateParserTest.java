@@ -34,8 +34,8 @@ public class DateParserTest {
 	    assertEquals("Parser should get only one valid date without 'to'", 
 	    			 createdDateList, 
 	    			 parser.parseAndGetDateList("from 15 jan 2013 30 march  7.45"));
-	    assertEquals("Parser should return empty if no dates are found", 
-	    			 new ArrayList<Date>(), 
+	    assertEquals("Parser should return null if no dates are found", 
+	    			 null, 
 	    			 parser.parseAndGetDateList("do research on database"));
 
 
