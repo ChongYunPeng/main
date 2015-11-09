@@ -118,7 +118,7 @@ public class UIState {
 		for (String word : filterList) {
 			title += word + ", ";
 		}
-		return title;
+		return title.substring(0, title.length()-2);
 	}
 
 	
