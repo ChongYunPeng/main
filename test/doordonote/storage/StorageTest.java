@@ -157,6 +157,7 @@ public class StorageTest {
 	}
 	
 	@Test
+	//This tests if done and deleted task lists are being properly returned.
 	public void testReadDeleteAndDone() throws IOException, EmptyTaskListException, DuplicateTaskException, EventsClashException{
 		ArrayList<Task> arrlist = addTasksToStorage();
 		ArrayList<Task> dellist = new ArrayList<Task>();

@@ -40,6 +40,8 @@ public class TaskReader {
 	private static final Type type = new TypeToken<HashSet<Task>>(){}.getType();
 
 	private Set<Task> set = new HashSet<Task>(HASHSET_SIZE);
+	
+	//This parameter is to check if file is a valid Json file. Freeze operations if file is not valid.
 	private boolean isValidJson;
 
 	private static String currentFile;
@@ -71,7 +73,8 @@ public class TaskReader {
 	protected static void setCurrentFile(String fileName){
 		currentFile = fileName;
 	}
-
+	
+	//This method switches to said fileName to read.
 	protected String read(String fileName) throws FileNotFoundException{
 		if(!fileName.contains(FILE_TYPE)){
 			fileName += FILE_TYPE;
@@ -149,16 +152,15 @@ public class TaskReader {
 	// This method gets json string from currentFile and map it
 	protected HashSet<Task> jsonToSet() throws IOException {
 		String json = getFileString(currentFile);
+		HashSet<Task> jsonSet = null;
 		try{
 			new JsonParser().parse(json);
 		}
 		catch(JsonParseException e){
 			isValidJson = false;
-			HashSet<Task> jsonSet = new HashSet<Task>();
 			return jsonSet;
 		}
-		isValidJson = true;
-		HashSet<Task> jsonSet = null;
+		isValidJson = true;		
 		jsonSet = gson.fromJson(json, type);
 		return jsonSet;
 	}

@@ -18,7 +18,6 @@ import com.google.gson.JsonSerializer;
  * @author A0131716M
  *
  */
-
 public class TaskClassAdapter<Task> implements JsonSerializer<Task>, JsonDeserializer<Task> {
 
 	@Override

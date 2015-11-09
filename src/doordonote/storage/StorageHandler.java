@@ -60,8 +60,7 @@ public class StorageHandler implements Storage {
 	}
 
 	public String path(String fileName){
-		if((fileName.length() < 5) ||
-				!(fileName.substring(fileName.length()-4)).contains(FILE_TYPE)){
+		if(checkFormat(fileName)){
 			fileName += FILE_TYPE;
 		}
 		try{
@@ -76,6 +75,11 @@ public class StorageHandler implements Storage {
 			return MESSAGE_INVALID_PATH;
 		}
 		return MESSAGE_INVALID_PATH;
+	}
+
+	private boolean checkFormat(String fileName) {
+		return (fileName.length() < 5) ||
+				!(fileName.substring(fileName.length()-4)).contains(FILE_TYPE);
 	}
 
 	public String get(String fileName){
