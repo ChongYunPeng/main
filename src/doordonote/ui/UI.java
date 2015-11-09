@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.lang.StringBuilder;
+import java.util.logging.*;
 
 import org.apache.commons.lang.WordUtils;
 
@@ -56,7 +57,8 @@ import javafx.scene.shape.Shape;
  * @author Priyanka
  */
 public class UI extends Application {
-
+    
+	/** String objects for state of helpBox from UIState */
 	private static final String HELP = "help";
 	private static final String HELP_ADD = "add";
 	private static final String HELP_DELETE = "delete";
@@ -67,13 +69,15 @@ public class UI extends Application {
 	private static final String HELP_RESTORE = "restore";
 	private static final String HELP_READFROM = "readfrom";
 	private static final String HELP_VIEW = "view";
-
+    
+	/** String objects for commands */
 	private static final String COMMAND_HOME = "home";
 	private static final String COMMAND_DISPLAY_FINISH = "view finished";
 	private static final String COMMAND_DISPLAY_DELETE = "view deleted";
 	private static final String COMMAND_UNDO = "undo";
 	private static final String COMMAND_REDO = "redo";
-
+    
+	/** String objects for different messages displayed to the user */
 	private static final String MESSAGE_WELCOME = "Welcome to DoOrDoNote! "
 			+ "Type in \"help\" for all the help you need!";
 	private static final String MESSAGE_COMMAND_TABLE = "Table for Commands: ";
@@ -81,39 +85,74 @@ public class UI extends Application {
 	private static final String MESSAGE_COLOUR_TABLE = "Table for Colour Coding of Tasks: ";
 	private static final String MESSAGE_HELP = "Hello! "
 			+ "This is the page to provide you with all the help you need for DoOrDoNote";
-	private static final String MESSAGE_NO_INPUT = "Try typing one of our commands. For help, just type \"help\"!";
-
+	private static final String MESSAGE_HELP_COMMAND = "Hello! Here is a table of the commands "
+			+ "you can use for ";
+	private static final String MESSAGE_NO_INPUT = "Try typing one of our commands. "
+			+ "For help, just type \"help\"!";
+    
+	/** String objects for titles displayed */
 	private static final String TITLE_APP = "DoOrDoNote";
 	private static final String TITLE_HOME = "Home";
 	private static final String TITLE_HELP = "Help!";
 	private static final String TITLE_FLOATING = "Floating Tasks";
 	private static final String TITLE_EVENTS = "Events Spanning Tasks";
-
+    
+	/** String objects for text for labels */
 	private static final String LABEL_OK = " OK ";
 	private static final String LABEL_COMMAND = "Command:";
-
+    
+	/** String objects for types of tasks */
 	private static final String TYPE_EVENT = "EVENT_TASK";
 	private static final String TYPE_DEADLINE = "DEADLINE_TASK";
 	private static final String TYPE_FLOATING = "FLOATING_TASK";
-
+    
+	/** String objects for different fonts */
 	private static final String FONT_CALIBRI = "Calibri";
 	private static final String FONT_TAHOMA = "Tahoma";
 	private static final String FONT_AHARONI = "Aharoni";
-
+	
+	/** String objects for logging warning messages */
+	private static final String EXECUTION_ERROR_LOGGING = "processing execution error";
+	private static final String FILE_ERROR_LOGGING = "processing file error";
+	
+	/** double value for the scroll change during up/down keys navigation */
+	private static final double SCROLL_INCREMENT = 0.2;
+    
+	/** Text object for the feedback area containing feedback to be displayed */
 	private static Text output = new Text(MESSAGE_WELCOME);
+	
+	/** Text object for the header area containing header to be displayed */
 	private static Text title = new Text(TITLE_HOME);
+	
+	/** BorderPane object for the Scene to be displayed in the main display*/
 	private static BorderPane border = new BorderPane();
+	
+	/** Scene object for the Stage to be displayed in the main display */
 	private static Scene scene = new Scene(border);
-
+    
+	/** integer for the Task ID of the tasks displayed */
 	private static int count;
-
+    
+	/** Logic object to which input is to be passed and data for display is to be retrieved */
 	private static UIToLogic logic = null;
-
+	
+	/** Obtains a suitable logger for class UI */
+	private static Logger logger = Logger.getLogger("UI");
+    
+	/** Constructor for UI */
 	public UI() {
 		logic = new Logic();
 		count = 1;
 	}
 
+	/**
+	 * The main entry point for all JavaFX applications. 
+	 * The start method is invoked once the application is opened by the user, 
+	 * and after the system is ready for the application to begin running
+	 *
+	 * @param primaryStage     the primary stage for this application, 
+	 *                         onto which the application scene can be set. 
+	 */
 	@Override
 	public void start(Stage primaryStage) {
 		
@@ -127,6 +166,7 @@ public class UI extends Application {
 		primaryStage.setTitle(TITLE_APP);
 		primaryStage.getIcons().add(new Image("icon1.jpg"));
 		primaryStage.show();
+		// ensures application enters full screen by default
 		primaryStage.setMaximized(true);
 
 	}
@@ -172,7 +212,6 @@ public class UI extends Application {
 		HBox hBox = new HBox();
 		hBox.setPadding(new Insets(5, 12, 5, 12));
 		hBox.setSpacing(10);
-		// hbox.setStyle("-fx-background-color: #336699;");
 
 		Label command = new Label(LABEL_COMMAND);
 		command.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
@@ -197,7 +236,6 @@ public class UI extends Application {
 	 * object for information regarding display
 	 *
 	 * @param commandBox  TextField where user can enter input      
-	 * @return            void
 	 */
 	public static void handleUserInput(TextField commandBox) {
 
@@ -221,13 +259,16 @@ public class UI extends Application {
 						} catch (Exception e) {
 							handleExecutionException(e.getMessage());
 						}
-					} else {
+					} 
+					// if user presses enter without giving a command
+					else {
 						feedback = MESSAGE_NO_INPUT;
 						output.setText(feedback);
 						output.setFill(Color.web("#00811C"));
 					}
 				}
-
+                
+				// keyboard shortcut for home
 				if (ke.getCode().equals(KeyCode.ESCAPE)) {
 					try {
 						feedback = logic.parseAndExecuteCommand(COMMAND_HOME);
@@ -238,7 +279,8 @@ public class UI extends Application {
 						handleExecutionException(e.getMessage());
 					}
 				}
-
+                
+				// keyboard shortcut for undo
 				if (ke.getCode().equals(KeyCode.Z) && ke.isShortcutDown()) {
 					try {
 						feedback = logic.parseAndExecuteCommand(COMMAND_UNDO);
@@ -249,7 +291,8 @@ public class UI extends Application {
 						handleExecutionException(e.getMessage());
 					}
 				}
-
+                
+				// keyboard shortcut for redo
 				if (ke.getCode().equals(KeyCode.Y) && ke.isShortcutDown()) {
 					try {
 						feedback = logic.parseAndExecuteCommand(COMMAND_REDO);
@@ -260,7 +303,8 @@ public class UI extends Application {
 						handleExecutionException(e.getMessage());
 					}
 				}
-
+                
+				// keyboard shortcut for view deleted
 				if (ke.getCode().equals(KeyCode.D) && ke.isShortcutDown()) {
 					try {
 						feedback = logic.parseAndExecuteCommand(COMMAND_DISPLAY_DELETE);
@@ -271,7 +315,8 @@ public class UI extends Application {
 						handleExecutionException(e.getMessage());
 					}
 				}
-
+                
+				// keyboard shortcut for view finished
 				if (ke.getCode().equals(KeyCode.F) && ke.isShortcutDown()) {
 					try {
 						feedback = logic.parseAndExecuteCommand(COMMAND_DISPLAY_FINISH);
@@ -282,7 +327,8 @@ public class UI extends Application {
 						handleExecutionException(e.getMessage());
 					}
 				}
-
+                
+				// keyboard shortcut for help
 				if (ke.getCode().equals(KeyCode.H) && ke.isShortcutDown()) {
 					try {
 						feedback = logic.parseAndExecuteCommand(HELP);
@@ -298,18 +344,41 @@ public class UI extends Application {
 		});
 	}
     
+	/**
+	 * Handles exceptions thrown from logic while parsing and executing user
+	 * command 
+	 *
+	 * @param feedback  String message for the exception to be displayed as  
+	 *                  feedback in the Text object output
+	 */
 	public static void handleExecutionException(String feedback) {
+		
+		//log a message at WARNING level
+		logger.log(Level.WARNING, EXECUTION_ERROR_LOGGING, feedback);
 		
 		UIState state = logic.getState();
 		
 		border.setCenter(addMainDisplay(0, state.getDisplayType()));
 		
 		output.setText(feedback);
+		// sets the colour of feedback displayed as output as red
 		output.setFill(Color.web("#F20505"));
 		
 	}
 	
-	public static void handleNonHelpCommand(String feedback, UIState state, TextField commandBox) {
+	/**
+	 * Handles the display of UI after user-entered non-help commands 
+	 * by gathering information from Logic's UIState
+	 *
+	 * @param feedback     String message to be displayed as output after
+	 *                     successful execution of command
+	 * @param state        UIState object giving information about the display
+	 *                     (title, list type, Task ID for highlighting, input Box)
+	 * @param commandBox   TextField object where for the user input, to be 
+	 *                     manipulated according to UIState
+	 */
+	public static void handleNonHelpCommand(String feedback, UIState state, 
+			                                TextField commandBox) {
 		
 		output.setText(feedback);
 		output.setFill(Color.web("#00811C"));
@@ -324,12 +393,25 @@ public class UI extends Application {
 			commandBox.clear();
 		} else {
 			commandBox.setText(state.getInputBox());
+			// to position the caret at the end of the line of text
 			commandBox.positionCaret(state.getInputBox().length() + 1);
 		}
 		
 	}
 	
-	public static void handleHelpCommand(String feedback, UIState state, TextField commandBox) {
+	/**
+	 * Handles the display of UI after user-entered help command 
+	 * by gathering information from Logic's UIState
+	 *
+	 * @param feedback     String message to be displayed as output after
+	 *                     successful execution of command
+	 * @param state        UIState object giving information about the type 
+	 *                     of help display
+	 * @param commandBox   TextField object for the user input, to be 
+	 *                     cleared after help command
+	 */
+	public static void handleHelpCommand(String feedback, UIState state, 
+			                             TextField commandBox) {
 		
 		output.setText(feedback);
 		output.setFill(Color.web("#00811C"));
@@ -371,6 +453,8 @@ public class UI extends Application {
 		}
 
 		helpStage.show();
+		
+		// closes help window if user presses Enter or Esc
 		helpStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent evt) {
@@ -380,6 +464,7 @@ public class UI extends Application {
 				}
 			}
 		});
+		
 		commandBox.clear();
 	}
 	
@@ -414,13 +499,14 @@ public class UI extends Application {
 		hBox2.setSpacing(15);
 		hBox2.setAlignment(Pos.CENTER);
 		
+		// for the table of commands
 		VBox vBox1 = new VBox();
 	    vBox1.setSpacing(5);
 	    vBox1.setAlignment(Pos.TOP_CENTER);
-
-		Text tableHeader = new Text(MESSAGE_COMMAND_TABLE);
-		tableHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 15));
-		tableHeader.setFill(Color.web("#00143E"));
+        
+		Text commandHeader = new Text(MESSAGE_COMMAND_TABLE);
+		commandHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 15));
+		commandHeader.setFill(Color.web("#00143E"));
 
 		Image image2 = new Image("help.png");
 		ImageView imv2 = new ImageView(image2);
@@ -429,8 +515,9 @@ public class UI extends Application {
 		imv2.setSmooth(true);
 		imv2.setCache(true);
 		
-		vBox1.getChildren().addAll(tableHeader, imv2);
+		vBox1.getChildren().addAll(commandHeader, imv2);
 		
+		// for the table of shortcuts
 		VBox vBox2_1 = new VBox();
 		vBox2_1.setSpacing(5);
 		vBox2_1.setAlignment(Pos.TOP_CENTER);
@@ -446,6 +533,7 @@ public class UI extends Application {
 		imv3.setSmooth(true);
 		imv3.setCache(true);
 		
+		// for the table of colour codes
 		vBox2_1.getChildren().addAll(shortcutHeader, imv3);
 		
 		VBox vBox2_2 = new VBox();
@@ -486,7 +574,8 @@ public class UI extends Application {
 		stage.setTitle(TITLE_HELP);
 		stage.getIcons().add(image1);
 		stage.setScene(sc);
-
+        
+		// if pressed, button OK closes the window
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
@@ -522,8 +611,8 @@ public class UI extends Application {
 		imv1.setSmooth(true);
 		imv1.setCache(true);
 
-		Text helpHeader = new Text(
-				"Hello! Here is a table of the commands you can use for " + commandType.toUpperCase() + ":");
+		Text helpHeader = new Text(MESSAGE_HELP_COMMAND + 
+				commandType.toUpperCase() + ":");
 		helpHeader.setFont(Font.font(FONT_CALIBRI, FontWeight.BOLD, 18));
 		helpHeader.setFill(Color.web("#00143E")); // #00143E
 		
@@ -562,6 +651,16 @@ public class UI extends Application {
 		return stage;
 	}
 	
+	/**
+	 * Returns the Image object for the Help window 
+	 * box displaying help table for a particular
+	 * command type with all useful info about that 
+	 * command type for the user.
+	 *  
+	 * @param commandType String for the type of command for which 
+	 *                    image is to be returned            
+	 * @return            Image object for specific command type
+	 */
 	public static Image getTableImage(String commandType) {
 		
 		Image image;
@@ -604,6 +703,7 @@ public class UI extends Application {
 			break;
 		}
 		default: {
+			// main help box with all commands as default
 			image = new Image("help.png");
 		}
 		}
@@ -619,7 +719,6 @@ public class UI extends Application {
 	 * @param listType    type of task lists to be displayed (home, deleted, finished)
 	 * @return            horizontal box HBox for main display
 	 */
-
 	public static HBox addMainDisplay(int taskId, doordonote.logic.UIState.ListType listType) {
 		
 		HBox main = new HBox();
@@ -632,10 +731,18 @@ public class UI extends Application {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 		List<Task> taskList;
+		
 		try {
 			taskList = logic.getTasks();
 		}
 		catch (Exception e) {
+			//log a message at WARNING level
+			logger.log(Level.WARNING, FILE_ERROR_LOGGING, e);
+			
+			/* if exception thrown by logic, displays exception 
+			 * message as feedback in red and initialises taskList
+			 * as an empty List 
+			 */
 			taskList = new ArrayList<Task>();
 			output.setText(e.getMessage());
 			output.setFill(Color.web("#F20505"));
@@ -674,7 +781,7 @@ public class UI extends Application {
 		floatingBox.setStyle("-fx-background-color: #F9FFC6;");
 
 		ScrollPane scroll2 = createScroll();
-		VBox floatingTasks = displayFloatingTasks(taskId, isHome, taskList);
+		VBox floatingTasks = displayFloatingTasks(taskId, taskList);
 		scroll2.setContent(floatingTasks);
 		floatingBox.getChildren().addAll(scroll2);
 
@@ -695,6 +802,12 @@ public class UI extends Application {
 
 	}
 	
+	/**
+	 * Customizes and returns a ScrollPane object for a
+	 * task list box
+	 *  
+	 * @return     customized ScrollPane object for VBox
+	 */
 	public static ScrollPane createScroll() {
 		
 		ScrollPane scroll = new ScrollPane();
@@ -704,20 +817,19 @@ public class UI extends Application {
 		scroll.setPrefSize(115, 150);
 		scroll.setHbarPolicy(ScrollBarPolicy.NEVER);
 		scroll.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-
-		double scrollPaneIncrement = 0.2;
-		  
+		
+		// for scrolling using up/down arrow keys
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent evt) {
 				if (evt.getCode().equals(KeyCode.UP)) {
 					if (scroll.getVvalue() > scroll.getVmin()) {
-						scroll.setVvalue(scroll.getVvalue() - scrollPaneIncrement);
+						scroll.setVvalue(scroll.getVvalue() - SCROLL_INCREMENT);
 					}
 				}
 				if (evt.getCode().equals(KeyCode.DOWN)) {
 					if (scroll.getVvalue() < scroll.getVmax()) {
-						scroll.setVvalue(scroll.getVvalue() + scrollPaneIncrement);
+						scroll.setVvalue(scroll.getVvalue() + SCROLL_INCREMENT);
 					}
 				}
 			}
@@ -755,12 +867,16 @@ public class UI extends Application {
 	}
 
 	/**
-	 * Returns the horizontal box for the main window 
-	 * displaying all the tasks inside their boxes
+	 * Returns the vertical box for the display 
+	 * of dated tasks NOT spanning multiple days
 	 *  
 	 * @param taskId      id of the task to be highlighted after update or add command
-	 * @param listType    type of task lists to be displayed (home, deleted, finished)
-	 * @return            horizontal box HBox for main display
+	 * @param isHome      boolean value: true if display is of home type, else false
+	 *                    lets method know if tasks are to be colour coded
+	 * @param taskList    list of all tasks to be displayed
+	 * @param formatter   SimpleDateFormat object for formatting of task dates
+	 *                
+	 * @return            vertical box VBox for display of single day tasks
 	 */
 	public static VBox displaySingleDayTasks(int taskId, boolean isHome, List<Task> taskList,
 			SimpleDateFormat formatter) {
@@ -778,6 +894,7 @@ public class UI extends Application {
 		for (int i = 0; i < taskList.size(); i++) {
 			if (!(taskList.get(i).getType().equals(TYPE_FLOATING))) {
 				if (taskList.get(i).getType().equals(TYPE_EVENT)) {
+					// if task encountered is multiple day event, doesn't display
 					if (DateUtil.checkIfMultipleDayEvent(taskList.get(i), formatter)) {
 						continue;
 					}
@@ -798,25 +915,32 @@ public class UI extends Application {
 				if (taskList.get(i).getType().equals(TYPE_DEADLINE)) {
 					task = getDeadlineString(taskList.get(i));
 					taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
+					
 					FillTransition colour;
+					
+					// if task is overdue and display type is home
 					if (DateUtil.checkForOverdue(taskList.get(i).getEndDate()) && isHome) {
 						taskDesc.setFill(Color.RED);
 						colour = changeColour(taskDesc, Color.RED);
 					} else {
 						colour = changeColour(taskDesc, Color.BLACK);
 					}
+					
+					// if count i.e. Task ID of task corresponds to value of taskId passed, task is highlighted 
 					if (count == taskId + 1) {
 						Timeline blinker = createBlinker(taskDesc);
-						SequentialTransition blink = new SequentialTransition(taskDesc, blinker, colour);
+						SequentialTransition blink = 
+								new SequentialTransition(taskDesc, blinker, colour);
 
 						blink.play();
 					}
 				} else {
 					task = getSingleDayEventString(taskList.get(i));
 					taskDesc = new Text(WordUtils.wrap(task, 62, "\n", true));
+					
 					FillTransition colour;
-					if (DateUtil.checkForOngoing(taskList.get(i).getStartDate(), taskList.get(i).getEndDate())
-							&& isHome) {
+					if (DateUtil.checkForOngoing(taskList.get(i).getStartDate(), 
+							taskList.get(i).getEndDate()) && isHome) {
 						taskDesc.setFill(Color.web("#0F6F00"));
 						colour = changeColour(taskDesc, Color.web("#0F6F00"));
 					} else if (DateUtil.checkForOverdue(taskList.get(i).getEndDate()) && isHome) {
@@ -825,6 +949,7 @@ public class UI extends Application {
 					} else {
 						colour = changeColour(taskDesc, Color.BLACK);
 					}
+					
 					if (count == taskId + 1) {
 						Timeline blinker = createBlinker(taskDesc);
 						SequentialTransition blink = new SequentialTransition(taskDesc, blinker, colour);
@@ -844,16 +969,20 @@ public class UI extends Application {
 							}
 						}
 
-						if (DateUtil.checkForSameDay(taskList.get(i), taskList.get(j)))
+						if (DateUtil.checkForSameDay(taskList.get(i), taskList.get(j))) {
 							haveSameDate = false;
+						}
+						// if same date, task is displayed under that day
 						else {
 							Text taskDesc2;
+							
 							FillTransition colour;
 							if (taskList.get(j).getType().equals(TYPE_DEADLINE)) {
 								task = getDeadlineString(taskList.get(j));
 								taskDesc2 = new Text(WordUtils.wrap(task, 62, "\n", true));
 
-								if (DateUtil.checkForOverdue(taskList.get(j).getEndDate()) && isHome) {
+								if (DateUtil.checkForOverdue(taskList.get(j).getEndDate()) 
+										&& isHome) {
 									taskDesc2.setFill(Color.RED);
 									colour = changeColour(taskDesc2, Color.RED);
 								} else {
@@ -866,24 +995,30 @@ public class UI extends Application {
 										taskList.get(j).getEndDate()) && isHome) {
 									taskDesc2.setFill(Color.web("#0F6F00"));
 									colour = changeColour(taskDesc2, Color.web("#0F6F00"));
-								} else if (DateUtil.checkForOverdue(taskList.get(j).getEndDate()) && isHome) {
+								} else if (DateUtil.checkForOverdue(taskList.get(j).getEndDate()) 
+										&& isHome) {
 									taskDesc2.setFill(Color.RED);
 									colour = changeColour(taskDesc2, Color.RED);
 								} else {
 									colour = changeColour(taskDesc2, Color.BLACK);
 								}
 							}
+							
 							taskDesc2.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
+							
 							if (count == taskId + 1) {
 								Timeline blinker = createBlinker(taskDesc2);
-								SequentialTransition blink = new SequentialTransition(taskDesc2, blinker, colour);
+								SequentialTransition blink = 
+										new SequentialTransition(taskDesc2, blinker, colour);
 
 								blink.play();
 							}
 							vBox.getChildren().addAll(taskDesc2);
 							i++;
 						}
-					} else {
+					}
+					// if floating task encountered, doesn't display
+					else {
 						haveEventsOrDeadlines = false;
 					}
 					if (haveEventsOrDeadlines == false || haveSameDate == false) {
@@ -903,6 +1038,14 @@ public class UI extends Application {
 		return vBox;
 	}
 	
+	/**
+	 * Returns the String for the Date to be displayed in the single day events
+	 * box (today(if true), day, date and month)
+	 *  
+	 * @param task      Task whose date is to be displayed
+	 *                
+	 * @return          String for date of task
+	 */
 	public static String getDateToBeDisplayedString(Task task) {
 
 		Calendar calEnd = DateUtil.dateToCalendar(task.getEndDate());
@@ -920,6 +1063,14 @@ public class UI extends Application {
 		return dateString;
 	}
 	
+	/**
+	 * Returns the customized String for the deadline task to be displayed 
+	 * in the single day events box (end time and description)
+	 *  
+	 * @param task      DeadlineTask which is to be displayed as String
+	 *                
+	 * @return          String for deadline task
+	 */
 	public static String getDeadlineString(Task task) {
 		
 		Calendar calEnd = DateUtil.dateToCalendar(task.getEndDate());
@@ -931,6 +1082,14 @@ public class UI extends Application {
 		
 	}
 	
+	/**
+	 * Returns the customized String for the event task to be displayed 
+	 * in the single day events box (start time-end time and description)
+	 *  
+	 * @param task      EventTask which is to be displayed as String
+	 *                
+	 * @return          String for single day event task
+	 */
 	public static String getSingleDayEventString(Task task) {
 		
 		Calendar calStart = DateUtil.dateToCalendar(task.getStartDate());
@@ -939,13 +1098,26 @@ public class UI extends Application {
 		Calendar calEnd = DateUtil.dateToCalendar(task.getEndDate());
 		String timeEnd = DateUtil.getTime(calEnd);
 		
-		String taskString = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " + task.getDescription();
+		String taskString = count++ + ". " + "[" + timeStart + "-" + timeEnd + "] " 
+		                    + task.getDescription();
 		
 		return taskString;
 	}
 
-	public static VBox displayEventsSpanningDays(int taskId, boolean isHome, List<Task> taskList,
-			SimpleDateFormat formatter) {
+	/**
+	 * Returns the vertical box for the display 
+	 * of event tasks spanning multiple days
+	 *  
+	 * @param taskId      id of the task to be highlighted after update or add command
+	 * @param isHome      boolean value: true if display is of home type, else false
+	 *                    lets method know if tasks are to be colour coded
+	 * @param taskList    list of all tasks to be displayed
+	 * @param formatter   SimpleDateFormat object for formatting of task dates
+	 *                
+	 * @return            vertical box VBox for display of multiple day events
+	 */
+	public static VBox displayEventsSpanningDays(int taskId, boolean isHome, 
+			List<Task> taskList, SimpleDateFormat formatter) {
 
 		VBox vBox = new VBox();
 		vBox.setAlignment(Pos.TOP_LEFT);
@@ -979,8 +1151,8 @@ public class UI extends Application {
 					if (DateUtil.checkForOverdue(taskList.get(i).getEndDate()) && isHome) {
 						eventDisplay.setFill(Color.RED);
 						colour = changeColour(eventDisplay, Color.RED);
-					} else if (DateUtil.checkForOngoing(taskList.get(i).getStartDate(), taskList.get(i).getEndDate())
-							&& isHome) {
+					} else if (DateUtil.checkForOngoing(taskList.get(i).getStartDate(), 
+							taskList.get(i).getEndDate()) && isHome) {
 						eventDisplay.setFill(Color.web("#0F6F00"));
 						colour = changeColour(eventDisplay, Color.web("#0F6F00"));
 					} else {
@@ -990,7 +1162,8 @@ public class UI extends Application {
 					if (count == taskId + 1) {
 						Timeline blinker = createBlinker(eventDisplay);
 
-						SequentialTransition blink = new SequentialTransition(eventDisplay, blinker, colour);
+						SequentialTransition blink = 
+								new SequentialTransition(eventDisplay, blinker, colour);
 
 						blink.play();
 					}
@@ -1003,6 +1176,15 @@ public class UI extends Application {
 		return vBox;
 	}
 	
+	/**
+	 * Returns the customized String for the event task to be displayed 
+	 * in the multiple day events box (start date and time-end date and time 
+	 * and description)
+	 *  
+	 * @param task      EventTask which is to be displayed as String
+	 *                
+	 * @return          String for multiple day event task
+	 */
 	public static String getMultipleDayEventString(Task task) {
 		
 		Calendar calStart = DateUtil.dateToCalendar(task.getStartDate());
@@ -1017,14 +1199,25 @@ public class UI extends Application {
 		String endTime = DateUtil.getTime(calEnd);
 		int endDate = calEnd.get(Calendar.DAY_OF_MONTH);
 
-		String taskString = (count++ + ". " + "[" + startDay + ", " + startDate + " " + startMonth + ", "
-				+ startTime + " - " + endDay + ", " + endDate + " " + endMonth + ", " + endTime + "] "
-				+ task.getDescription());
+		String taskString = count++ + ". " + "[" + startDay + ", " + startDate + " " 
+		                     + startMonth + ", " + startTime + " - " + endDay + 
+		                     ", " + endDate + " " + endMonth + ", " + endTime + "] "
+				             + task.getDescription();
 		
 		return taskString;
 	}
-
-	public static VBox displayFloatingTasks(int taskId, boolean isHome, List<Task> taskList) {
+    
+	/**
+	 * Returns the vertical box for the display 
+	 * of floating tasks
+	 *  
+	 * @param taskId      id of the task to be highlighted after update or add command
+	 * @param taskList    list of all tasks to be displayed
+	 *                
+	 * @return            vertical box VBox for display of floating tasks
+	 */
+	public static VBox displayFloatingTasks(int taskId, List<Task> taskList) {
+		
 		VBox vBox = new VBox();
 		vBox.setAlignment(Pos.TOP_LEFT);
 		vBox.setPadding(new Insets(18, 18, 18, 18));
@@ -1050,6 +1243,7 @@ public class UI extends Application {
 
 				Text floatingDisplay = new Text(WordUtils.wrap(floatingTask, 62, "\n", true));
 				floatingDisplay.setFont(Font.font(FONT_CALIBRI, FontWeight.NORMAL, 16));
+				
 				if (count == taskId + 1) {
 					Timeline blinker = createBlinker(floatingDisplay);
 					FillTransition colour = changeColour(floatingDisplay, Color.BLACK);
@@ -1069,7 +1263,16 @@ public class UI extends Application {
 
 		return vBox;
 	}
-
+    
+	/**
+	 * Return a horizontal box customizing of the top
+	 * (header) section of the display according to listType
+	 * (normal, finished, deleted)
+	 *
+	 * @param listType      type of list to be displayed as instructed by 
+	 *                      Logic's UIState       
+	 * @return              horizontal box HBox for the header area
+	 */
 	public static HBox addHeader(doordonote.logic.UIState.ListType listType) {
 		
 		HBox hBox = new HBox();
@@ -1090,6 +1293,11 @@ public class UI extends Application {
 		return hBox;
 	}
 	
+	/**
+	 * Sets shadow effects for the title Text object of the header area 
+	 * of the display
+	 * 
+	 */
 	public static void setTitleEffects() {
 		
 		DropShadow shadow = new DropShadow();
@@ -1104,27 +1312,53 @@ public class UI extends Application {
 		title.setY(270.0f);
 	}
 
+	/**
+	 * Creates a Timeline object for the blinker, to be played 
+	 * when a task is to be higlighted
+	 * 
+	 * @param node       The node to which the blinking effect is to be added
+	 *                   In this class, text object
+	 * 
+	 * @return Timeline  Timeline object for the blinker
+	 */
 	public static Timeline createBlinker(Node node) {
 		
 		Timeline blink = new Timeline(
-				new KeyFrame(Duration.seconds(0), new KeyValue(node.opacityProperty(), 1, Interpolator.DISCRETE)),
-				new KeyFrame(Duration.seconds(0.25), new KeyValue(node.opacityProperty(), 0, Interpolator.DISCRETE)),
-				new KeyFrame(Duration.seconds(0.5), new KeyValue(node.opacityProperty(), 1, Interpolator.DISCRETE)));
+				new KeyFrame(Duration.seconds(0), new KeyValue(node.opacityProperty(), 
+						1, Interpolator.DISCRETE)),
+				new KeyFrame(Duration.seconds(0.25), new KeyValue(node.opacityProperty(), 
+						0, Interpolator.DISCRETE)),
+				new KeyFrame(Duration.seconds(0.5), new KeyValue(node.opacityProperty(), 
+						1, Interpolator.DISCRETE)));
+		
 		blink.setCycleCount(3);
 
 		return blink;
 	}
-
+    
+	/**
+	 * Creates a FillTransition object for changing colour purposes, 
+	 * to be played when a task is to be higlighted
+	 * 
+	 * @param shape            the shape whose colour is to be changed
+	 *                         In this class, a Text object
+	 * @param                  the final colour to be set to shape
+	 *                         after colour change 
+	 * 
+	 * @return                 the FillTransition object for changing 
+	 *                         colour of the shape passed
+	 */
 	public static FillTransition changeColour(Shape shape, Color color) {
 		
-		FillTransition fill = new FillTransition(Duration.seconds(5), shape, Color.web("#DFCA00"), color);
+		FillTransition fill = new FillTransition(Duration.seconds(5), shape, 
+				Color.web("#DFCA00"), color);
 		
 		return fill;
 	}
 
 	/**
-	 * @param args
-	 *            the command line arguments
+	 * @param args  the command line arguments
+	 *            
 	 */
 	public static void main(String[] args) {
 		
